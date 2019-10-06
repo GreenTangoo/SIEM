@@ -4,6 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
+    aggregator/parser_json/json.cpp \
         main.cpp \
     correlation_module/sypmtoms_namespace/other_symptoms.cpp \
     correlation_module/sypmtoms_namespace/repeater_symptoms.cpp \
@@ -12,6 +13,7 @@ SOURCES += \
     aggregator/parser_txt/parser.cpp
 
 HEADERS += \
+    aggregator/parser_json/json.hpp \
     correlation_module/sypmtoms_namespace/other_symptoms.hpp \
     correlation_module/sypmtoms_namespace/repeater_symptoms.hpp \
     correlation_module/recognition_interface.hpp \

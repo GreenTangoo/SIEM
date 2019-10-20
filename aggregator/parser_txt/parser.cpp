@@ -23,4 +23,14 @@ namespace parser_string
 
         return return_list;
     }
+
+    std::string delete_symbol(std::string source_str, symbol_type symbol)
+    {
+        std::string return_str;
+        for(size_t i(0); i < source_str.size(); i++)
+            if(source_str[i] != symbol)
+                return_str.push_back(source_str[i]);
+
+        return return_str;
+    }
 }

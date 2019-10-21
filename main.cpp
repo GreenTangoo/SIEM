@@ -11,6 +11,7 @@
 
 using namespace recognition;
 using namespace symptoms::discovery;
+using namespace symptoms::account_access;
 using namespace jsoner;
 
 std::vector<symptoms::Symptom*> initialize_discovered_symptoms()
@@ -23,31 +24,30 @@ std::vector<symptoms::Symptom*> initialize_discovered_symptoms()
     return vector_discovery_symptoms;
 }
 
+std::vector<symptoms::Symptom*> initialize_account_access_symptoms()
+{
+    std::vector<symptoms::Symptom*> vector_account_symptoms;
+    UserLoginSymptoms *usr_log_symp = new UserLoginSymptoms("auth.json");
+
+    vector_account_symptoms.push_back(usr_log_symp);
+
+    return vector_account_symptoms;
+}
+
 std::vector<recognition_inter*> initialize_recognitions_methods()
 {
     std::vector<recognition_inter*> initialized_vec;
 
     Discovery_symptoms_recognition *all_discovery_symptoms = new Discovery_symptoms_recognition(initialize_discovered_symptoms());
-
+    Account_symptoms_recognition *all_account_access_symptoms = new Account_symptoms_recognition(initialize_account_access_symptoms());
     initialized_vec.push_back(all_discovery_symptoms);
-
+    initialized_vec.push_back(all_account_access_symptoms);
 
     return initialized_vec;
 }
 
 int main()
 {
-    /*recognition::Discovery_symptoms_recognition obj;
-
-    std::vector<recognition_inter*> vector_objs;
-    vector_objs.push_back(&obj);
-
-    for(size_t i(0); i < vector_objs.size(); i++)
-    {
-        if(typeid (*vector_objs[i]) == typeid (recognition::Discovery_symptoms_recognition))
-            std::cout << "COMPARED" << std::endl;
-    }*/
-
     std::vector<recognition_inter*> rec_main_vector = initialize_recognitions_methods();
 
     while(true)
@@ -55,7 +55,6 @@ int main()
         for(size_t i(0); i < rec_main_vector.size(); i++)
         {
             std::vector<symptoms::Symptom*> symp_vector = rec_main_vector[i]->getAlertSymptoms();
-            std::cout << symp_vector.size() << std::endl;
             for(size_t j(0); j < symp_vector.size(); j++)
                 std::cout << symp_vector[j]->warning_msg() << std::endl;
         }

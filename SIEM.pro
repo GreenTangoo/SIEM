@@ -10,7 +10,9 @@ SOURCES += \
     correlation_module/discovery/directory_discovery/directory_discovery_symptoms.cpp \
     correlation_module/discovery/port_scanning/port_scanning_symptoms.cpp \
     main.cpp \
-    correlation_module/discovery/discovery_main.cpp
+    correlation_module/discovery/discovery_main.cpp \
+    correlation_module/account_access/user_login/user_login_symptoms.cpp \
+    correlation_module/account_access/account_access_main.cpp
 
 HEADERS += \
     aggregator/parser_json/json.hpp \
@@ -22,4 +24,6 @@ HEADERS += \
     correlation_module/discovery/port_scanning/port_scanning_symptoms.hpp \
     correlation_module/discovery/discovery_main.hpp \
     correlation_module/recognition_interface.hpp \
-    correlation_module/all_symptoms.hpp
+    correlation_module/all_symptoms.hpp \
+    correlation_module/account_access/user_login/user_login_symptoms.hpp \
+    correlation_module/account_access/account_access_main.hpp

@@ -1,0 +1,9 @@
+{
+	"iptables":{
+		"new_session":{
+			"127.0.0.1":{
+				"amount_packets":"180"
+			}
+		}
+	}
+}

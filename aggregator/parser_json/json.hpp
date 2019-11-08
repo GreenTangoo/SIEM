@@ -5,68 +5,83 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
+
+#include "../parser_txt/parser.hpp"
 
 namespace jsoner
 {
-    enum type_json_node {OBJECT, ARRAY, STRING, ROOT};
-
-    class json_interface
+    enum type_cell {OBJECT = '}', ARRAY = ']', STRING, END_OBJECT = '{', END_ARRAY = '[', NONE};
+    struct json_container
     {
-    protected:
-        type_json_node node;
-        std::list<std::pair<json_interface, json_interface>> json_node;
-    public:
-        explicit json_interface(type_json_node type_node);
-        json_interface(const json_interface &other);
-        ~json_interface();
-        type_json_node getType();
-        void add_nodes(json_interface one, json_interface two);
-    };
+        std::pair<std::string, std::string> one_cell;
+        type_cell cell_type;
 
-    class json_object : public json_interface
-    {
-    public:
-        explicit json_object(type_json_node type_node);
-        json_object(const json_object &other);
-        ~json_object();
-    };
+        json_container *next;
+        json_container *prev;
+        json_container *down;
+        json_container *up;
 
-    class json_array : public json_interface
-    {
-    public:
-        explicit json_array(type_json_node type_node);
-        json_array(const json_array &other);
-        ~json_array();
+        explicit json_container()
+        {
+            next = prev = down = up = nullptr;
+            cell_type = NONE;
+        }
+        explicit json_container(type_cell celltype)
+        {
+            cell_type = celltype;
+        }
+        explicit json_container(std::string first_str, std::string second_str, type_cell celltype)
+        {
+            one_cell.first = first_str;
+            one_cell.second = second_str;
+            cell_type = celltype;
+        }
+        void setData(std::string first_str, std::string second_str, type_cell celltype)
+        {
+            one_cell.first = first_str;
+            one_cell.second = second_str;
+            cell_type = celltype;
+        }
     };
-
-    class json_string : public json_interface
-    {
-    private:
-        std::string name;
-    public:
-        explicit json_string(std::string name_node);
-        json_string(const json_string &other);
-        ~json_string();
-    };
-
 
 
     class json_parser
     {
     private:
-        json_interface json_document;
+        json_container *root;
     private:
-        json_interface get_json_interface(std::istream &in);
-        void getFromFile(std::istream &in);
-        void putToFile(std::ostream &out);
+        void erase_json_container(json_container **root);
+        void add_child(json_container **node, json_container **new_container);
+        void add_neighbord(json_container **node, json_container **new_container);
+        json_container* find_element_by_name(json_container *node, std::string name);
+        type_cell get_type(std::string source_str) const;
+        void getFromStream(std::istream &in, json_container **node);
+        void putToStream(std::ostream &out, json_container **node, int32_t offset);
+        void copy_elements(json_container **node, const json_container *other);
     public:
-        explicit json_parser();
+        json_parser();
+        json_parser(const json_parser &other);
+        json_parser(json_parser &&other);
+        json_parser(json_container *other);
         ~json_parser();
-        void readJson(std::string filename);
-        void writeJson(std::string filename);
-
-        friend std::istream& operator>>(std::istream& fin, json_parser obj);
-        friend std::ostream& operator<<(std::ostream& stream, json_parser obj);
+        json_parser& operator=(const json_parser &other);
+        void getJson(std::istream &input_stream);
+        void setJson(std::ostream &output_stream);
+        json_container* find_element_by_name(std::string name);
+        std::list<json_container*> find_elements_by_name(std::string name);
     };
+
+    static json_parser getJsonData(std::string filename)
+    {
+        std::ifstream fin;
+        fin.open(filename.c_str());
+        if(fin.is_open() == false)
+            throw std::exception();
+
+        json_parser return_parser;
+        return_parser.getJson(fin);
+        return return_parser;
+    }
 }
 #endif

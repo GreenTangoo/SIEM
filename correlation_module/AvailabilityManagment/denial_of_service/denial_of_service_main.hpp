@@ -1,0 +1,4 @@
+#ifndef DENIAL_OF_SERVICE_HPP
+#define DENIAL_OF_SERVICE_HPP
+
+#endif

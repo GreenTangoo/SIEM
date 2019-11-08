@@ -1,19 +1,23 @@
-#ifndef RECOGNITION_INTERFACE
-#define RECOGNITION_INTERFACE
+#ifndef RECOGNITION_INTERFACE_HPP
+#define RECOGNITION_INTERFACE_HPP
 
 #include <vector>
 
-template<class T>
-class problem_recognition
+#include "symptoms_interface/main_symp_interface.hpp"
+
+namespace recognition
 {
-private:
-    problem_recognition& operator=(const problem_recognition &other) = delete;
-public:
-    problem_recognition() = default;
-    problem_recognition(const problem_recognition &other) = default;
-    problem_recognition(problem_recognition &&other) = default;
-    virtual ~problem_recognition() = default;
-    virtual std::vector<std::pair<double, T>> checkSymptoms() = 0;
-};
+    class recognition_inter
+    {
+    protected:
+        std::vector<symptoms::Symptom*> vector_symptoms;
+    public:
+        recognition_inter() = default;
+        virtual ~recognition_inter() = default;
+        virtual std::vector<symptoms::Symptom*> getAlertSymptoms() = 0;
+        virtual void addSymptomChecker(symptoms::Symptom *obj) = 0;
+        virtual size_t getAmountFoundedSymptoms() = 0;
+    };
+}
 
 #endif

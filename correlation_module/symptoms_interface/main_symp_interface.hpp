@@ -2,11 +2,14 @@
 #define MAIN_SYMP_INTERFACE_HPP
 
 #include <string>
+#include <vector>
 
 namespace symptoms
 {
     class Symptom
     {
+    protected:
+        std::vector<Symptom*> binds;
     public:
         Symptom() = default;
         Symptom(const Symptom &other) = delete;

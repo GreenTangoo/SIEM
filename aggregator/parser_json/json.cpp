@@ -143,14 +143,15 @@ void json_parser::getFromStream(std::istream &in, json_container **node)
             add_child(&temp_node, &temp);
             getFromStream(in, &(temp_node->down));
         }
-        if(type == STRING)
+        json_container *temp = new json_container;
+        add_neighbord(&temp_node, &temp);
+        temp_node = temp_node->next;
+        /*if(type == STRING)
         {
             json_container *temp = new json_container;
             add_neighbord(&temp_node, &temp);
-            /*temp_node->next = temp;
-            temp->prev = temp_node;*/
             temp_node = temp_node->next;
-        }
+        }*/
     }
 }
 
@@ -214,12 +215,9 @@ void json_parser::copy_elements(json_container **node, const json_container *oth
             add_child(&temp_node, &temp);
             copy_elements(&(temp_node->down), temp_other->down);
         }
-        else
-        {
-            json_container *temp = new json_container;
-            add_neighbord(&temp_node, &temp);
-            temp_node = temp_node->next;
-        }
+        json_container *temp = new json_container;
+        add_neighbord(&temp_node, &temp);
+        temp_node = temp_node->next;
     }
 }
 

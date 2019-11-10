@@ -59,6 +59,7 @@ namespace jsoner
         void getFromStream(std::istream &in, json_container **node);
         void putToStream(std::ostream &out, json_container **node, int32_t offset);
         void copy_elements(json_container **node, const json_container *other);
+        void delete_none_elements(json_container **node);
     public:
         json_parser();
         json_parser(const json_parser &other);

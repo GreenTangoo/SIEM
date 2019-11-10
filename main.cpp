@@ -40,8 +40,8 @@ std::vector<recognition_inter*> initialize_recognitions_methods()
 {
     std::vector<recognition_inter*> initialized_vec;
 
-    Discovery_symptoms_recognition *all_discovery_symptoms = new Discovery_symptoms_recognition(initialize_discovered_symptoms());
-    Account_symptoms_recognition *all_account_access_symptoms = new Account_symptoms_recognition(initialize_account_access_symptoms());
+    recognition_category *all_discovery_symptoms = new recognition_category(initialize_discovered_symptoms());
+    recognition_category *all_account_access_symptoms = new recognition_category(initialize_account_access_symptoms());
     initialized_vec.push_back(all_discovery_symptoms);
     initialized_vec.push_back(all_account_access_symptoms);
 
@@ -60,21 +60,11 @@ void reportAbouSymptoms(const std::vector<recognition_inter*> &rec_vector)
 
 int main()
 {
-    const float amount_groups = 5;
     std::vector<recognition_inter*> rec_main_vector = initialize_recognitions_methods();
 
     while(true)
     {
-        float counter_founded_groups = 0;
-        for(size_t i(0); i < rec_main_vector.size(); i++)
-            if(rec_main_vector[i]->getAmountFoundedSymptoms() > 0)
-                counter_founded_groups++;
 
-        if((counter_founded_groups / amount_groups) > 0.2)
-        {
-            std::cout << "Probability attack: " << (counter_founded_groups / amount_groups) * 100 << "%" << std::endl;
-            reportAbouSymptoms(rec_main_vector);
-        }
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
     return 0;

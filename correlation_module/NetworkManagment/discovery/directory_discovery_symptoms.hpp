@@ -23,6 +23,7 @@ namespace symptoms
             ~DirectoryDiscoverySymptoms();
             bool checkSymptoms();
             std::string warning_msg();
+            data getData();
         };
     }
 }

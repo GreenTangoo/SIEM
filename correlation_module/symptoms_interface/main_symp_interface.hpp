@@ -9,7 +9,11 @@ namespace symptoms
     class Symptom
     {
     protected:
-        std::vector<Symptom*> binds;
+        struct data
+        {
+            std::vector<std::string> main_data;
+        };
+        std::vector<data> data_from_all_symptoms;
     public:
         Symptom() = default;
         Symptom(const Symptom &other) = delete;
@@ -17,6 +21,7 @@ namespace symptoms
         virtual ~Symptom() = default;
         virtual bool checkSymptoms() = 0;
         virtual std::string warning_msg() = 0;
+        virtual data getData() = 0;
     };
 }
 

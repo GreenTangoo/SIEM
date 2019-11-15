@@ -23,6 +23,7 @@ namespace symptoms
             ~PortScanningSymptoms();
             bool checkSymptoms();
             std::string warning_msg();
+            data getData();
         };
     }
 }

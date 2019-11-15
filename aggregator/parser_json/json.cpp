@@ -14,6 +14,7 @@ json_parser::json_parser(const json_parser &other)
     json_container *child = new json_container;
     add_child(&root, &child);
     copy_elements(&root, other.root);
+    delete_none_elements(&root);
 }
 
 json_parser::json_parser(json_parser &&other)
@@ -28,6 +29,7 @@ json_parser::json_parser(json_container *other)
     json_container *child = new json_container;
     add_child(&root, &child);
     copy_elements(&(root->down), other);
+    delete_none_elements(&root);
 }
 
 json_parser::~json_parser()
@@ -44,6 +46,7 @@ json_parser& json_parser::operator=(const json_parser &other)
         json_container *child = new json_container;
         add_child(&root, &child);
         copy_elements(&(root->down), other.root);
+        delete_none_elements(&root);
     }
     return *this;
 }
@@ -221,11 +224,33 @@ void json_parser::copy_elements(json_container **node, const json_container *oth
     }
 }
 
+void json_parser::delete_none_elements(json_container **node)
+{
+    json_container *temp = *node;
+
+    for(;;)
+    {
+        if(temp->down != nullptr)
+            delete_none_elements(&(temp->down));
+        if(temp->next == nullptr)
+            break;
+        temp = temp->next;
+    }
+    while(temp->cell_type == NONE)
+    {
+        json_container *prev = temp->prev;
+        delete temp;
+        temp = prev;
+        temp->next = nullptr;
+    }
+}
+
 void json_parser::getJson(std::istream &input_stream)
 {
     erase_json_container(&root);
     root = new json_container(OBJECT);
     getFromStream(input_stream, &root);
+    delete_none_elements(&root);
 }
 
 void json_parser::setJson(std::ostream &output_stream)

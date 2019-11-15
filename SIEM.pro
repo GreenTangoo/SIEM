@@ -10,7 +10,6 @@ SOURCES += \
     correlation_module/AccessManagment/account_access/account_access_main.cpp \
     correlation_module/AvailabilityManagment/denial_of_service/denial_of_service_main.cpp \
     correlation_module/NetworkManagment/discovery/discovery_main.cpp \
-    main.cpp \
     correlation_module/AvailabilityManagment/denial_of_service/dos_wifi_symptoms.cpp \
     correlation_module/NetworkManagment/discovery/directory_discovery_symptoms.cpp \
     correlation_module/NetworkManagment/discovery/port_scanning_symptoms.cpp \

@@ -23,7 +23,7 @@ namespace symptoms
             ~UserLoginSymptoms();
             bool checkSymptoms();
             std::string warning_msg();
-            data getData();
+            std::vector<data> getData();
         };
     }
 }

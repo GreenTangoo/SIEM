@@ -15,18 +15,25 @@ UserLoginSymptoms::~UserLoginSymptoms()
 bool UserLoginSymptoms::checkSymptoms()
 {
     parser = jsoner::getJsonData(json_filename);
-
-    jsoner::json_container *container = parser.find_element_by_name("auth_log");
+    jsoner::json_container *container = parser.find_element_by_name("users");
     container = container->down;
+
     for(; container != nullptr; container = container->next)
     {
-        if(container->one_cell.second == "Login")
-            return true;
+        symptoms::data user_data_obj;
+        user_data_obj.main_data.push_back(container->one_cell.first);         // Get name user logon
+        user_data_obj.main_data.push_back(container->down->one_cell.second);  // Get user ip
+        this->data_from_all_symptoms.push_back(user_data_obj);
     }
-    return false;
+    return true;
 }
 
 std::string UserLoginSymptoms::warning_msg()
 {
     return "Warning: user login in system";
+}
+
+std::vector<symptoms::data> UserLoginSymptoms::getData()
+{
+    return data_from_all_symptoms;
 }

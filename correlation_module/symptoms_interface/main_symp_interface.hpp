@@ -6,13 +6,14 @@
 
 namespace symptoms
 {
+    struct data
+    {
+        std::vector<std::string> main_data;
+    };
+
     class Symptom
     {
     protected:
-        struct data
-        {
-            std::vector<std::string> main_data;
-        };
         std::vector<data> data_from_all_symptoms;
     public:
         Symptom() = default;
@@ -21,7 +22,7 @@ namespace symptoms
         virtual ~Symptom() = default;
         virtual bool checkSymptoms() = 0;
         virtual std::string warning_msg() = 0;
-        virtual data getData() = 0;
+        virtual std::vector<data> getData() = 0;
     };
 }
 

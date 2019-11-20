@@ -3,6 +3,8 @@
 
 #include <fstream>
 #include <string>
+#include <algorithm>
+#include <map>
 
 #include "../../symptoms_interface/main_symp_interface.hpp"
 #include "../../../aggregator/parser_json/json.hpp"
@@ -23,7 +25,7 @@ namespace symptoms
             ~PortScanningSymptoms();
             bool checkSymptoms();
             std::string warning_msg();
-            data getData();
+            std::vector<data> getData();
         };
     }
 }

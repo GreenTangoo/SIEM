@@ -12,6 +12,7 @@ namespace topology
     struct symptom_info
     {
         std::vector<std::string> vec_info;
+        category::symptom_category symp_type;
     };
     class sub_graph
     {
@@ -20,8 +21,8 @@ namespace topology
     public:
         sub_graph();
         ~sub_graph();
-        std::vector<symptom_info> getSymptomInfo();
-        void addSymptomInfo(std::vector<std::string> info);
+        const std::vector<symptom_info> getSymptomInfo() const;
+        void addSymptomInfo(std::vector<std::string> info, category::symptom_category type);
     };
 }
 #endif // SUB_GRAPH_H

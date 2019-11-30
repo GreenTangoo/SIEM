@@ -1,5 +1,5 @@
-#ifndef USER_LOGIN_SYMPTOMS_HPP
-#define USER_LOGIN_SYMPTOMS_HPP
+#ifndef LOGIN_ROOT_SYMPTOMS_HPP
+#define LOGIN_ROOT_SYMPTOMS_HPP
 
 #include <string>
 
@@ -10,16 +10,16 @@ namespace symptoms
 {
     namespace account_access
     {
-        class UserLoginSymptoms : public Symptom_impl
+        class LoginRootSymptoms : public Symptom_impl
         {
         private:
             jsoner::json_parser parser;
             std::string json_filename;
         public:
-            UserLoginSymptoms(std::string filename);
-            UserLoginSymptoms(const UserLoginSymptoms &other) = default;
-            UserLoginSymptoms(UserLoginSymptoms &&other) = default;
-            ~UserLoginSymptoms();
+            LoginRootSymptoms(std::string filename);
+            LoginRootSymptoms(const LoginRootSymptoms &other) = default;
+            LoginRootSymptoms(LoginRootSymptoms &&other) = default;
+            ~LoginRootSymptoms();
             bool checkSymptoms();
         };
     }

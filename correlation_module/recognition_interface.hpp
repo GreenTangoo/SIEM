@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "symptoms_interface/main_symp_interface.hpp"
+#include "symptoms_interface/symp_implementation.hpp"
 
 namespace recognition
 {
@@ -12,8 +12,8 @@ namespace recognition
     public:
         recognition_inter() = default;
         virtual ~recognition_inter() = default;
-        virtual std::vector<symptoms::Symptom*> getAlertSymptoms() = 0;
-        virtual void addSymptomChecker(symptoms::Symptom *obj) = 0;
+        virtual std::vector<symptoms::Symptom_impl*> getAlertSymptoms() = 0;
+        virtual void addSymptomChecker(symptoms::Symptom_impl *obj) = 0;
     };
 }
 

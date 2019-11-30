@@ -6,6 +6,7 @@ using namespace symptoms::discovery;
 
 DirectoryDiscoverySymptoms::DirectoryDiscoverySymptoms(std::string filename) : json_filename(filename)
 {
+    this->type_symp = category::symptom_category::directory_discovery;
 }
 
 DirectoryDiscoverySymptoms::~DirectoryDiscoverySymptoms()
@@ -27,22 +28,13 @@ bool DirectoryDiscoverySymptoms::checkSymptoms()
             ip_amount_req[container->one_cell.first]++;
     }
     for(std::map<std::string, int32_t>::iterator it = ip_amount_req.begin(); it != ip_amount_req.end(); it++)
-        if(it->second > 100)
+        if(it->second > 2)
         {
             symptoms::data user_data_obj;
             user_data_obj.main_data.push_back(it->first);
-            this->data_from_all_symptoms.push_back(user_data_obj);
+            this->all_data_from_symptom.push_back(user_data_obj);
         }
-
-    return false;
-}
-
-std::string DirectoryDiscoverySymptoms::warning_msg()
-{
-    return "Warning: directory traversal was recghonized";
-}
-
-std::vector<symptoms::data> DirectoryDiscoverySymptoms::getData()
-{
-    return data_from_all_symptoms;
+    if(this->all_data_from_symptom.size() > 0)
+        return true;
+    else return false;
 }

@@ -1,0 +1,11 @@
+{
+	"users":{
+		"Denis":{
+			"crontab":{
+				"action":"start",
+				"privilieges":"root",
+				"time":"00:05"
+			}
+		}
+	}
+}

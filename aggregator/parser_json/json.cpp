@@ -67,7 +67,7 @@ type_cell json_parser::get_type(std::string source_str) const
 
 void json_parser::erase_json_container(json_container **root)
 {
-    json_container *temp = *root;
+    /*json_container *temp = *root;
 
     if(temp->down != nullptr)
         erase_json_container(&temp->down);
@@ -79,7 +79,7 @@ void json_parser::erase_json_container(json_container **root)
         delete temp;
         temp = nullptr;
         return;
-    }
+    }*/
 }
 
 void json_parser::add_child(json_container **node, json_container **new_container)

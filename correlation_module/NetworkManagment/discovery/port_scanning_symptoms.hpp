@@ -1,19 +1,18 @@
 #ifndef PORT_SCANNING_SYMPTOMS_HPP
 #define PORT_SCANNING_SYMPTOMS_HPP
 
-#include <fstream>
 #include <string>
 #include <algorithm>
 #include <map>
 
-#include "../../symptoms_interface/main_symp_interface.hpp"
+#include "../../symptoms_interface/symp_implementation.hpp"
 #include "../../../aggregator/parser_json/json.hpp"
 
 namespace symptoms
 {
     namespace discovery
     {
-        class PortScanningSymptoms : public Symptom
+        class PortScanningSymptoms : public Symptom_impl
         {
         private:
             jsoner::json_parser parser;
@@ -24,8 +23,6 @@ namespace symptoms
             PortScanningSymptoms(PortScanningSymptoms &&other) = default;
             ~PortScanningSymptoms();
             bool checkSymptoms();
-            std::string warning_msg();
-            std::vector<data> getData();
         };
     }
 }

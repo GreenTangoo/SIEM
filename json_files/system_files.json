@@ -1,0 +1,10 @@
+{
+	"users":{
+		"Bob":{
+			"sshd.conf":{
+				"action":"download",
+				"privilieges":"root",
+				"time":"00:00"
+			}
+		}
+}

@@ -5,6 +5,7 @@ using namespace symptoms::discovery;
 
 PortScanningSymptoms::PortScanningSymptoms(std::string filename) : json_filename(filename)
 {
+    this->type_symp = category::symptom_category::port_scanning;
 }
 
 PortScanningSymptoms::~PortScanningSymptoms()
@@ -27,18 +28,10 @@ bool PortScanningSymptoms::checkSymptoms()
         {
             symptoms::data user_data_obj;
             user_data_obj.main_data.push_back(it->first);
-            this->data_from_all_symptoms.push_back(user_data_obj);
-            return true;
+            this->all_data_from_symptom.push_back(user_data_obj);
         }
-    return false;
+    if(this->all_data_from_symptom.size() > 0)
+        return true;
+    else return false;
 }
 
-std::string PortScanningSymptoms::warning_msg()
-{
-    return "Warning: port scan was recghonized";
-}
-
-std::vector<symptoms::data> PortScanningSymptoms::getData()
-{
-    return data_from_all_symptoms;
-}

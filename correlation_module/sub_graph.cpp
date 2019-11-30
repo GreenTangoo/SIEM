@@ -12,14 +12,15 @@ sub_graph::~sub_graph()
 
 }
 
-std::vector<symptom_info> sub_graph::getSymptomInfo()
+const std::vector<symptom_info> sub_graph::getSymptomInfo() const
 {
     return signs_vec;
 }
 
-void sub_graph::addSymptomInfo(std::vector<std::string> info)
+void sub_graph::addSymptomInfo(std::vector<std::string> info, category::symptom_category type)
 {
     symptom_info obj;
     obj.vec_info = info;
+    obj.symp_type = type;
     signs_vec.push_back(obj);
 }

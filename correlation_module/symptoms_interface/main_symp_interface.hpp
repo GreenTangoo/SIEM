@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "../all_categories.hpp"
+
 namespace symptoms
 {
     struct data
@@ -11,18 +13,15 @@ namespace symptoms
         std::vector<std::string> main_data;
     };
 
-    class Symptom
+    class Symptom_inter
     {
-    protected:
-        std::vector<data> data_from_all_symptoms;
     public:
-        Symptom() = default;
-        Symptom(const Symptom &other) = delete;
-        Symptom(Symptom &&other) = default;
-        virtual ~Symptom() = default;
+        Symptom_inter() = default;
+        Symptom_inter(const Symptom_inter &other) = delete;
+        Symptom_inter(Symptom_inter &&other) = default;
+        std::vector<data> getData();
+        virtual ~Symptom_inter() = default;
         virtual bool checkSymptoms() = 0;
-        virtual std::string warning_msg() = 0;
-        virtual std::vector<data> getData() = 0;
     };
 }
 

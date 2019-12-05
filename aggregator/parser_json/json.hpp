@@ -29,10 +29,12 @@ namespace jsoner
         }
         explicit json_container(type_cell celltype)
         {
+            next = prev = down = up = nullptr;
             cell_type = celltype;
         }
         explicit json_container(std::string first_str, std::string second_str, type_cell celltype)
         {
+            next = prev = down = up = nullptr;
             one_cell.first = first_str;
             one_cell.second = second_str;
             cell_type = celltype;

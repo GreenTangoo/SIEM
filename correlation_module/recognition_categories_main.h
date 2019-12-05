@@ -22,7 +22,7 @@ namespace recognition
         recognition_category(std::vector<symptoms::Symptom_impl*> vec_obj);
         ~recognition_category();
         std::vector<symptoms::Symptom_impl*> getAlertSymptoms();
-        void addSymptomChecker(symptoms::Symptom_impl *obj);
+        void addSymptomsChecker(std::vector<symptoms::Symptom_impl*> obj);
     };
 }
 

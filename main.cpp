@@ -7,6 +7,7 @@
 #include "correlation_module/graph.h"
 #include "correlation_module/sub_graph.h"
 #include "prediction_module/predictor.hpp"
+#include "aggregator/time_class/parse_time.hpp"
 
 using namespace topology;
 
@@ -20,23 +21,18 @@ int main()
 
     for(std::list<sub_graph>::iterator it = return_vec.begin(); it != return_vec.end(); it++)
     {
-        std::cout << "Sub graph" << std::endl;
-        analysis::prediction predictor_obj(*it);
-        std::vector<std::string> later_types_attacks = predictor_obj.getProbablyLaterSymptoms();
-        if(later_types_attacks.size() > 0)
-            for(size_t i(0); i < later_types_attacks.size(); i++)
-                std::cout << "Probably next attack: " << later_types_attacks[i] << std::endl;
+        std::cout << "One sub graph" << std::endl;
+        std::vector<symptom_info> symptoms = it->getSymptomInfo();
 
-        std::vector<symptom_info> info = it->getSymptomInfo();
-        for(size_t j(0); j < info.size(); j++)
+        for(size_t i(0); i < symptoms.size(); i++)
         {
             std::cout << "One symptom" << std::endl;
-            for(size_t k(0); k < info[j].vec_info.size(); k++)
-            {
-                std::cout << "    -" << info[j].vec_info[k] << std::endl;
-            }
+            std::cout << "Time: " << symptoms[i].time.getStrTime() << std::endl;
+            std::cout << "Category: " << category::getCategoryName(symptoms[i].symp_type) << std::endl;
+
+            for(size_t j(0); j < symptoms[i].info.size(); j++)
+                std::cout << "Information: " << symptoms[i].info[j].first << std::endl;
         }
-        std::cout << std::endl;
     }
     return 0;
 }

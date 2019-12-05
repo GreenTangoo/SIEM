@@ -13,7 +13,7 @@ namespace recognition
         recognition_inter() = default;
         virtual ~recognition_inter() = default;
         virtual std::vector<symptoms::Symptom_impl*> getAlertSymptoms() = 0;
-        virtual void addSymptomChecker(symptoms::Symptom_impl *obj) = 0;
+        virtual void addSymptomsChecker(std::vector<symptoms::Symptom_impl*>obj) = 0;
     };
 }
 

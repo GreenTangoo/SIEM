@@ -105,7 +105,7 @@ void json_parser::getFromStream(std::istream &in, json_container **node)
     std::string second_part_str;
     while(std::getline(in, input_str))
     {
-        std::list<std::string> parsed = parser_string::parse_by_delimeter(input_str, ":");
+        std::list<std::string> parsed = parser_string::parse_by_delimeter(input_str, ":", true);
         if(parsed.size() > 1)
         {
             std::list<std::string>::iterator it = std::next(parsed.begin(), 0);

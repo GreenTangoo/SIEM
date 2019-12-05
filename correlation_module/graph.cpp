@@ -15,15 +15,13 @@ graph::~graph()
 
 void graph::initializeRecognitionMethods()
 {
-    recognition_category *all_discovery_symptoms = new recognition_category(initializeDiscoveredSymptoms());
-    recognition_category *all_account_access_symptoms = new recognition_category(initializeAccountAccessSymptoms());
-    recognition_category *all_files_manipulation_symptoms = new recognition_category(initializeFilesManipulationSymptoms());
-    recognition_category *all_proccess_manipulation_symptoms = new recognition_category(initializeProccessManipulationSymptoms());
+    recognition_category *all_symptoms = new recognition_category();
+    all_symptoms->addSymptomsChecker(initializeDiscoveredSymptoms());
+    all_symptoms->addSymptomsChecker(initializeAccountAccessSymptoms());
+    all_symptoms->addSymptomsChecker(initializeFilesManipulationSymptoms());
+    all_symptoms->addSymptomsChecker(initializeProccessManipulationSymptoms());
 
-    initialized_vec.push_back(all_discovery_symptoms);
-    initialized_vec.push_back(all_account_access_symptoms);
-    initialized_vec.push_back(all_files_manipulation_symptoms);
-    initialized_vec.push_back(all_proccess_manipulation_symptoms);
+    initialized_vec = all_symptoms;
 }
 
 std::vector<symptoms::Symptom_impl*> graph::initializeDiscoveredSymptoms()
@@ -73,60 +71,26 @@ std::vector<Symptom_impl*> graph::initializeProccessManipulationSymptoms()
 
 void graph::fillGraph()
 {
-    for(size_t i(0); i < 1; i++)
+    std::vector<symptoms::Symptom_impl*> vec_alert_symptoms = initialized_vec->getAlertSymptoms();
+
+    for(size_t i(0); i < vec_alert_symptoms.size(); i++)
     {
-        std::vector<symptoms::Symptom_impl*> vec_alert_symptoms = initialized_vec[0]->getAlertSymptoms();
-
-        for(size_t j(0); j < vec_alert_symptoms.size(); j++)
+        for(size_t k(0); k < vec_alert_symptoms[i]->getData().size(); k++)
         {
-            for(size_t k(0); k < vec_alert_symptoms[j]->getData().size(); k++)
+            std::vector<std::pair<std::string, int16_t>> passed_info = vec_alert_symptoms[i]->getData()[k].main_data;
+            data_time::time passed_time = vec_alert_symptoms[i]->getData()[k].time;
+            category::symptom_category passed_category = vec_alert_symptoms[i]->getSymptomType();
+
+            sub_graph obj(passed_info, passed_category, passed_time);
+            for(size_t j(0); j < vec_alert_symptoms.size(); j++)
             {
-                std::vector<std::string> symptom_data = vec_alert_symptoms[j]->getData()[k].main_data;
-                sub_graph sub_graph_obj;
-                sub_graph_obj.addSymptomInfo(symptom_data, vec_alert_symptoms[j]->getSymptomType());
-                getOneAttackVector(i + 1, sub_graph_obj);
-                all_sub_graphs.push_back(sub_graph_obj);
+                if(i == j)
+                    continue;
+                obj.addSymptomInfo(vec_alert_symptoms[j]);
             }
+            if(obj.getSymptomInfo().size() > 1)
+                all_sub_graphs.push_back(obj);
         }
-    }
-    crop_unsuspicious_sub_graphs();
-}
-
-void graph::getOneAttackVector(size_t curr_index, sub_graph &obj)
-{
-    if(curr_index >= initialized_vec.size())
-        return;
-
-    std::vector<symptoms::Symptom_impl*> alert_vec = initialized_vec[curr_index]->getAlertSymptoms();
-
-    std::vector<symptom_info> get_founded_symp = obj.getSymptomInfo();
-
-    bool is_founded = false;
-    for(size_t i(0); i < alert_vec.size(); i++)
-    {
-        std::vector<data> symp_data = alert_vec[i]->getData();
-        for(size_t j(0); j < symp_data.size(); j++)
-        {
-            for(size_t k(0); k < get_founded_symp.size(); k++)
-            {
-                for(size_t z(0); z < get_founded_symp[k].vec_info.size(); z++)
-                {
-                    if(std::count(symp_data[j].main_data.begin(), symp_data[j].main_data.end(), get_founded_symp[k].vec_info[z]) != 0)
-                    {
-                        is_founded = true;
-                        obj.addSymptomInfo(symp_data[j].main_data, alert_vec[i]->getSymptomType());
-                        getOneAttackVector(++curr_index, obj);
-                        break;
-                    }
-                }
-                if(is_founded == true)
-                    break;
-            }
-            if(is_founded == true)
-                break;
-        }
-        if(is_founded == true)
-            break;
     }
 }
 

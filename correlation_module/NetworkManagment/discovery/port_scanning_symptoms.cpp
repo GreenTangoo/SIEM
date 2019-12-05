@@ -27,7 +27,9 @@ bool PortScanningSymptoms::checkSymptoms()
         if(it->second > 2)
         {
             symptoms::data user_data_obj;
-            user_data_obj.main_data.push_back(it->first);
+            user_data_obj.main_data.push_back(std::pair<std::string, int16_t>(it->first, 1));
+            jsoner::json_container *anchor = parser.find_element_by_name(it->first);
+            user_data_obj.time = data_time::time(anchor->down->one_cell.second);
             this->all_data_from_symptom.push_back(user_data_obj);
         }
     if(this->all_data_from_symptom.size() > 0)

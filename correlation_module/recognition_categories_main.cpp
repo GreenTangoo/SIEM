@@ -37,8 +37,8 @@ std::vector<symptoms::Symptom_impl*> recognition_category::getAlertSymptoms()
     return recogh_symps;
 }
 
-void recognition_category::addSymptomChecker(symptoms::Symptom_impl *obj)
+void recognition_category::addSymptomsChecker(std::vector<symptoms::Symptom_impl*>obj)
 {
-    vector_symptoms.push_back(obj);
+    vector_symptoms.insert(vector_symptoms.end(), obj.begin(), obj.end());
 }
 

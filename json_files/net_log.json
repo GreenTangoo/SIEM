@@ -1,6 +1,7 @@
 {
 	"iptables":{
 		"291.245.11.122":{
+			"time":"2019/12/5/12:57:35",
 			"protocol":"tcp",
 			"remote_port":"33484",
 			"local_port":"22",
@@ -9,14 +10,16 @@
 			"length":"44"
 		},
 		"291.245.11.122":{
+			"time":"2019/12/5/12:57:35",
 			"protocol":"tcp",
 			"remote_port":"33484",
 			"local_port":"80",
 			"ttl":"64",
 			"window":"1024",
-			"length":"44"
+			"length":"44"	
 		},
 		"291.245.11.122":{
+			"time":"2019/12/5/12:57:35",
 			"protocol":"tcp",
 			"remote_port":"33484",
 			"local_port":"10",
@@ -25,30 +28,7 @@
 			"length":"44"
 		},
 		"291.245.11.122":{
-			"protocol":"tcp",
-			"remote_port":"33484",
-			"local_port":"54",
-			"ttl":"64",
-			"window":"1024",
-			"length":"44"
-		},
-		"119.211.153.222":{
-			"protocol":"tcp",
-			"remote_port":"33484",
-			"local_port":"54",
-			"ttl":"64",
-			"window":"1024",
-			"length":"44"
-		},
-		"119.211.153.222":{
-			"protocol":"tcp",
-			"remote_port":"33484",
-			"local_port":"54",
-			"ttl":"64",
-			"window":"1024",
-			"length":"44"
-		},
-		"119.211.153.222":{
+			"time":"2019/12/5/12:57:36",
 			"protocol":"tcp",
 			"remote_port":"33484",
 			"local_port":"54",

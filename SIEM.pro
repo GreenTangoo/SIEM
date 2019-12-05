@@ -18,7 +18,8 @@ SOURCES += \
     correlation_module/SystemManagment/proccess_manipulation/action_proccess_symptoms.cpp \
     correlation_module/SystemManagment/files_manipulation/action_files_symptoms.cpp \
     correlation_module/symptoms_interface/symp_implementation.cpp \
-    prediction_module/predictor.cpp
+    prediction_module/predictor.cpp \
+    aggregator/time_class/parse_time.cpp
 
 HEADERS += \
     aggregator/parser_json/json.hpp \
@@ -30,18 +31,13 @@ HEADERS += \
     correlation_module/symptoms_interface/main_symp_interface.hpp \
     correlation_module/recognition_interface.hpp \
     correlation_module/all_symptoms.hpp \
-    correlation_module/AccessManagment/account_access/account_access_main.hpp \
-    correlation_module/AvailabilityManagment/denial_of_service/denial_of_service_main.hpp \
-    correlation_module/NetworkManagment/discovery/discovery_main.hpp \
     correlation_module/all_categories.hpp \
     correlation_module/AvailabilityManagment/denial_of_service/dos_wifi_symptoms.hpp \
     correlation_module/NetworkManagment/discovery/directory_discovery_symptoms.hpp \
     correlation_module/NetworkManagment/discovery/port_scanning_symptoms.hpp \
-    correlation_module/SystemManagment/escalation_priv/escalation_priv_main.hpp \
-    correlation_module/SystemManagment/files_manipulation/files_manipulation_main.hpp \
     correlation_module/AccessManagment/account_access/login_root_symptoms.hpp \
     correlation_module/SystemManagment/proccess_manipulation/action_proccess_symptoms.hpp \
-    correlation_module/SystemManagment/proccess_manipulation/proccess_manipulation_main.hpp \
     correlation_module/SystemManagment/files_manipulation/action_files_symptoms.hpp \
     correlation_module/symptoms_interface/symp_implementation.hpp \
-    prediction_module/predictor.hpp
+    prediction_module/predictor.hpp \
+    aggregator/time_class/parse_time.hpp

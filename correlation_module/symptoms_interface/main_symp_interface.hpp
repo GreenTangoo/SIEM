@@ -1,16 +1,19 @@
 #ifndef MAIN_SYMP_INTERFACE_HPP
 #define MAIN_SYMP_INTERFACE_HPP
 
-#include <string>
 #include <vector>
+#include <string>
+#include <map>
 
 #include "../all_categories.hpp"
+#include "../../aggregator/time_class/parse_time.hpp"
 
 namespace symptoms
 {
     struct data
     {
-        std::vector<std::string> main_data;
+        std::vector<std::pair<std::string, int16_t>> main_data;
+        data_time::time time;
     };
 
     class Symptom_inter

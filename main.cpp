@@ -13,7 +13,7 @@ using namespace topology;
 
 int main()
 {
-    topology::graph graph_obj;
+    /*topology::graph graph_obj;
     graph_obj.initializeRecognitionMethods();
     graph_obj.fillGraph();
 
@@ -33,6 +33,24 @@ int main()
             for(size_t j(0); j < symptoms[i].info.size(); j++)
                 std::cout << "Information: " << symptoms[i].info[j].first << std::endl;
         }
-    }
+    }*/
+
+    std::vector<std::pair<int, char>> obj1 = {std::pair<int,char>(1,'a'), std::pair<int,char>(2,'c'), std::pair<int,char>(3,'c'),
+                                             std::pair<int,char>(4,'b')};
+    std::vector<std::pair<int, char>> obj2 = {std::pair<int,char>(1,'d'), std::pair<int,char>(2,'i'), std::pair<int,char>(3,'x'),
+                                             std::pair<int,char>(5,'b')};
+
+    std::vector<std::pair<int,char>> result;
+
+    std::set_intersection(obj1.begin(), obj1.end(), obj2.begin(), obj2.end(), std::back_inserter(result),
+                          [](std::pair<int,char> one, std::pair<int,char> two) -> bool
+    {
+        if(one.first == two.first)
+            return false;
+        else return true;
+    });
+
+    for(size_t i(0); i < result.size(); i++)
+        std::cout << result[i].first << " " << result[i].second << std::endl;
     return 0;
 }

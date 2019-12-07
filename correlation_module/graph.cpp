@@ -16,10 +16,10 @@ graph::~graph()
 void graph::initializeRecognitionMethods()
 {
     recognition_category *all_symptoms = new recognition_category();
-    all_symptoms->addSymptomsChecker(initializeDiscoveredSymptoms());
+    //all_symptoms->addSymptomsChecker(initializeDiscoveredSymptoms());
     all_symptoms->addSymptomsChecker(initializeAccountAccessSymptoms());
-    all_symptoms->addSymptomsChecker(initializeFilesManipulationSymptoms());
-    all_symptoms->addSymptomsChecker(initializeProccessManipulationSymptoms());
+    //all_symptoms->addSymptomsChecker(initializeFilesManipulationSymptoms());
+    //all_symptoms->addSymptomsChecker(initializeProccessManipulationSymptoms());
 
     initialized_vec = all_symptoms;
 }
@@ -77,11 +77,15 @@ void graph::fillGraph()
     {
         for(size_t k(0); k < vec_alert_symptoms[i]->getData().size(); k++)
         {
+            if(vec_alert_symptoms[i]->getData()[k].is_used == true)
+                continue;
+
             std::vector<std::pair<std::string, int16_t>> passed_info = vec_alert_symptoms[i]->getData()[k].main_data;
             data_time::time passed_time = vec_alert_symptoms[i]->getData()[k].time;
             category::symptom_category passed_category = vec_alert_symptoms[i]->getSymptomType();
 
             sub_graph obj(passed_info, passed_category, passed_time);
+            vec_alert_symptoms[i]->getData()[k].is_used = true;
             for(size_t j(0); j < vec_alert_symptoms.size(); j++)
             {
                 if(i == j)

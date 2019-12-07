@@ -21,6 +21,7 @@ namespace data_time
         time(time &&other) = delete;
         ~time();
         time& operator=(const time &other);
+        bool operator==(const time &other);
         friend int compare(const time &first, const time &second);
         void setTime(std::string str_time); // Format: year/month/day/hour:minute:second
         std::string getStrTime();

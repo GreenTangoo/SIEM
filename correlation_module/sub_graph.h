@@ -24,7 +24,7 @@ namespace topology
         sub_graph(std::vector<std::pair<std::string, int16_t>> info, category::symptom_category symp_categrory, data_time::time time);
         ~sub_graph();
         const std::vector<symptom_info> getSymptomInfo() const;
-        void addSymptomInfo(symptoms::Symptom_impl* symp);
+        void addSymptomInfo(symptoms::Symptom_impl *symp);
     };
 }
 #endif // SUB_GRAPH_H

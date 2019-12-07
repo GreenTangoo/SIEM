@@ -25,8 +25,9 @@ bool LoginRootSymptoms::checkSymptoms()
         {
             symptoms::data data_obj;
             data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->one_cell.first, 1)); // Get username
-            data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->down->next->one_cell.second, 1)); // Get ip
+            data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->down->next->one_cell.second, 0)); // Get result
             data_obj.time = data_time::time(container->down->one_cell.second);
+            data_obj.is_used = false;
             this->all_data_from_symptom.push_back(data_obj);
         }
     }

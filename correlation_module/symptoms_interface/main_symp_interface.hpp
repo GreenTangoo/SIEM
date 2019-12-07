@@ -14,6 +14,7 @@ namespace symptoms
     {
         std::vector<std::pair<std::string, int16_t>> main_data;
         data_time::time time;
+        bool is_used;
     };
 
     class Symptom_inter
@@ -22,7 +23,6 @@ namespace symptoms
         Symptom_inter() = default;
         Symptom_inter(const Symptom_inter &other) = delete;
         Symptom_inter(Symptom_inter &&other) = default;
-        std::vector<data> getData();
         virtual ~Symptom_inter() = default;
         virtual bool checkSymptoms() = 0;
     };

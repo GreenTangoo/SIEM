@@ -13,9 +13,9 @@ namespace symptoms
     public:
         Symptom_impl() = default;
         Symptom_impl(const Symptom_impl &other) = default;
-        Symptom_impl(Symptom_impl &&other) = default;
+        Symptom_impl(Symptom_impl &&other) = delete;
         ~Symptom_impl() = default;
-        std::vector<data> getData();
+        std::vector<data>& getData();
         category::symptom_category getSymptomType();
         virtual bool checkSymptoms() = 0;
     };

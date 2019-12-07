@@ -35,6 +35,13 @@ data_time::time& data_time::time::operator=(const time &other)
     return *this;
 }
 
+bool data_time::time::operator==(const time &other)
+{
+    if(this == &other)
+        return true;
+    return ((this->year == other.year) && (this->month == other.month) && (this->day == other.day) && (this->absolute_one_day_time == other.absolute_one_day_time));
+}
+
 void data_time::time::setTime(std::string str_time)
 {
     std::list<std::string> parsed_str = parser_string::parse_by_delimeter(str_time, "/"); // Get year, month, day, day time

@@ -29,42 +29,53 @@ const std::vector<symptom_info> sub_graph::getSymptomInfo() const
 
 void sub_graph::addSymptomInfo(symptoms::Symptom_impl *symp)
 {
-    for(size_t i(0); i < symp->getData().size(); i++)
+    std::vector<symptoms::data> symptom_data = symp->getData();
+    for(size_t i(0); i < symptom_data.size(); i++)
     {
+        if(symp->getData()[i].is_used == true)
+            continue;
+
+        std::vector<symptom_info> temp_signs_vec = this->signs_vec;
+
         for(size_t j(0); j < this->signs_vec.size(); j++)
         {
             std::vector<std::pair<std::string, int16_t>> out_vec;
-            /*try {
-            std::sort(symp->getData()[i].main_data.begin(), symp->getData()[i].main_data.end(),
-                      [](std::pair<std::string, int16_t> first_elem, std::pair<std::string, int16_t> second_elem) -> bool
+
+            std::sort(symptom_data[i].main_data.begin(), symptom_data[i].main_data.end(), [](const std::pair<std::string, int16_t> &obj1, const std::pair<std::string, int16_t> &obj2)
             {
-               return first_elem.first > second_elem.first;
+                return obj1.first < obj2.first;
+            });
+            std::sort(this->signs_vec[j].info.begin(), this->signs_vec[j].info.end(), [](const std::pair<std::string, int16_t> &obj1, const std::pair<std::string, int16_t> &obj2)
+            {
+                return obj1.first < obj2.first;
             });
 
-            std::sort(this->signs_vec[j].info.begin(), this->signs_vec[j].info.end(),
-                      [](std::pair<std::string, int16_t> first_elem, std::pair<std::string, int16_t> second_elem) -> bool
-            {
-               return first_elem.first > second_elem.first;
-            });
-            }catch(...) {std::cout << "Except" << std::endl; abort();}*/
-            std::set_intersection(symp->getData()[i].main_data.begin(), symp->getData()[i].main_data.end(),
+            std::set_intersection(symptom_data[i].main_data.begin(), symptom_data[i].main_data.end(),
                     this->signs_vec[j].info.begin(), this->signs_vec[j].info.end(), std::back_inserter(out_vec),
                       [](std::pair<std::string, int16_t> first_elem, std::pair<std::string, int16_t> second_elem) -> bool
             {
-                if((first_elem.first == second_elem.first) && (first_elem.second > 0))
+                if(first_elem.second == 0)
+                    return true;
+                if(first_elem.first < second_elem.first)
                     return true;
                 else return false;
             });
 
             if(out_vec.size() > 0)
             {
+                symp->getData()[i].is_used = true;
                 topology::symptom_info obj;
-                obj.info = symp->getData()[i].main_data;
+                obj.info = symptom_data[i].main_data;
                 obj.symp_type = symp->getSymptomType();
-                obj.time = symp->getData()[i].time;
+                obj.time = symptom_data[i].time;
 
-                signs_vec.push_back(obj);
+                if(count_if(temp_signs_vec.begin(), temp_signs_vec.end(), [&obj](const symptom_info &sign_obj)
+                {
+                    return ((obj.symp_type == sign_obj.symp_type) && (obj.time == sign_obj.time));
+                }) == 0)
+                    temp_signs_vec.push_back(obj);
             }
         }
+        this->signs_vec = temp_signs_vec;
     }
 }

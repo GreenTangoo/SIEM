@@ -1,6 +1,6 @@
 #include "symp_implementation.hpp"
 
-std::vector<symptoms::data> symptoms::Symptom_impl::getData()
+std::vector<symptoms::data>& symptoms::Symptom_impl::getData()
 {
     return all_data_from_symptom;
 }

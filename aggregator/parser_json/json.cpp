@@ -202,6 +202,8 @@ void json_parser::putToStream(std::ostream &out, json_container **node, int32_t 
 
 void json_parser::copy_elements(json_container **node, const json_container *other)
 {
+    if(other == nullptr)
+        return;
     json_container *temp_node = *node;
     const json_container *temp_other = other;
 
@@ -236,7 +238,7 @@ void json_parser::delete_none_elements(json_container **node)
             break;
         temp = temp->next;
     }
-    while(temp->cell_type == NONE)
+    while((temp->cell_type == NONE) && (temp->prev != nullptr))
     {
         json_container *prev = temp->prev;
         delete temp;

@@ -16,10 +16,10 @@ graph::~graph()
 void graph::initializeRecognitionMethods()
 {
     recognition_category *all_symptoms = new recognition_category();
-    //all_symptoms->addSymptomsChecker(initializeDiscoveredSymptoms());
+    all_symptoms->addSymptomsChecker(initializeDiscoveredSymptoms());
     all_symptoms->addSymptomsChecker(initializeAccountAccessSymptoms());
-    //all_symptoms->addSymptomsChecker(initializeFilesManipulationSymptoms());
-    //all_symptoms->addSymptomsChecker(initializeProccessManipulationSymptoms());
+    all_symptoms->addSymptomsChecker(initializeFilesManipulationSymptoms());
+    all_symptoms->addSymptomsChecker(initializeProccessManipulationSymptoms());
 
     initialized_vec = all_symptoms;
 }
@@ -51,9 +51,11 @@ std::vector<symptoms::Symptom_impl*> graph::initializeAccountAccessSymptoms()
 std::vector<symptoms::Symptom_impl*> graph::initializeFilesManipulationSymptoms()
 {
     std::vector<symptoms::Symptom_impl*> vector_files_manipulation_symptoms;
-    ActionFilesSymptoms *action_files_symp = new ActionFilesSymptoms("system_files.json");
+    DataCollectionSymptoms *data_collection_symp = new DataCollectionSymptoms("system_files.json");
+    AccountDiscoverySymptoms *account_discovery_symp = new AccountDiscoverySymptoms("system_files.json");
 
-    vector_files_manipulation_symptoms.push_back(action_files_symp);
+    vector_files_manipulation_symptoms.push_back(data_collection_symp);
+    vector_files_manipulation_symptoms.push_back(account_discovery_symp);
 
     return vector_files_manipulation_symptoms;
 }
@@ -61,9 +63,17 @@ std::vector<symptoms::Symptom_impl*> graph::initializeFilesManipulationSymptoms(
 std::vector<Symptom_impl*> graph::initializeProccessManipulationSymptoms()
 {
     std::vector<symptoms::Symptom_impl*> vector_proccess_manipulation_symptoms;
-    ActionProccessSymptoms *action_proccess_symp = new ActionProccessSymptoms("system_proccesses.json");
+    ProcessDiscoverySymptoms *process_discovery_symp = new ProcessDiscoverySymptoms("system_processes.json");
+    CommandLineInterfaceSymptoms *cmd_symptoms = new CommandLineInterfaceSymptoms("system_processes.json");
+    DataCompressedSymptoms *data_compressed_symp = new DataCompressedSymptoms("system_processes.json");
+    SystemNetworkConfDiscoverySymptoms *net_conf_discovery_symp = new SystemNetworkConfDiscoverySymptoms("system_processes.json");
+    SystemNetworkConnDiscoverySymptoms *net_conn_discovery_symp = new SystemNetworkConnDiscoverySymptoms("system_processes.json");
 
-    vector_proccess_manipulation_symptoms.push_back(action_proccess_symp);
+    vector_proccess_manipulation_symptoms.push_back(process_discovery_symp);
+    vector_proccess_manipulation_symptoms.push_back(cmd_symptoms);
+    vector_proccess_manipulation_symptoms.push_back(data_compressed_symp);
+    vector_proccess_manipulation_symptoms.push_back(net_conf_discovery_symp);
+    vector_proccess_manipulation_symptoms.push_back(net_conn_discovery_symp);
 
     return vector_proccess_manipulation_symptoms;
 }

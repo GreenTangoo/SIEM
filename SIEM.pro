@@ -15,11 +15,17 @@ SOURCES += \
     correlation_module/NetworkManagment/discovery/directory_discovery_symptoms.cpp \
     correlation_module/NetworkManagment/discovery/port_scanning_symptoms.cpp \
     correlation_module/AccessManagment/account_access/login_root_symptoms.cpp \
-    correlation_module/SystemManagment/proccess_manipulation/action_proccess_symptoms.cpp \
-    correlation_module/SystemManagment/files_manipulation/action_files_symptoms.cpp \
+    correlation_module/SystemManagment/proccess_manipulation/process_discovery_symptoms.cpp \
+    correlation_module/SystemManagment/files_manipulation/data_collection_symptoms.cpp \
     correlation_module/symptoms_interface/symp_implementation.cpp \
     prediction_module/predictor.cpp \
-    aggregator/time_class/parse_time.cpp
+    aggregator/time_class/parse_time.cpp \
+    correlation_module/SystemManagment/proccess_manipulation/command_line_interface_symptoms.cpp \
+    correlation_module/SystemManagment/files_manipulation/account_discovery_symptoms.cpp \
+    correlation_module/SystemManagment/proccess_manipulation/system_network_conf_discovery_symptoms.cpp \
+    correlation_module/SystemManagment/proccess_manipulation/system_network_conn_discovery_symptoms.cpp \
+    correlation_module/SystemManagment/proccess_manipulation/data_compressed_symptoms.cpp \
+    correlation_module/all_categories.cpp
 
 HEADERS += \
     aggregator/parser_json/json.hpp \
@@ -36,8 +42,13 @@ HEADERS += \
     correlation_module/NetworkManagment/discovery/directory_discovery_symptoms.hpp \
     correlation_module/NetworkManagment/discovery/port_scanning_symptoms.hpp \
     correlation_module/AccessManagment/account_access/login_root_symptoms.hpp \
-    correlation_module/SystemManagment/proccess_manipulation/action_proccess_symptoms.hpp \
-    correlation_module/SystemManagment/files_manipulation/action_files_symptoms.hpp \
+    correlation_module/SystemManagment/proccess_manipulation/process_discovery_symptoms.hpp \
+    correlation_module/SystemManagment/files_manipulation/data_collection_symptoms.hpp \
     correlation_module/symptoms_interface/symp_implementation.hpp \
     prediction_module/predictor.hpp \
-    aggregator/time_class/parse_time.hpp
+    aggregator/time_class/parse_time.hpp \
+    correlation_module/SystemManagment/proccess_manipulation/command_line_interface_symptoms.hpp \
+    correlation_module/SystemManagment/files_manipulation/account_discovery_symptoms.hpp \
+    correlation_module/SystemManagment/proccess_manipulation/system_network_conf_discovery_symptoms.hpp \
+    correlation_module/SystemManagment/proccess_manipulation/system_network_conn_discovery_symptoms.hpp \
+    correlation_module/SystemManagment/proccess_manipulation/data_compressed_symptoms.hpp

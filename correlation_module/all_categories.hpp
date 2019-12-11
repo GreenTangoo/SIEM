@@ -7,26 +7,21 @@ namespace category
 {
     enum symptom_category
     {
-        user_login, login_root, directory_discovery, port_scanning,
-        action_files, action_proccesses, escalation_priv
+        user_login, login_root, directory_discovery, port_scanning, command_line_interface,
+        account_discovery, process_discovery, system_network_configuration_discovery,
+        system_network_connection_discovery, data_collection, data_compressed
     };
-    static std::string getCategoryName(symptom_category symptom_category)
+    class category_resolver // SINGLETON
     {
-        if(symptom_category == user_login)
-            return std::string("user_login");
-        if(symptom_category == login_root)
-            return std::string("login_root");
-        if(symptom_category == directory_discovery)
-            return std::string("directory_discovery");
-        if(symptom_category == port_scanning)
-            return std::string("port_scanning");
-        if(symptom_category == action_files)
-            return std::string("action_files");
-        if(symptom_category == action_proccesses)
-            return std::string("action_proccesses");
-        if(symptom_category == escalation_priv)
-            return std::string("escalation_priv");
-    }
+    private:
+        category_resolver();
+        category_resolver(const category_resolver &other) = delete;
+        category_resolver(category_resolver &&other) = delete;
+        category_resolver& operator=(const category_resolver &other) = delete;
+    public:
+        static category_resolver& getInstance();
+        std::string getCategoryName(symptom_category symptom_cat);
+    };
 }
 
 #endif

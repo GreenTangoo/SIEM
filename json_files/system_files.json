@@ -1,10 +1,16 @@
 {
 	"users":{
-		"Bob":{
-			"sshd.conf":{
-				"time":"2019/12/5/13:01:35",
+		"Denis":{
+			"passwd":{
+				"time":"2019/12/5/13:02:35",
+				"action":"open",
+				"privilieges":"Denis"
+			},
+			"credentials.db":{
+				"time":"2019/12/5/16:02:35",
 				"action":"download",
-				"privilieges":"root",
+				"privilieges":"Denis"
 			}
 		}
+	}
 }

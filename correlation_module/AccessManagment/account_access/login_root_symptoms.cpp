@@ -18,6 +18,8 @@ bool LoginRootSymptoms::checkSymptoms()
     parser = jsoner::getJsonData(json_filename);
     jsoner::json_container *container = parser.find_element_by_name("root");
     container = container->down;
+    if(container->cell_type == jsoner::NONE)
+        return false;
 
     for(; container != nullptr; container = container->next)
     {

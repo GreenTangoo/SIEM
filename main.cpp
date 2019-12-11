@@ -11,8 +11,27 @@
 
 using namespace topology;
 
+void displayPrediction(const analysis::prediction &obj, std::ofstream &fout)
+{
+    std::vector<std::pair<std::string, std::vector<std::string>>> returned_pred = obj.getPredictionSymptoms();
+
+    for(size_t i(0); i < returned_pred.size(); i++)
+    {
+        fout << "Attack vector name: " << returned_pred[i].first << "\n";
+        for(size_t j(0); j < returned_pred[i].second.size(); j++)
+            fout << "    Possible later symptoms: " << returned_pred[i].second[j] << "\n";
+    }
+}
+
 int main()
 {
+    std::ofstream fout;
+    fout.open("result.txt", std::ios_base::out);
+    if(fout.is_open() == false)
+        return -1;
+
+
+
     topology::graph graph_obj;
     graph_obj.initializeRecognitionMethods();
     graph_obj.fillGraph();
@@ -21,19 +40,23 @@ int main()
 
     for(std::list<sub_graph>::iterator it = return_vec.begin(); it != return_vec.end(); it++)
     {
-        std::cout << "One sub graph" << std::endl;
+        analysis::prediction prediction_obj(*it);
+        displayPrediction(prediction_obj, fout);
+
+        fout << "One sub graph" << "\n";
         std::vector<symptom_info> symptoms = it->getSymptomInfo();
 
         for(size_t i(0); i < symptoms.size(); i++)
         {
-            std::cout << "  One symptom" << std::endl;
-            std::cout << "      Time: " << symptoms[i].time.getStrTime() << std::endl;
-            std::cout << "      Category: " << category::getCategoryName(symptoms[i].symp_type) << std::endl;
+            fout << "  One symptom" << "\n";
+            fout << "      Time: " << symptoms[i].time.getStrTime() << "\n";
+            fout << "      Category: " << category::category_resolver::getInstance().getCategoryName(symptoms[i].symp_type) << "\n";
 
             for(size_t j(0); j < symptoms[i].info.size(); j++)
-                std::cout << "      Information: " << symptoms[i].info[j].first << std::endl;
+                fout << "      Information: " << symptoms[i].info[j].first << "\n";
         }
-        std::cout << std::endl;
+        fout << "\n";
     }
+
     return 0;
 }

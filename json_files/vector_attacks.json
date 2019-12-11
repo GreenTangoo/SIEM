@@ -1,0 +1,25 @@
+{
+	"attacks":{
+		"APT1":{
+			"symptoms":[
+				"command_line_interface",
+				"account_discovery",
+				"process_discovery",
+				"system_network_configuration_discovery",
+				"system_network_connection_discovery",
+				"data_collection",
+				"data_compressed"
+			]
+		},
+		"APT41":{
+			"symptoms":[
+				"command_line_interface",
+				"system_network_configuration_discovery",
+				"system_network_connection_discovery",
+				"data_compressed",
+				"brute_force",
+				"clear_command_history"
+			]
+		}
+	}
+}

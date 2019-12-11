@@ -1,24 +1,4 @@
 {
 	"requests":{
-		"291.245.11.122":{
-			"time":"2019/12/5/12:59:35",
-			"type_request" : "GET",
-			"response_code_status" : "404"
-		},
-		"291.245.11.122":{
-			"time":"2019/12/5/12:59:35",
-			"type_request" : "GET",
-			"response_code_status" : "404"
-		},
-		"291.245.11.122":{
-			"time":"2019/12/5/12:59:35",
-			"type_request" : "GET",
-			"response_code_status" : "404"
-		},
-		"291.245.11.122":{
-			"time":"2019/12/5/12:59:35",
-			"type_request" : "GET",
-			"response_code_status" : "404"
-		}
 	}
 }

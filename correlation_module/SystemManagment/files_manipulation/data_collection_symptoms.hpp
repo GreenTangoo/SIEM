@@ -1,5 +1,5 @@
-#ifndef DOWNLOAD_FILES_SYMPTOMS_HPP
-#define DOWNLOAD_FILES_SYMPTOMS_HPP
+#ifndef DATA_COLLECTION_SYMPTOMS_HPP
+#define DATA_COLLECTION_SYMPTOMS_HPP
 
 #include <string>
 #include <algorithm>
@@ -12,16 +12,16 @@ namespace symptoms
 {
     namespace files_manipulation
     {
-        class ActionFilesSymptoms : public Symptom_impl
+        class DataCollectionSymptoms : public Symptom_impl
         {
         private:
             jsoner::json_parser parser;
             std::string json_filename;
         public:
-            ActionFilesSymptoms(std::string filename);
-            ActionFilesSymptoms(const ActionFilesSymptoms &other) = default;
-            ActionFilesSymptoms(ActionFilesSymptoms &&other) = default;
-            ~ActionFilesSymptoms();
+            DataCollectionSymptoms(std::string filename);
+            DataCollectionSymptoms(const DataCollectionSymptoms &other) = default;
+            DataCollectionSymptoms(DataCollectionSymptoms &&other) = default;
+            ~DataCollectionSymptoms();
             bool checkSymptoms();
         };
     }

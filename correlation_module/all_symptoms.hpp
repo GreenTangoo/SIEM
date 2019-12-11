@@ -11,8 +11,13 @@
 #include "AccessManagment/account_access/user_login_symptoms.hpp"
 #include "AccessManagment/account_access/login_root_symptoms.hpp"
 
-#include "SystemManagment/files_manipulation/action_files_symptoms.hpp"
-#include "SystemManagment/proccess_manipulation/action_proccess_symptoms.hpp"
+#include "SystemManagment/files_manipulation/data_collection_symptoms.hpp"
+#include "SystemManagment/files_manipulation/account_discovery_symptoms.hpp"
+#include "SystemManagment/proccess_manipulation/process_discovery_symptoms.hpp"
+#include "SystemManagment/proccess_manipulation/command_line_interface_symptoms.hpp"
+#include "SystemManagment/proccess_manipulation/system_network_conf_discovery_symptoms.hpp"
+#include "SystemManagment/proccess_manipulation/system_network_conn_discovery_symptoms.hpp"
+#include "SystemManagment/proccess_manipulation/data_compressed_symptoms.hpp"
 
 using namespace symptoms::discovery;
 using namespace symptoms::account_access;

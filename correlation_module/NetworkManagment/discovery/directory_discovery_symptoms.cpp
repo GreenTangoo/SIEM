@@ -20,6 +20,8 @@ bool DirectoryDiscoverySymptoms::checkSymptoms()
 
     jsoner::json_container *container = parser.find_element_by_name("requests");
     container = container->down;
+    if(container->cell_type == jsoner::NONE)
+        return false;
 
     std::map<std::string, int32_t> ip_amount_req;
     for(; container != nullptr; container = container->next)

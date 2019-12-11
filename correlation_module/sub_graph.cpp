@@ -32,9 +32,6 @@ void sub_graph::addSymptomInfo(symptoms::Symptom_impl *symp)
     std::vector<symptoms::data> symptom_data = symp->getData();
     for(size_t i(0); i < symptom_data.size(); i++)
     {
-        if(symp->getData()[i].is_used == true)
-            continue;
-
         std::vector<symptom_info> temp_signs_vec = this->signs_vec;
 
         for(size_t j(0); j < this->signs_vec.size(); j++)
@@ -63,6 +60,8 @@ void sub_graph::addSymptomInfo(symptoms::Symptom_impl *symp)
 
             if(out_vec.size() > 0)
             {
+                if(symp->getData()[i].is_used == true)
+                    continue;
                 symp->getData()[i].is_used = true;
                 topology::symptom_info obj;
                 obj.info = symptom_data[i].main_data;
@@ -74,6 +73,7 @@ void sub_graph::addSymptomInfo(symptoms::Symptom_impl *symp)
                     return ((obj.symp_type == sign_obj.symp_type) && (obj.time == sign_obj.time));
                 }) == 0)
                     temp_signs_vec.push_back(obj);
+                else std::cout << category::category_resolver::getInstance().getCategoryName(obj.symp_type) << " " << obj.time.getStrTime() << std::endl;
             }
         }
         this->signs_vec = temp_signs_vec;

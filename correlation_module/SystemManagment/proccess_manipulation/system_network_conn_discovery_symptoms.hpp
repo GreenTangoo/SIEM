@@ -1,12 +1,7 @@
 #ifndef SYSTEM_NETWORK_CONN_DISCOVERY_HPP
 #define SYSTEM_NETWORK_CONN_DISCOVERY_HPP
 
-#include <string>
-#include <algorithm>
-#include <map>
-
 #include "../../symptoms_interface/symp_implementation.hpp"
-#include "../../../aggregator/parser_json/json.hpp"
 
 namespace symptoms
 {

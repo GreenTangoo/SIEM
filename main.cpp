@@ -1,3 +1,5 @@
+#include <QApplication>
+
 #include <iostream>
 #include <fstream>
 #include <typeinfo>
@@ -8,6 +10,7 @@
 #include "correlation_module/sub_graph.h"
 #include "prediction_module/predictor.hpp"
 #include "aggregator/time_class/parse_time.hpp"
+#include "gui_module/mainwindow.h"
 
 using namespace topology;
 
@@ -23,8 +26,18 @@ void displayPrediction(const analysis::prediction &obj, std::ofstream &fout)
     }
 }
 
-int main()
+int main(int argc, char **argv)
 {
+    QApplication app(argc, argv);
+    app.setStyleSheet("QLabel {"
+                      "border-style: solid;"
+                      "border-width: 1px;"
+                      "border-color: black; "
+                      "}");
+    MainWindow *window = new MainWindow();
+    window->setFixedSize(800,600);
+    window->show();
+
     std::ofstream fout;
     fout.open("result.txt", std::ios_base::out);
     if(fout.is_open() == false)
@@ -58,5 +71,5 @@ int main()
         fout << "\n";
     }
 
-    return 0;
+    return app.exec();
 }

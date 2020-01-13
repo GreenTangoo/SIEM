@@ -1,8 +1,6 @@
 #ifndef RECOGNITION_INTERFACE_HPP
 #define RECOGNITION_INTERFACE_HPP
 
-#include <vector>
-
 #include "symptoms_interface/symp_implementation.hpp"
 
 namespace recognition

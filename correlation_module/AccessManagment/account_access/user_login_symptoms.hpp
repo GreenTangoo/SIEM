@@ -1,10 +1,7 @@
 #ifndef USER_LOGIN_SYMPTOMS_HPP
 #define USER_LOGIN_SYMPTOMS_HPP
 
-#include <string>
-
 #include "../../symptoms_interface/symp_implementation.hpp"
-#include "../../../aggregator/parser_json/json.hpp"
 
 namespace symptoms
 {

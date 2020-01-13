@@ -2,11 +2,11 @@
 #define MAIN_SYMP_INTERFACE_HPP
 
 #include <vector>
-#include <string>
 #include <map>
 
 #include "../all_categories.hpp"
 #include "../../aggregator/time_class/parse_time.hpp"
+#include "../../aggregator/parser_json/json.hpp"
 
 namespace symptoms
 {

@@ -25,6 +25,7 @@ recognition_category::~recognition_category()
         delete vector_symptoms[i];
 }
 
+/*This method returns vector of alert symptoms(symptoms which signs was reghonized)*/
 std::vector<symptoms::Symptom_impl*> recognition_category::getAlertSymptoms()
 {
     std::vector<symptoms::Symptom_impl*> recogh_symps;
@@ -37,6 +38,7 @@ std::vector<symptoms::Symptom_impl*> recognition_category::getAlertSymptoms()
     return recogh_symps;
 }
 
+/*Add a new symptom to checking symptoms vector*/
 void recognition_category::addSymptomsChecker(std::vector<symptoms::Symptom_impl*>obj)
 {
     vector_symptoms.insert(vector_symptoms.end(), obj.begin(), obj.end());

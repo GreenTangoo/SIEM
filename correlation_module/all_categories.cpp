@@ -13,6 +13,7 @@ category_resolver& category_resolver::getInstance()
     return instance;
 }
 
+/*This method returns string representation of category name*/
 std::string category_resolver::getCategoryName(symptom_category symptom_category)
 {
     if(symptom_category == user_login)

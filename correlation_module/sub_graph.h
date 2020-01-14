@@ -9,12 +9,14 @@
 
 namespace topology
 {
+    /*symptom_info contains all information about one symptom*/
     struct symptom_info
     {
         std::vector<std::pair<std::string, int16_t>> info;
         category::symptom_category symp_type;
         data_time::time time;
     };
+    /*One sub_graph object contains the sequence of probably relative symptoms*/
     class sub_graph
     {
     private:

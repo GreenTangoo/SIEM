@@ -30,10 +30,11 @@ const std::vector<symptom_info> sub_graph::getSymptomInfo() const
 void sub_graph::addSymptomInfo(symptoms::Symptom_impl *symp)
 {
     std::vector<symptoms::data> symptom_data = symp->getData();
+    /*Moving through the data from one symptom*/
     for(size_t i(0); i < symptom_data.size(); i++)
     {
         std::vector<symptom_info> temp_signs_vec = this->signs_vec;
-
+        /*Moving through the data from alredy added to sub_graph symptoms*/
         for(size_t j(0); j < this->signs_vec.size(); j++)
         {
             std::vector<std::pair<std::string, int16_t>> out_vec;
@@ -47,6 +48,7 @@ void sub_graph::addSymptomInfo(symptoms::Symptom_impl *symp)
                 return obj1.first < obj2.first;
             });
 
+            /*Get data which contains in both vector(finding the relative signs between already added and othe symptoms)*/
             std::set_intersection(symptom_data[i].main_data.begin(), symptom_data[i].main_data.end(),
                     this->signs_vec[j].info.begin(), this->signs_vec[j].info.end(), std::back_inserter(out_vec),
                       [](std::pair<std::string, int16_t> first_elem, std::pair<std::string, int16_t> second_elem) -> bool
@@ -58,6 +60,7 @@ void sub_graph::addSymptomInfo(symptoms::Symptom_impl *symp)
                 else return false;
             });
 
+            /*If founded more than one consilience*/
             if(out_vec.size() > 0)
             {
                 if(symp->getData()[i].is_used == true)
@@ -68,6 +71,7 @@ void sub_graph::addSymptomInfo(symptoms::Symptom_impl *symp)
                 obj.symp_type = symp->getSymptomType();
                 obj.time = symptom_data[i].time;
 
+                /*Checking for already added info from other symptom to vector inforamtion*/
                 if(count_if(temp_signs_vec.begin(), temp_signs_vec.end(), [&obj](const symptom_info &sign_obj)
                 {
                     return ((obj.symp_type == sign_obj.symp_type) && (obj.time == sign_obj.time));

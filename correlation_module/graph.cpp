@@ -13,6 +13,7 @@ graph::~graph()
 
 }
 
+
 void graph::initializeRecognitionMethods()
 {
     recognition_category *all_symptoms = new recognition_category();
@@ -78,31 +79,36 @@ std::vector<Symptom_impl*> graph::initializeProccessManipulationSymptoms()
     return vector_proccess_manipulation_symptoms;
 }
 
-
+/*This method run along through the symptoms and contructs the sub_graph of relative syptoms by signs*/
 void graph::fillGraph()
 {
     std::vector<symptoms::Symptom_impl*> vec_alert_symptoms = initialized_vec->getAlertSymptoms();
 
+    /*Moving through the all alert symptoms for get info from all of them*/
     for(size_t i(0); i < vec_alert_symptoms.size(); i++)
     {
+        /*Moving through the vector information from each symptom*/
         for(size_t k(0); k < vec_alert_symptoms[i]->getData().size(); k++)
         {
             if(vec_alert_symptoms[i]->getData()[k].is_used == true)
                 continue;
 
+            /*Get information about one symptom(one sign from symptom)*/
             std::vector<std::pair<std::string, int16_t>> passed_info = vec_alert_symptoms[i]->getData()[k].main_data;
             data_time::time passed_time = vec_alert_symptoms[i]->getData()[k].time;
             category::symptom_category passed_category = vec_alert_symptoms[i]->getSymptomType();
 
+            /*Creating a new sub_graph object and filling his first data of the first symptom*/
             sub_graph obj(passed_info, passed_category, passed_time);
             vec_alert_symptoms[i]->getData()[k].is_used = true;
+            /*Moving through the other symptoms to check each of them for having relative signs*/
             for(size_t j(0); j < vec_alert_symptoms.size(); j++)
             {
                 if(i == j)
                     continue;
-                obj.addSymptomInfo(vec_alert_symptoms[j]);
+                obj.addSymptomInfo(vec_alert_symptoms[j]); // Add information about other symptom if founds relative signs
             }
-            if(obj.getSymptomInfo().size() > 1)
+            if(obj.getSymptomInfo().size() > 1) // If founded more than two events IS
                 all_sub_graphs.push_back(obj);
         }
     }

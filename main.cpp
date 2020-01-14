@@ -17,15 +17,31 @@ void displayPrediction(const analysis::prediction &obj, std::ofstream &fout)
 
     for(size_t i(0); i < returned_pred.size(); i++)
     {
-        fout << "Attack vector name: " << returned_pred[i].first << "\n";
+        std::cout << "Attack vector name: " << returned_pred[i].first << "\n";
         for(size_t j(0); j < returned_pred[i].second.size(); j++)
-            fout << "    Possible later symptoms: " << returned_pred[i].second[j] << "\n";
+            std::cout << "    Possible later symptoms: " << returned_pred[i].second[j] << "\n";
     }
+}
+
+int get_interger(const char *msg)
+{
+    int n;
+    char answer[256];
+
+    fgets(answer, sizeof(answer), stdin);
+
+    while(sscanf(answer, "%d", &n) != 1)
+    {
+        fflush(stdin);
+        fgets(answer, sizeof(answer), stdin);
+    }
+
+    return n;
 }
 
 int main()
 {
-    std::ofstream fout;
+    /*std::ofstream fout;
     fout.open("result.txt", std::ios_base::out);
     if(fout.is_open() == false)
         return -1;
@@ -43,20 +59,22 @@ int main()
         analysis::prediction prediction_obj(*it);
         displayPrediction(prediction_obj, fout);
 
-        fout << "One sub graph" << "\n";
+        std::cout << "One sub graph" << "\n";
         std::vector<symptom_info> symptoms = it->getSymptomInfo();
 
         for(size_t i(0); i < symptoms.size(); i++)
         {
-            fout << "  One symptom" << "\n";
-            fout << "      Time: " << symptoms[i].time.getStrTime() << "\n";
-            fout << "      Category: " << category::category_resolver::getInstance().getCategoryName(symptoms[i].symp_type) << "\n";
+            std::cout << "  One symptom" << "\n";
+            std::cout << "      Time: " << symptoms[i].time.getStrTime() << "\n";
+            std::cout << "      Category: " << category::category_resolver::getInstance().getCategoryName(symptoms[i].symp_type) << "\n";
 
             for(size_t j(0); j < symptoms[i].info.size(); j++)
-                fout << "      Information: " << symptoms[i].info[j].first << "\n";
+                std::cout << "      Information: " << symptoms[i].info[j].first << "\n";
         }
-        fout << "\n";
-    }
+        std::cout << "\n";
+    }*/
+
+    std::cout << get_interger("") << std::endl;
 
     return 0;
 }

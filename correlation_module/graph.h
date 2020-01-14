@@ -11,7 +11,7 @@ namespace topology
     {
     private:
         std::list<sub_graph> all_sub_graphs;
-        recognition::recognition_inter* initialized_vec;
+        recognition::recognition_inter* initialized_vec; // Contains symptoms group by APT Mitre Matrix groups
     private:
         std::vector<symptoms::Symptom_impl*> initializeAccountAccessSymptoms();
         std::vector<symptoms::Symptom_impl*> initializeDiscoveredSymptoms();
@@ -22,7 +22,7 @@ namespace topology
         graph();
         ~graph();
         void initializeRecognitionMethods();
-        void fillGraph();
+        void fillGraph(); // Constructs sub_graph objects and add them to all_sub_graphs object
         std::list<sub_graph> getAllSubGraphs();
     };
 }

@@ -1,13 +1,10 @@
 #ifndef JSON_H
 #define JSON_H
 
-#include <list>
-#include <string>
 #include <fstream>
-#include <iostream>
-#include <algorithm>
 
 #include "../parser_txt/parser.hpp"
+#include "../../error_handler_module/handler.hpp"
 
 namespace jsoner
 {
@@ -80,7 +77,7 @@ namespace jsoner
         std::ifstream fin;
         fin.open(filename.c_str());
         if(fin.is_open() == false)
-            throw std::exception();
+            throw SIEM_errors::hander_error("Cannot open file: " + filename);
 
         json_parser return_parser;
         return_parser.getJson(fin);

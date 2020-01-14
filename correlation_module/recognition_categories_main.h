@@ -1,12 +1,7 @@
 #ifndef RECOGNITION_CATEGORIES_MAIN_H
 #define RECOGNITION_CATEGORIES_MAIN_H
 
-
-#include <vector>
-
 #include "recognition_interface.hpp"
-
-
 
 using namespace symptoms;
 

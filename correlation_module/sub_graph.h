@@ -1,10 +1,6 @@
 #ifndef SUB_GRAPH_H
 #define SUB_GRAPH_H
 
-#include <list>
-#include <vector>
-#include <string>
-
 #include "recognition_interface.hpp"
 
 namespace topology

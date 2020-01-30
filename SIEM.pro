@@ -42,7 +42,9 @@ SOURCES += \
     correlation_module/SystemManagment/proccess_manipulation/system_network_conf_discovery_symptoms.cpp \
     correlation_module/SystemManagment/proccess_manipulation/system_network_conn_discovery_symptoms.cpp \
     correlation_module/SystemManagment/proccess_manipulation/data_compressed_symptoms.cpp \
-    correlation_module/all_categories.cpp
+    correlation_module/all_categories.cpp \
+    gui_module/graph_node.cpp \
+    gui_module/sub_graph_gui.cpp
 
 HEADERS += \
     aggregator/parser_json/json.hpp \
@@ -70,7 +72,10 @@ HEADERS += \
     correlation_module/SystemManagment/files_manipulation/account_discovery_symptoms.hpp \
     correlation_module/SystemManagment/proccess_manipulation/system_network_conf_discovery_symptoms.hpp \
     correlation_module/SystemManagment/proccess_manipulation/system_network_conn_discovery_symptoms.hpp \
-    correlation_module/SystemManagment/proccess_manipulation/data_compressed_symptoms.hpp
+    correlation_module/SystemManagment/proccess_manipulation/data_compressed_symptoms.hpp \
+    gui_module/mainapplicationwindow.h \
+    gui_module/graph_node.h \
+    gui_module/sub_graph_gui.h
 
 FORMS += \
     gui_module/mainapplicationwindow.ui

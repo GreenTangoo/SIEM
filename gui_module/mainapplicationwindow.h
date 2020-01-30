@@ -2,21 +2,30 @@
 #define MAINAPPLICATIONWINDOW_H
 
 #include <QMainWindow>
+#include <QDialog>
+#include <QGraphicsScene>
+#include <QGraphicsObject>
+#include <QtCore>
+#include <QtGui>
 
-namespace Ui {
-class MainApplicationWindow;
-}
+#include "sub_graph_gui.h"
 
-class MainApplicationWindow : public QMainWindow
+
+namespace Ui
 {
-    Q_OBJECT
-
-public:
-    explicit MainApplicationWindow(QWidget *parent = nullptr);
-    ~MainApplicationWindow();
-
-private:
-    Ui::MainApplicationWindow *ui;
-};
+    class MainApplicationWindow : public QMainWindow
+    {
+        Q_OBJECT
+    private:
+        Ui::MainApplicationWindow *ui;
+        QGraphicsScene *scene;
+        topology::graph *graph_obj;
+        std::vector<sub_graph_gui> sub_graphs;
+    public:
+        explicit MainApplicationWindow(QWidget *parent = nullptr);
+        ~MainApplicationWindow();
+        void start_siem();
+    };
+}
 
 #endif // MAINAPPLICATIONWINDOW_H

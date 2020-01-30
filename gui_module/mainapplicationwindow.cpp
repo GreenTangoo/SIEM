@@ -6,9 +6,18 @@ MainApplicationWindow::MainApplicationWindow(QWidget *parent) :
     ui(new Ui::MainApplicationWindow)
 {
     ui->setupUi(this);
+
+    scene = new QGraphicsScene(this);
+    ui->graphicsView->setScene(scene);
+
+    /*node = new graph_node();
+    node->setPos(100, 100);
+    scene->addItem(node);*/
+
 }
 
 MainApplicationWindow::~MainApplicationWindow()
 {
     delete ui;
 }
+

@@ -1,11 +1,11 @@
 #include "port_scanning_symptoms.hpp"
 
-using namespace symptoms::discovery;
+using namespace symptoms_space::discovery;
 
 
-PortScanningSymptoms::PortScanningSymptoms(std::string filename) : json_filename(filename)
+PortScanningSymptoms::PortScanningSymptoms(std::string filename) : jsonFilename(filename)
 {
-    this->type_symp = category::symptom_category::port_scanning;
+    this->typeSymp = category_space::symptomCategory::port_scanning;
 }
 
 PortScanningSymptoms::~PortScanningSymptoms()
@@ -15,27 +15,34 @@ PortScanningSymptoms::~PortScanningSymptoms()
 
 bool PortScanningSymptoms::checkSymptoms()
 {
-    parser = jsoner::getJsonData(json_filename);
+    parser = getJsonData(jsonFilename);
 
-    jsoner::json_container *container = parser.find_element_by_name("iptables");
+    jsoner_space::JsonContainer *container = parser.findElementByName("iptables");
     container = container->down;
-    if(container->cell_type == jsoner::NONE)
+    if(container->cellType == jsoner_space::NONE)
         return false;
 
-    std::map<std::string, int32_t> ip_amount_req;
+    std::map<std::string, int32_t> ipAmountReq;
     for(; container != nullptr; container = container->next)
-        ip_amount_req[container->one_cell.first]++;
-    for(std::map<std::string, int32_t>::iterator it = ip_amount_req.begin(); it != ip_amount_req.end(); it++)
+    {
+        std::string ipAddr = container->oneCell.first;
+        ipAmountReq[ipAddr]++;
+    }
+
+    for(std::map<std::string, int32_t>::iterator it = ipAmountReq.begin(); it != ipAmountReq.end(); it++)
+    {
         if(it->second > 2)
         {
-            symptoms::data data_obj;
-            data_obj.main_data.push_back(std::pair<std::string, int16_t>(it->first, 1));
-            jsoner::json_container *anchor = parser.find_element_by_name(it->first);
-            data_obj.time = data_time::time(anchor->down->one_cell.second);
-            data_obj.is_used = false;
-            this->all_data_from_symptom.push_back(data_obj);
+            symptoms_space::Data dataObj;
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(it->first, 1));
+            jsoner_space::JsonContainer *anchor = parser.findElementByName(it->first);
+            dataObj.time = data_time_space::Time(anchor->down->oneCell.second);
+            dataObj.isUsed = false;
+            this->allDataFromSymptom.push_back(dataObj);
         }
-    if(this->all_data_from_symptom.size() > 0)
+    }
+
+    if(this->allDataFromSymptom.size() > 0)
         return true;
     else return false;
 }

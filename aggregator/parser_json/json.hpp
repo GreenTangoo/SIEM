@@ -6,82 +6,73 @@
 #include "../parser_txt/parser.hpp"
 #include "../../error_handler_module/handler.hpp"
 
-namespace jsoner
+namespace jsoner_space
 {
-    enum type_cell {OBJECT = '}', ARRAY = ']', STRING, END_OBJECT = '{', END_ARRAY = '[', NONE};
-    struct json_container
+    enum typeCell {OBJECT = '}', ARRAY = ']', STRING, END_OBJECT = '{', END_ARRAY = '[', NONE};
+    struct JsonContainer
     {
-        std::pair<std::string, std::string> one_cell;
-        type_cell cell_type;
+        std::pair<std::string, std::string> oneCell;
+        typeCell cellType;
 
-        json_container *next;
-        json_container *prev;
-        json_container *down;
-        json_container *up;
+        JsonContainer *next;
+        JsonContainer *prev;
+        JsonContainer *down;
+        JsonContainer *up;
 
-        explicit json_container()
+        explicit JsonContainer()
         {
             next = prev = down = up = nullptr;
-            cell_type = NONE;
+            cellType = NONE;
         }
-        explicit json_container(type_cell celltype)
+        explicit JsonContainer(typeCell cellType)
         {
             next = prev = down = up = nullptr;
-            cell_type = celltype;
+            this->cellType = cellType;
         }
-        explicit json_container(std::string first_str, std::string second_str, type_cell celltype)
+        explicit JsonContainer(std::string firstStr, std::string secondStr, typeCell cellType)
         {
             next = prev = down = up = nullptr;
-            one_cell.first = first_str;
-            one_cell.second = second_str;
-            cell_type = celltype;
+            oneCell.first = firstStr;
+            oneCell.second = secondStr;
+            this->cellType = cellType;
         }
-        void setData(std::string first_str, std::string second_str, type_cell celltype)
+        void setData(std::string firstStr, std::string secondStr, typeCell cellType)
         {
-            one_cell.first = first_str;
-            one_cell.second = second_str;
-            cell_type = celltype;
+            oneCell.first = firstStr;
+            oneCell.second = secondStr;
+            this->cellType = cellType;
         }
     };
 
 
-    class json_parser
+    class JsonParser
     {
     private:
-        json_container *root;
+        JsonContainer *root;
     private:
-        void erase_json_container(json_container **root);
-        void add_child(json_container **node, json_container **new_container);
-        void add_neighbord(json_container **node, json_container **new_container);
-        json_container* find_element_by_name(json_container *node, std::string name);
-        type_cell get_type(std::string source_str) const;
-        void getFromStream(std::istream &in, json_container **node);
-        void putToStream(std::ostream &out, json_container **node, int32_t offset);
-        void copy_elements(json_container **node, const json_container *other);
-        void delete_none_elements(json_container **node);
+        void eraseJsonContainer(JsonContainer **root);
+        void addChild(JsonContainer **node, JsonContainer **newContainer);
+        void addNeighbord(JsonContainer **node, JsonContainer **newContainer);
+        JsonContainer* findElementByName(JsonContainer *node, std::string name);
+        typeCell getType(std::string sourceStr) const;
+        void getFromStream(std::istream &in, JsonContainer **node);
+        void putToStream(std::ostream &out, JsonContainer **node, int32_t offset);
+        void copyElements(JsonContainer **node, const JsonContainer *other);
+        void deleteNoneElements(JsonContainer **node);
     public:
-        json_parser();
-        json_parser(const json_parser &other);
-        json_parser(json_parser &&other);
-        json_parser(json_container *other);
-        ~json_parser();
-        json_parser& operator=(const json_parser &other);
+        JsonParser();
+        JsonParser(const JsonParser &other);
+        JsonParser(JsonParser &&other);
+        JsonParser(JsonContainer *other);
+        ~JsonParser();
+        JsonParser& operator=(const JsonParser &other);
         void getJson(std::istream &input_stream);
         void setJson(std::ostream &output_stream);
-        json_container* find_element_by_name(std::string name);
-        std::list<json_container*> find_elements_by_name(std::string name);
+        JsonContainer* findElementByName(std::string name);
+        std::list<JsonContainer*> findElementsByName(std::string name);
     };
-
-    static json_parser getJsonData(std::string filename)
-    {
-        std::ifstream fin;
-        fin.open(filename.c_str());
-        if(fin.is_open() == false)
-            throw SIEM_errors::hander_error("Cannot open file: " + filename);
-
-        json_parser return_parser;
-        return_parser.getJson(fin);
-        return return_parser;
-    }
 }
+
+jsoner_space::JsonParser getJsonData(std::string filename);
+
 #endif

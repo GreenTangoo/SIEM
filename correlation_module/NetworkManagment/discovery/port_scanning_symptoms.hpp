@@ -3,15 +3,15 @@
 
 #include "../../symptoms_interface/symp_implementation.hpp"
 
-namespace symptoms
+namespace symptoms_space
 {
     namespace discovery
     {
-        class PortScanningSymptoms : public Symptom_impl
+        class PortScanningSymptoms : public SymptomImpl
         {
         private:
-            jsoner::json_parser parser;
-            std::string json_filename;
+            jsoner_space::JsonParser parser;
+            std::string jsonFilename;
         public:
             PortScanningSymptoms(std::string filename);
             PortScanningSymptoms(const PortScanningSymptoms &other) = default;

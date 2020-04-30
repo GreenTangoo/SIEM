@@ -2,45 +2,45 @@
 
 
 
-using namespace recognition;
+using namespace recognition_space;
 
-recognition_category::recognition_category()
+RecognitionCategory::RecognitionCategory()
 {
 
 }
 
-recognition_category::recognition_category(symptoms::Symptom_impl* obj)
+RecognitionCategory::RecognitionCategory(symptoms_space::SymptomImpl* obj)
 {
-    vector_symptoms.push_back(obj);
+    vectorSymptoms.push_back(obj);
 }
 
-recognition_category::recognition_category(std::vector<symptoms::Symptom_impl*> vec_obj)
+RecognitionCategory::RecognitionCategory(std::vector<symptoms_space::SymptomImpl*> vecObj)
 {
-    vector_symptoms = vec_obj;
+    vectorSymptoms = vecObj;
 }
 
-recognition_category::~recognition_category()
+RecognitionCategory::~RecognitionCategory()
 {
-    for(size_t i(0); i < vector_symptoms.size(); i++)
-        delete vector_symptoms[i];
+    for(size_t i(0); i < vectorSymptoms.size(); i++)
+        delete vectorSymptoms[i];
 }
 
 /*This method returns vector of alert symptoms(symptoms which signs was reghonized)*/
-std::vector<symptoms::Symptom_impl*> recognition_category::getAlertSymptoms()
+std::vector<symptoms_space::SymptomImpl*> RecognitionCategory::getAlertSymptoms()
 {
-    std::vector<symptoms::Symptom_impl*> recogh_symps;
-    for(size_t i(0); i < vector_symptoms.size(); i++)
+    std::vector<symptoms_space::SymptomImpl*> recoghSymps;
+    for(size_t i(0); i < vectorSymptoms.size(); i++)
     {
-        if(vector_symptoms[i]->checkSymptoms() == true)
-            recogh_symps.push_back(vector_symptoms[i]);
+        if(vectorSymptoms[i]->checkSymptoms() == true)
+            recoghSymps.push_back(vectorSymptoms[i]);
     }
 
-    return recogh_symps;
+    return recoghSymps;
 }
 
 /*Add a new symptom to checking symptoms vector*/
-void recognition_category::addSymptomsChecker(std::vector<symptoms::Symptom_impl*>obj)
+void RecognitionCategory::addSymptomsChecker(std::vector<symptoms_space::SymptomImpl*>obj)
 {
-    vector_symptoms.insert(vector_symptoms.end(), obj.begin(), obj.end());
+    vectorSymptoms.insert(vectorSymptoms.end(), obj.begin(), obj.end());
 }
 

@@ -1,11 +1,11 @@
 #include "data_compressed_symptoms.hpp"
 
-using namespace symptoms::proccess_manipulation;
+using namespace symptoms_space::proccess_manipulation;
 
 
-DataCompressedSymptoms::DataCompressedSymptoms(std::string filename) : json_filename(filename)
+DataCompressedSymptoms::DataCompressedSymptoms(std::string filename) : jsonFilename(filename)
 {
-    this->type_symp = category::symptom_category::data_compressed;
+    this->typeSymp = category_space::symptomCategory::data_compressed;
 }
 
 DataCompressedSymptoms::~DataCompressedSymptoms()
@@ -15,32 +15,38 @@ DataCompressedSymptoms::~DataCompressedSymptoms()
 
 bool DataCompressedSymptoms::checkSymptoms()
 {
-    parser = jsoner::getJsonData(json_filename);
+    parser = getJsonData(jsonFilename);
 
-    jsoner::json_container *container = parser.find_element_by_name("users");
+    jsoner_space::JsonContainer *container = parser.findElementByName("users");
     container = container->down;
-    if(container->cell_type == jsoner::NONE)
+    if(container->cellType == jsoner_space::NONE)
         return false;
     for(; container->down != nullptr; container->down = container->down->next)
     {
-        std::string process_name = container->down->one_cell.first;
-        if(((process_name == "tar") || (process_name == "gzip") || (process_name == "7z")) &&
-                (container->down->down->next->one_cell.second == "start"))
+        std::string processName = container->down->oneCell.first;
+        std::string actionName = container->down->down->next->oneCell.second;
+
+        if(((processName == "tar") || (processName == "gzip") || (processName == "7z")) &&
+                (actionName == "start"))
         {
-            symptoms::data data_obj;
-            data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->one_cell.first, 1)); // Get name
-            data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->down->one_cell.first, 0)); // Get process name
-            data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->down->down->next->one_cell.first +
-                                                ":" + container->down->down->next->one_cell.second, 0)); // Get action
-            data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->down->down->next->next->one_cell.first +
-                                                ":" + container->down->down->next->next->one_cell.second, 0)); // Get privilieges
-            data_obj.time = data_time::time(container->down->down->one_cell.second);
-            data_obj.is_used = false;
-            this->all_data_from_symptom.push_back(data_obj);
+            symptoms_space::Data dataObj;
+            std::string name = container->oneCell.first;
+            std::string actionPrefix = container->down->down->next->oneCell.first;
+            std::string privilegesPrefix = container->down->down->next->next->oneCell.first;
+            std::string privilegesName = container->down->down->next->next->oneCell.second;
+            std::string time = container->down->down->oneCell.second;
+
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(name, 1)); // Get name
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(processName, 0)); // Get process name
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(actionPrefix + ":" + actionName, 0)); // Get action
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(privilegesPrefix + ":" + privilegesName, 0)); // Get privilieges
+            dataObj.time = data_time_space::Time(time);
+            dataObj.isUsed = false;
+            this->allDataFromSymptom.push_back(dataObj);
         }
     }
 
-    if(this->all_data_from_symptom.size() > 0)
+    if(this->allDataFromSymptom.size() > 0)
         return true;
     else return false;
 }

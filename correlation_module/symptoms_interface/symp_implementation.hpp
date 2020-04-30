@@ -3,20 +3,20 @@
 
 #include "main_symp_interface.hpp"
 
-namespace symptoms
+namespace symptoms_space
 {
-    class Symptom_impl : public Symptom_inter
+    class SymptomImpl : public SymptomInter
     {
     protected:
-        std::vector<data> all_data_from_symptom;
-        category::symptom_category type_symp;
+        std::vector<Data> allDataFromSymptom;
+        category_space::symptomCategory typeSymp;
     public:
-        Symptom_impl() = default;
-        Symptom_impl(const Symptom_impl &other) = default;
-        Symptom_impl(Symptom_impl &&other) = delete;
-        ~Symptom_impl() = default;
-        std::vector<data>& getData();
-        category::symptom_category getSymptomType();
+        SymptomImpl() = default;
+        SymptomImpl(const SymptomImpl &other) = default;
+        SymptomImpl(SymptomImpl &&other) = delete;
+        ~SymptomImpl() = default;
+        std::vector<Data>& getData();
+        category_space::symptomCategory getSymptomType();
         virtual bool checkSymptoms() = 0;
     };
 }

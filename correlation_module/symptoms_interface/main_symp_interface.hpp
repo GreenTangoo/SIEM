@@ -8,22 +8,22 @@
 #include "../../aggregator/time_class/parse_time.hpp"
 #include "../../aggregator/parser_json/json.hpp"
 
-namespace symptoms
+namespace symptoms_space
 {
-    struct data
+    struct Data
     {
-        std::vector<std::pair<std::string, int16_t>> main_data;
-        data_time::time time;
-        bool is_used;
+        std::vector<std::pair<std::string, int16_t>> mainData;
+        data_time_space::Time time;
+        bool isUsed;
     };
 
-    class Symptom_inter
+    class SymptomInter
     {
     public:
-        Symptom_inter() = default;
-        Symptom_inter(const Symptom_inter &other) = delete;
-        Symptom_inter(Symptom_inter &&other) = default;
-        virtual ~Symptom_inter() = default;
+        SymptomInter() = default;
+        SymptomInter(const SymptomInter &other) = delete;
+        SymptomInter(SymptomInter &&other) = default;
+        virtual ~SymptomInter() = default;
         virtual bool checkSymptoms() = 0;
     };
 }

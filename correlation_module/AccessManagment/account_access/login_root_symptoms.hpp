@@ -3,15 +3,15 @@
 
 #include "../../symptoms_interface/symp_implementation.hpp"
 
-namespace symptoms
+namespace symptoms_space
 {
     namespace account_access
     {
-        class LoginRootSymptoms : public Symptom_impl
+        class LoginRootSymptoms : public SymptomImpl
         {
         private:
-            jsoner::json_parser parser;
-            std::string json_filename;
+            jsoner_space::JsonParser parser;
+            std::string jsonFilename;
         public:
             LoginRootSymptoms(std::string filename);
             LoginRootSymptoms(const LoginRootSymptoms &other) = default;

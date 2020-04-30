@@ -19,9 +19,9 @@
 #include "SystemManagment/proccess_manipulation/system_network_conn_discovery_symptoms.hpp"
 #include "SystemManagment/proccess_manipulation/data_compressed_symptoms.hpp"
 
-using namespace symptoms::discovery;
-using namespace symptoms::account_access;
-using namespace symptoms::files_manipulation;
-using namespace symptoms::proccess_manipulation;
+using namespace symptoms_space::discovery;
+using namespace symptoms_space::account_access;
+using namespace symptoms_space::files_manipulation;
+using namespace symptoms_space::proccess_manipulation;
 
 #endif

@@ -1,85 +1,85 @@
 #include "sub_graph.h"
 
-using namespace topology;
+using namespace topology_space;
 
-sub_graph::sub_graph()
+SubGraph::SubGraph()
 {
 
 }
 
-sub_graph::sub_graph(std::vector<std::pair<std::string, int16_t>> info, category::symptom_category symp_categrory, data_time::time time)
+SubGraph::SubGraph(std::vector<std::pair<std::string, int16_t>> info, category_space::symptomCategory sympCategrory, data_time_space::Time time)
 {
-    topology::symptom_info obj;
+    topology_space::SymptomInfo obj;
     obj.info = info;
-    obj.symp_type = symp_categrory;
+    obj.sympType = sympCategrory;
     obj.time = time;
 
-    signs_vec.push_back(obj);
+    signsVec.push_back(obj);
 }
 
-sub_graph::~sub_graph()
+SubGraph::~SubGraph()
 {
 
 }
 
-const std::vector<symptom_info> sub_graph::getSymptomInfo() const
+const std::vector<SymptomInfo> SubGraph::getSymptomInfo() const
 {
-    return signs_vec;
+    return signsVec;
 }
 
-void sub_graph::addSymptomInfo(symptoms::Symptom_impl *symp)
+void SubGraph::addSymptomInfo(symptoms_space::SymptomImpl *symp)
 {
-    std::vector<symptoms::data> symptom_data = symp->getData();
+    std::vector<symptoms_space::Data> symptomData = symp->getData();
     /*Moving through the data from one symptom*/
-    for(size_t i(0); i < symptom_data.size(); i++)
+    for(size_t i(0); i < symptomData.size(); i++)
     {
-        std::vector<symptom_info> temp_signs_vec = this->signs_vec;
+        std::vector<SymptomInfo> tempSignsVec = this->signsVec;
         /*Moving through the data from alredy added to sub_graph symptoms*/
-        for(size_t j(0); j < this->signs_vec.size(); j++)
+        for(size_t j(0); j < this->signsVec.size(); j++)
         {
-            std::vector<std::pair<std::string, int16_t>> out_vec;
+            std::vector<std::pair<std::string, int16_t>> outVec;
 
-            std::sort(symptom_data[i].main_data.begin(), symptom_data[i].main_data.end(), [](const std::pair<std::string, int16_t> &obj1, const std::pair<std::string, int16_t> &obj2)
+            std::sort(symptomData[i].mainData.begin(), symptomData[i].mainData.end(), [](const std::pair<std::string, int16_t> &obj1, const std::pair<std::string, int16_t> &obj2)
             {
                 return obj1.first < obj2.first;
             });
-            std::sort(this->signs_vec[j].info.begin(), this->signs_vec[j].info.end(), [](const std::pair<std::string, int16_t> &obj1, const std::pair<std::string, int16_t> &obj2)
+            std::sort(this->signsVec[j].info.begin(), this->signsVec[j].info.end(), [](const std::pair<std::string, int16_t> &obj1, const std::pair<std::string, int16_t> &obj2)
             {
                 return obj1.first < obj2.first;
             });
 
             /*Get data which contains in both vector(finding the relative signs between already added and othe symptoms)*/
-            std::set_intersection(symptom_data[i].main_data.begin(), symptom_data[i].main_data.end(),
-                    this->signs_vec[j].info.begin(), this->signs_vec[j].info.end(), std::back_inserter(out_vec),
-                      [](std::pair<std::string, int16_t> first_elem, std::pair<std::string, int16_t> second_elem) -> bool
+            std::set_intersection(symptomData[i].mainData.begin(), symptomData[i].mainData.end(),
+                    this->signsVec[j].info.begin(), this->signsVec[j].info.end(), std::back_inserter(outVec),
+                      [](std::pair<std::string, int16_t> firstElem, std::pair<std::string, int16_t> secondElem) -> bool
             {
-                if(first_elem.second == 0)
+                if(firstElem.second == 0)
                     return true;
-                if(first_elem.first < second_elem.first)
+                if(firstElem.first < secondElem.first)
                     return true;
                 else return false;
             });
 
             /*If founded more than one consilience*/
-            if(out_vec.size() > 0)
+            if(outVec.size() > 0)
             {
-                if(symp->getData()[i].is_used == true)
+                if(symp->getData()[i].isUsed == true)
                     continue;
-                symp->getData()[i].is_used = true;
-                topology::symptom_info obj;
-                obj.info = symptom_data[i].main_data;
-                obj.symp_type = symp->getSymptomType();
-                obj.time = symptom_data[i].time;
+                symp->getData()[i].isUsed = true;
+                topology_space::SymptomInfo obj;
+                obj.info = symptomData[i].mainData;
+                obj.sympType = symp->getSymptomType();
+                obj.time = symptomData[i].time;
 
                 /*Checking for already added info from other symptom to vector inforamtion*/
-                if(count_if(temp_signs_vec.begin(), temp_signs_vec.end(), [&obj](const symptom_info &sign_obj)
+                if(count_if(tempSignsVec.begin(), tempSignsVec.end(), [&obj](const SymptomInfo &sign_obj)
                 {
-                    return ((obj.symp_type == sign_obj.symp_type) && (obj.time == sign_obj.time));
+                    return ((obj.sympType == sign_obj.sympType) && (obj.time == sign_obj.time));
                 }) == 0)
-                    temp_signs_vec.push_back(obj);
-                else std::cout << category::category_resolver::getInstance().getCategoryName(obj.symp_type) << " " << obj.time.getStrTime() << std::endl;
+                    tempSignsVec.push_back(obj);
+                else std::cout << category_space::CategoryResolver::getInstance().getCategoryName(obj.sympType) << " " << obj.time.getStrTime() << std::endl;
             }
         }
-        this->signs_vec = temp_signs_vec;
+        this->signsVec = tempSignsVec;
     }
 }

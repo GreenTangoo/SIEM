@@ -3,21 +3,21 @@
 
 #include "recognition_interface.hpp"
 
-using namespace symptoms;
+using namespace symptoms_space;
 
-namespace recognition
+namespace recognition_space
 {
-    class recognition_category : public recognition_inter
+    class RecognitionCategory : public RecognitionInter
     {
     private:
-        std::vector<symptoms::Symptom_impl*> vector_symptoms;
+        std::vector<SymptomImpl*> vectorSymptoms;
     public:
-        recognition_category();
-        recognition_category(symptoms::Symptom_impl* obj);
-        recognition_category(std::vector<symptoms::Symptom_impl*> vec_obj);
-        ~recognition_category();
-        std::vector<symptoms::Symptom_impl*> getAlertSymptoms();
-        void addSymptomsChecker(std::vector<symptoms::Symptom_impl*> obj);
+        RecognitionCategory();
+        RecognitionCategory(SymptomImpl* obj);
+        RecognitionCategory(std::vector<SymptomImpl*> vec_obj);
+        ~RecognitionCategory();
+        std::vector<SymptomImpl*> getAlertSymptoms();
+        void addSymptomsChecker(std::vector<SymptomImpl*> obj);
     };
 }
 

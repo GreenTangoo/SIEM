@@ -1,33 +1,33 @@
 #include "graph.h"
 
-using namespace topology;
-using namespace recognition;
+using namespace topology_space;
+using namespace recognition_space;
 
-graph::graph()
+Graph::Graph()
 {
 
 }
 
-graph::~graph()
+Graph::~Graph()
 {
 
 }
 
 
-void graph::initializeRecognitionMethods()
+void Graph::initializeRecognitionMethods()
 {
-    recognition_category *all_symptoms = new recognition_category();
+    RecognitionCategory *all_symptoms = new RecognitionCategory();
     all_symptoms->addSymptomsChecker(initializeDiscoveredSymptoms());
     all_symptoms->addSymptomsChecker(initializeAccountAccessSymptoms());
     all_symptoms->addSymptomsChecker(initializeFilesManipulationSymptoms());
     all_symptoms->addSymptomsChecker(initializeProccessManipulationSymptoms());
 
-    initialized_vec = all_symptoms;
+    initializedVec = all_symptoms;
 }
 
-std::vector<symptoms::Symptom_impl*> graph::initializeDiscoveredSymptoms()
+std::vector<symptoms_space::SymptomImpl*> Graph::initializeDiscoveredSymptoms()
 {
-    std::vector<symptoms::Symptom_impl*> vector_discovery_symptoms;
+    std::vector<symptoms_space::SymptomImpl*> vector_discovery_symptoms;
     PortScanningSymptoms *port_scan_symp = new PortScanningSymptoms("net_log.json");
     DirectoryDiscoverySymptoms *dir_scan_symp = new DirectoryDiscoverySymptoms("apache2.json");
 
@@ -37,9 +37,9 @@ std::vector<symptoms::Symptom_impl*> graph::initializeDiscoveredSymptoms()
     return vector_discovery_symptoms;
 }
 
-std::vector<symptoms::Symptom_impl*> graph::initializeAccountAccessSymptoms()
+std::vector<symptoms_space::SymptomImpl*> Graph::initializeAccountAccessSymptoms()
 {
-    std::vector<symptoms::Symptom_impl*> vector_account_symptoms;
+    std::vector<symptoms_space::SymptomImpl*> vector_account_symptoms;
     UserLoginSymptoms *usr_log_symp = new UserLoginSymptoms("auth.json");
     LoginRootSymptoms *log_root_symp = new LoginRootSymptoms("auth.json");
 
@@ -49,9 +49,9 @@ std::vector<symptoms::Symptom_impl*> graph::initializeAccountAccessSymptoms()
     return vector_account_symptoms;
 }
 
-std::vector<symptoms::Symptom_impl*> graph::initializeFilesManipulationSymptoms()
+std::vector<symptoms_space::SymptomImpl*> Graph::initializeFilesManipulationSymptoms()
 {
-    std::vector<symptoms::Symptom_impl*> vector_files_manipulation_symptoms;
+    std::vector<symptoms_space::SymptomImpl*> vector_files_manipulation_symptoms;
     DataCollectionSymptoms *data_collection_symp = new DataCollectionSymptoms("system_files.json");
     AccountDiscoverySymptoms *account_discovery_symp = new AccountDiscoverySymptoms("system_files.json");
 
@@ -61,9 +61,9 @@ std::vector<symptoms::Symptom_impl*> graph::initializeFilesManipulationSymptoms(
     return vector_files_manipulation_symptoms;
 }
 
-std::vector<Symptom_impl*> graph::initializeProccessManipulationSymptoms()
+std::vector<SymptomImpl*> Graph::initializeProccessManipulationSymptoms()
 {
-    std::vector<symptoms::Symptom_impl*> vector_proccess_manipulation_symptoms;
+    std::vector<symptoms_space::SymptomImpl*> vector_proccess_manipulation_symptoms;
     ProcessDiscoverySymptoms *process_discovery_symp = new ProcessDiscoverySymptoms("system_processes.json");
     CommandLineInterfaceSymptoms *cmd_symptoms = new CommandLineInterfaceSymptoms("system_processes.json");
     DataCompressedSymptoms *data_compressed_symp = new DataCompressedSymptoms("system_processes.json");
@@ -80,9 +80,9 @@ std::vector<Symptom_impl*> graph::initializeProccessManipulationSymptoms()
 }
 
 /*This method run along through the symptoms and contructs the sub_graph of relative syptoms by signs*/
-void graph::fillGraph()
+void Graph::fillGraph()
 {
-    std::vector<symptoms::Symptom_impl*> vec_alert_symptoms = initialized_vec->getAlertSymptoms();
+    std::vector<symptoms_space::SymptomImpl*> vec_alert_symptoms = initializedVec->getAlertSymptoms();
 
     /*Moving through the all alert symptoms for get info from all of them*/
     for(size_t i(0); i < vec_alert_symptoms.size(); i++)
@@ -90,17 +90,17 @@ void graph::fillGraph()
         /*Moving through the vector information from each symptom*/
         for(size_t k(0); k < vec_alert_symptoms[i]->getData().size(); k++)
         {
-            if(vec_alert_symptoms[i]->getData()[k].is_used == true)
+            if(vec_alert_symptoms[i]->getData()[k].isUsed == true)
                 continue;
 
             /*Get information about one symptom(one sign from symptom)*/
-            std::vector<std::pair<std::string, int16_t>> passed_info = vec_alert_symptoms[i]->getData()[k].main_data;
-            data_time::time passed_time = vec_alert_symptoms[i]->getData()[k].time;
-            category::symptom_category passed_category = vec_alert_symptoms[i]->getSymptomType();
+            std::vector<std::pair<std::string, int16_t>> passed_info = vec_alert_symptoms[i]->getData()[k].mainData;
+            data_time_space::Time passed_time = vec_alert_symptoms[i]->getData()[k].time;
+            category_space::symptomCategory passed_category = vec_alert_symptoms[i]->getSymptomType();
 
             /*Creating a new sub_graph object and filling his first data of the first symptom*/
-            sub_graph obj(passed_info, passed_category, passed_time);
-            vec_alert_symptoms[i]->getData()[k].is_used = true;
+            SubGraph obj(passed_info, passed_category, passed_time);
+            vec_alert_symptoms[i]->getData()[k].isUsed = true;
             /*Moving through the other symptoms to check each of them for having relative signs*/
             for(size_t j(0); j < vec_alert_symptoms.size(); j++)
             {
@@ -109,24 +109,24 @@ void graph::fillGraph()
                 obj.addSymptomInfo(vec_alert_symptoms[j]); // Add information about other symptom if founds relative signs
             }
             if(obj.getSymptomInfo().size() > 1) // If founded more than two events IS
-                all_sub_graphs.push_back(obj);
+                allSubGraphs.push_back(obj);
         }
     }
 }
 
-void graph::crop_unsuspicious_sub_graphs()
+void Graph::crop_unsuspicious_sub_graphs()
 {
-    std::list<sub_graph> croped_graphs;
-    for(std::list<sub_graph>::iterator it = all_sub_graphs.begin(); it != all_sub_graphs.end(); it++)
+    std::list<SubGraph> croped_graphs;
+    for(std::list<SubGraph>::iterator it = allSubGraphs.begin(); it != allSubGraphs.end(); it++)
     {
-        std::vector<symptom_info> info = it->getSymptomInfo();
+        std::vector<SymptomInfo> info = it->getSymptomInfo();
         if(info.size() > 2)
             croped_graphs.push_back(*it);
     }
-    all_sub_graphs = croped_graphs;
+    allSubGraphs = croped_graphs;
 }
 
-std::list<sub_graph> graph::getAllSubGraphs()
+std::list<SubGraph> Graph::getAllSubGraphs()
 {
-    return all_sub_graphs;
+    return allSubGraphs;
 }

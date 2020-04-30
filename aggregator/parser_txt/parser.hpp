@@ -6,10 +6,10 @@
 #include <iostream>
 #include <algorithm>
 
-namespace parser_string
+namespace parser_string_space
 {
-    enum symbol_type {SPACE = ' ', DQUOTE = '\"', QUOTE = '\'', COMMA = ',', TAB = '\t'};
-    std::list<std::string> parse_by_delimeter(std::string source_str, std::string delimeter, bool parse_once = false);
-    std::string delete_symbol(std::string source_str, symbol_type symbol);
+    enum symbolType {SPACE = ' ', DQUOTE = '\"', QUOTE = '\'', COMMA = ',', TAB = '\t'};
+    std::list<std::string> parse_by_delimeter(std::string sourceStr, std::string delimeter, bool parseOnce = false);
+    std::string delete_symbol(std::string sourceStr, symbolType symbol);
 }
 #endif // PARSER_H

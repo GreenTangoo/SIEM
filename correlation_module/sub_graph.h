@@ -3,26 +3,26 @@
 
 #include "recognition_interface.hpp"
 
-namespace topology
+namespace topology_space
 {
     /*symptom_info contains all information about one symptom*/
-    struct symptom_info
+    struct SymptomInfo
     {
         std::vector<std::pair<std::string, int16_t>> info;
-        category::symptom_category symp_type;
-        data_time::time time;
+        category_space::symptomCategory sympType;
+        data_time_space::Time time;
     };
     /*One sub_graph object contains the sequence of probably relative symptoms*/
-    class sub_graph
+    class SubGraph
     {
     private:
-        std::vector<symptom_info> signs_vec;
+        std::vector<SymptomInfo> signsVec;
     public:
-        sub_graph();
-        sub_graph(std::vector<std::pair<std::string, int16_t>> info, category::symptom_category symp_categrory, data_time::time time);
-        ~sub_graph();
-        const std::vector<symptom_info> getSymptomInfo() const;
-        void addSymptomInfo(symptoms::Symptom_impl *symp);
+        SubGraph();
+        SubGraph(std::vector<std::pair<std::string, int16_t>> info, category_space::symptomCategory sympCategrory, data_time_space::Time time);
+        ~SubGraph();
+        const std::vector<SymptomInfo> getSymptomInfo() const;
+        void addSymptomInfo(symptoms_space::SymptomImpl *symp);
     };
 }
 #endif // SUB_GRAPH_H

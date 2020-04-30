@@ -1,113 +1,131 @@
 #include "parse_time.hpp"
 
-data_time::time::time(): year(0), month(0), day(0), absolute_one_day_time(0)
+data_time_space::Time::Time(): year(0), month(0), day(0), absoluteOneDayTime(0)
 {
 
 }
 
-data_time::time::time(std::string str_time): year(0), month(0), day(0), absolute_one_day_time(0)
+data_time_space::Time::Time(std::string strTime): year(0), month(0), day(0), absoluteOneDayTime(0)
 {
-    setTime(str_time);
+    setTime(strTime);
 }
 
-data_time::time::~time()
+data_time_space::Time::~Time()
 {
 
 }
 
-data_time::time::time(const time &other)
+data_time_space::Time::Time(const Time &other)
 {
     this->year = other.year;
     this->month = other.month;
     this->day = other.day;
-    this->absolute_one_day_time = other.absolute_one_day_time;
+    this->absoluteOneDayTime = other.absoluteOneDayTime;
 }
 
-data_time::time& data_time::time::operator=(const time &other)
+data_time_space::Time& data_time_space::Time::operator=(const Time &other)
 {
     if(this != &other)
     {
         this->year = other.year;
         this->month = other.month;
         this->day = other.day;
-        this->absolute_one_day_time = other.absolute_one_day_time;
+        this->absoluteOneDayTime = other.absoluteOneDayTime;
     }
     return *this;
 }
 
-bool data_time::time::operator==(const time &other)
+bool data_time_space::Time::operator==(const Time &other)
 {
     if(this == &other)
         return true;
-    return ((this->year == other.year) && (this->month == other.month) && (this->day == other.day) && (this->absolute_one_day_time == other.absolute_one_day_time));
+    return ((this->year == other.year) && (this->month == other.month) && (this->day == other.day) && (this->absoluteOneDayTime == other.absoluteOneDayTime));
 }
 
-void data_time::time::setTime(std::string str_time)
+void data_time_space::Time::setTime(std::string strTime)
 {
-    std::list<std::string> parsed_str = parser_string::parse_by_delimeter(str_time, "/"); // Get year, month, day, day time
-    std::list<std::string>::iterator access_iter = std::next(parsed_str.begin(), 0); // Get year
-    this->year = atoi(access_iter->c_str());
+    std::list<std::string> parsedStr = parser_string_space::parse_by_delimeter(strTime, "/"); // Get year, month, day, day time
+    std::list<std::string>::iterator accessIter = std::next(parsedStr.begin(), 0); // Get year
+    this->year = atoi(accessIter->c_str());
 
-    access_iter = std::next(parsed_str.begin(), 1); // Get month
-    this->month = atoi(access_iter->c_str());
+    accessIter = std::next(parsedStr.begin(), 1); // Get month
+    this->month = atoi(accessIter->c_str());
 
-    access_iter = std::next(parsed_str.begin(), 2); // Get day
-    this->day = atoi(access_iter->c_str());
+    accessIter = std::next(parsedStr.begin(), 2); // Get day
+    this->day = atoi(accessIter->c_str());
 
-    access_iter = std::next(parsed_str.begin(), 3); // Get day time
-    transformToAbsoluteTime(*access_iter);
+    accessIter = std::next(parsedStr.begin(), 3); // Get day time
+    transformToAbsoluteTime(*accessIter);
 }
 
-std::string data_time::time::getStrTime()
+std::string data_time_space::Time::getStrTime()
 {
-    int hour = absolute_one_day_time / 3600;
-    absolute_one_day_time %= 3600;
-    int minute = absolute_one_day_time / 60;
-    absolute_one_day_time %= 60;
-    int second = absolute_one_day_time;
+    int hour = absoluteOneDayTime / 3600;
+    absoluteOneDayTime %= 3600;
+    int minute = absoluteOneDayTime / 60;
+    absoluteOneDayTime %= 60;
+    int second = absoluteOneDayTime;
 
-    std::string return_str_time = std::to_string(year) + "/" + std::to_string(month) + "/" + std::to_string(day) + "/"
+    std::string returnStrTime = std::to_string(year) + "/" + std::to_string(month) + "/" + std::to_string(day) + "/"
                     + std::to_string(hour) + ":" + std::to_string(minute) + ":" + std::to_string(second);
-    return return_str_time;
+
+    return returnStrTime;
 }
 
-int data_time::time::getYear() const
+int data_time_space::Time::getYear() const
 {
     return year;
 }
 
-int data_time::time::getMonth() const
+int data_time_space::Time::getMonth() const
 {
     return month;
 }
 
-int data_time::time::getDay() const
+int data_time_space::Time::getDay() const
 {
     return day;
 }
 
-int data_time::time::getAbsoluteTime() const
+int data_time_space::Time::getAbsoluteTime() const
 {
-    return absolute_one_day_time;
+    return absoluteOneDayTime;
 }
 
-void data_time::time::transformToAbsoluteTime(std::string str_time)
+int data_time_space::Time::getAbsoluteTime(std::string timeStr)
 {
-    std::list<std::string> parsed_str = parser_string::parse_by_delimeter(str_time, ":"); // Get hour, minute, second
+    std::list<std::string> parsedStr = parser_string_space::parse_by_delimeter(timeStr, ":"); // Get hour, minute, second
 
-    std::list<std::string>::iterator access_iter = std::next(parsed_str.begin(), 0); // Get hour
-    int hour = atoi(access_iter->c_str());
+    std::list<std::string>::iterator accessIter = std::next(parsedStr.begin(), 0); // Get hour
+    int hour = atoi(accessIter->c_str());
 
-    access_iter = std::next(parsed_str.begin(), 1); // Get minute
-    int minute = atoi(access_iter->c_str());
+    accessIter = std::next(parsedStr.begin(), 1); // Get minute
+    int minute = atoi(accessIter->c_str());
 
-    access_iter = std::next(parsed_str.begin(), 2); // Get second
-    int second = atoi(access_iter->c_str());
+    accessIter = std::next(parsedStr.begin(), 2); // Get second
+    int second = atoi(accessIter->c_str());
 
-    absolute_one_day_time = second + minute * 60 + hour * 3600;
+    int innerAbsoluteOneDayTime = second + minute * 60 + hour * 3600;
+    return innerAbsoluteOneDayTime;
 }
 
-int data_time::compare(const data_time::time &first, const data_time::time &second)
+void data_time_space::Time::transformToAbsoluteTime(std::string strTime)
+{
+    std::list<std::string> parsedStr = parser_string_space::parse_by_delimeter(strTime, ":"); // Get hour, minute, second
+
+    std::list<std::string>::iterator accessIter = std::next(parsedStr.begin(), 0); // Get hour
+    int hour = atoi(accessIter->c_str());
+
+    accessIter = std::next(parsedStr.begin(), 1); // Get minute
+    int minute = atoi(accessIter->c_str());
+
+    accessIter = std::next(parsedStr.begin(), 2); // Get second
+    int second = atoi(accessIter->c_str());
+
+    absoluteOneDayTime = second + minute * 60 + hour * 3600;
+}
+
+int data_time_space::compare(const data_time_space::Time &first, const data_time_space::Time &second)
 {
     if(first.getYear() != second.getYear())
         return first.getYear() > second.getYear() ? 1 : 0;

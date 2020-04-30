@@ -1,11 +1,11 @@
 #include "symp_implementation.hpp"
 
-std::vector<symptoms::data>& symptoms::Symptom_impl::getData()
+std::vector<symptoms_space::Data>& symptoms_space::SymptomImpl::getData()
 {
-    return all_data_from_symptom;
+    return allDataFromSymptom;
 }
 
-category::symptom_category symptoms::Symptom_impl::getSymptomType()
+category_space::symptomCategory symptoms_space::SymptomImpl::getSymptomType()
 {
-    return type_symp;
+    return typeSymp;
 }

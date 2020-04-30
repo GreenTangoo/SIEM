@@ -3,15 +3,15 @@
 
 #include "../../symptoms_interface/symp_implementation.hpp"
 
-namespace symptoms
+namespace symptoms_space
 {
     namespace files_manipulation
     {
-        class DataCollectionSymptoms : public Symptom_impl
+        class DataCollectionSymptoms : public SymptomImpl
         {
         private:
-            jsoner::json_parser parser;
-            std::string json_filename;
+            jsoner_space::JsonParser parser;
+            std::string jsonFilename;
         public:
             DataCollectionSymptoms(std::string filename);
             DataCollectionSymptoms(const DataCollectionSymptoms &other) = default;

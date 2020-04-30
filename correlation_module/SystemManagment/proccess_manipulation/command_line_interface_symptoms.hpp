@@ -3,15 +3,15 @@
 
 #include "../../symptoms_interface/symp_implementation.hpp"
 
-namespace symptoms
+namespace symptoms_space
 {
     namespace proccess_manipulation
     {
-        class CommandLineInterfaceSymptoms : public Symptom_impl
+        class CommandLineInterfaceSymptoms : public SymptomImpl
         {
         private:
-            jsoner::json_parser parser;
-            std::string json_filename;
+            jsoner_space::JsonParser parser;
+            std::string jsonFilename;
         public:
             CommandLineInterfaceSymptoms(std::string filename);
             CommandLineInterfaceSymptoms(const CommandLineInterfaceSymptoms &other) = default;

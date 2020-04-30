@@ -8,7 +8,64 @@
 				"system_network_configuration_discovery",
 				"system_network_connection_discovery",
 				"data_collection",
-				"data_compressed"
+				"data_compressed",
+				"scripting",
+				"masquerading",
+				"credential_dumping",
+				"network_share_discovery",
+				"system_service_discovery",
+				"pass_the_hash",
+				"remote_desktop_protocol",
+				"automated_collection",
+				"email_collection"
+			]
+		},
+		"APT12":{
+			"symptoms":[
+				"spearphishing_attachment",
+				"exploitation_for_client_execution",
+				"user_execution",
+				"web_service"
+			]
+		},
+		"APT18":{
+			"symptoms":[
+				"external_remote_services",
+				"valid_accounts",
+				"command_line_interface",
+				"scheduled_task",
+				"registry_run_keys_startup_folder",
+				"obfuscated_files_or_information",
+				"file_deletion",
+				"file_and_directory_discovery",
+				"system_information_discovery",
+				"remote_file_copy",
+				"commonly_used_port",
+				"standart_application_layer_protocol"
+			]
+		},
+		"APT19":{
+			"symptoms":[
+				"drive_by_compromise",
+				"spearphishing_attachment",
+				"powershell",
+				"regsrv32",
+				"rundll32",
+				"scripting",
+				"user_execution",
+				"modify_existing_services",
+				"registry_run_keys_startup_folder",
+				"dll_side_loading",
+				"deobfuscate_decode_files_or_information",
+				"hidden_window",
+				"modify_registry",
+				"obfuscated_files_or_information",
+				"system_information_discovery",
+				"system_network_configuration_discovery",
+				"system_owner_user_discovery",
+				"commonly_used_port",
+				"data_encoding",
+				"standart_application_layer_protocol"
 			]
 		},
 		"APT41":{
@@ -18,7 +75,40 @@
 				"system_network_connection_discovery",
 				"data_compressed",
 				"brute_force",
-				"clear_command_history"
+				"clear_command_history",
+				"external_remote_services",
+				"spearphishing_attachment",
+				"supply_chain_compromise",
+				"valid_accounts",
+				"compiled_html_file",
+				"exploitation_for_client_execution",
+				"powershell",
+				"scheduled_task",
+				"windows_managment_instrumentation",
+				"accesebility_features",
+				"bootkit",
+				"create_account",
+				"modify_existing_services",
+				"registry_run_keys_startup_folder",
+				"process_injection",
+				"code_signing",
+				"connection_proxy",
+				"dll_side_loading",
+				"file_deletion",
+				"indicator_removal_on_host",
+				"masquerading",
+				"modify_registry",
+				"rootkit",
+				"web_service",
+				"credential_dumping",
+				"input_capture",
+				"network_share_discovery",
+				"network_service_scanning",
+				"system_owner_user_discovery",
+				"remote_desktop_protocol",
+				"domain_generation_algorithms",
+				"fallback_channels",
+				"standart_application_layer_protocol"
 			]
 		}
 	}

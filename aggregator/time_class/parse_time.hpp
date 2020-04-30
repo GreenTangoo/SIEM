@@ -3,29 +3,30 @@
 
 #include "../parser_txt/parser.hpp"
 
-namespace data_time
+namespace data_time_space
 {
-    class time
+    class Time
     {
     private:
         int year;
         int month;
         int day;
-        int absolute_one_day_time;
+        int absoluteOneDayTime;
     private:
-        void transformToAbsoluteTime(std::string str_time);
+        void transformToAbsoluteTime(std::string strTime);
     public:
-        explicit time(std::string str_time); // Format: year/month/day/hour:minute:second
-        explicit time();
-        time(const time &other);
-        time(time &&other) = delete;
-        ~time();
-        time& operator=(const time &other);
-        bool operator==(const time &other);
-        friend int compare(const time &first, const time &second);
-        void setTime(std::string str_time); // Format: year/month/day/hour:minute:second
+        explicit Time(std::string strTime); // Format: year/month/day/hour:minute:second
+        explicit Time();
+        Time(const Time &other);
+        Time(Time &&other) = delete;
+        ~Time();
+        Time& operator=(const Time &other);
+        bool operator==(const Time &other);
+        friend int compare(const Time &first, const Time &second);
+        void setTime(std::string strTime); // Format: year/month/day/hour:minute:second
         std::string getStrTime();
         int getAbsoluteTime() const;
+        static int getAbsoluteTime(std::string timeStr);
         int getYear() const ;
         int getMonth() const ;
         int getDay() const ;

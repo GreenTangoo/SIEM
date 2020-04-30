@@ -1,11 +1,11 @@
 #include "account_discovery_symptoms.hpp"
 
-using namespace symptoms::files_manipulation;
+using namespace symptoms_space::files_manipulation;
 
 
-AccountDiscoverySymptoms::AccountDiscoverySymptoms(std::string filename) : json_filename(filename)
+AccountDiscoverySymptoms::AccountDiscoverySymptoms(std::string filename) : jsonFilename(filename)
 {
-    this->type_symp = category::symptom_category::account_discovery;
+    this->typeSymp = category_space::symptomCategory::account_discovery;
 }
 
 AccountDiscoverySymptoms::~AccountDiscoverySymptoms()
@@ -15,29 +15,37 @@ AccountDiscoverySymptoms::~AccountDiscoverySymptoms()
 
 bool AccountDiscoverySymptoms::checkSymptoms()
 {
-    parser = jsoner::getJsonData(json_filename);
+    parser = getJsonData(jsonFilename);
 
-    jsoner::json_container *container = parser.find_element_by_name("users");
+    jsoner_space::JsonContainer *container = parser.findElementByName("users");
     container = container->down;
-    if(container->cell_type == jsoner::NONE)
+    if(container->cellType == jsoner_space::NONE)
         return false;
     for(; container != nullptr; container = container->next)
     {
-        if(container->down->one_cell.first == "passwd")
+        std::string openedFilename = container->down->oneCell.first;
+
+        if(openedFilename == "passwd")
         {
-            symptoms::data data_obj;
-            data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->one_cell.first, 1)); // Get name
-            data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->down->one_cell.first, 0)); // Get filename
-            data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->down->down->next->one_cell.first +
-                                        ":" + container->down->down->next->one_cell.second, 0)); // Get action
-            data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->down->down->next->next->one_cell.first +
-                                        ":" + container->down->down->next->next->one_cell.second, 0)); // Get privieleges
-            data_obj.time = data_time::time(container->down->down->one_cell.second);
-            data_obj.is_used = false;
-            this->all_data_from_symptom.push_back(data_obj);
+            std::string name = container->oneCell.first;
+            std::string filename = container->down->oneCell.first;
+            std::string actinoPrefix = container->down->down->next->oneCell.first;
+            std::string action = container->down->down->next->oneCell.second;
+            std::string privilegesPrefix = container->down->down->next->next->oneCell.first;
+            std::string privileges = container->down->down->next->next->oneCell.second;
+            std::string time = container->down->down->oneCell.second;
+
+            symptoms_space::Data dataObj;
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(name, 1)); // Get name
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(filename, 0)); // Get filename
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(actinoPrefix + ":" + action, 0)); // Get action
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(privilegesPrefix + ":" + privileges, 0)); // Get privieleges
+            dataObj.time = data_time_space::Time(time);
+            dataObj.isUsed = false;
+            this->allDataFromSymptom.push_back(dataObj);
         }
     }
-    if(this->all_data_from_symptom.size() > 0)
+    if(this->allDataFromSymptom.size() > 0)
         return true;
     else return false;
 }

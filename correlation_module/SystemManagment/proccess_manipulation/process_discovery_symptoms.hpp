@@ -3,15 +3,15 @@
 
 #include "../../symptoms_interface/symp_implementation.hpp"
 
-namespace symptoms
+namespace symptoms_space
 {
     namespace proccess_manipulation
     {
-        class ProcessDiscoverySymptoms : public Symptom_impl
+        class ProcessDiscoverySymptoms : public SymptomImpl
         {
         private:
-            jsoner::json_parser parser;
-            std::string json_filename;
+            jsoner_space::JsonParser parser;
+            std::string jsonFilename;
         public:
             ProcessDiscoverySymptoms(std::string filename);
             ProcessDiscoverySymptoms(const ProcessDiscoverySymptoms &other) = default;

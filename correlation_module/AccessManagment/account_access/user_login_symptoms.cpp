@@ -1,11 +1,11 @@
 #include "user_login_symptoms.hpp"
 
-using namespace symptoms::account_access;
+using namespace symptoms_space::account_access;
 
 
-UserLoginSymptoms::UserLoginSymptoms(std::string filename) : json_filename(filename)
+UserLoginSymptoms::UserLoginSymptoms(std::string filename) : jsonFilename(filename)
 {
-    this->type_symp = category::symptom_category::user_login;
+    this->typeSymp = category_space::symptomCategory::user_login;
 }
 
 UserLoginSymptoms::~UserLoginSymptoms()
@@ -15,22 +15,26 @@ UserLoginSymptoms::~UserLoginSymptoms()
 
 bool UserLoginSymptoms::checkSymptoms()
 {
-    parser = jsoner::getJsonData(json_filename);
-    jsoner::json_container *container = parser.find_element_by_name("users");
+    parser = getJsonData(jsonFilename);
+    jsoner_space::JsonContainer *container = parser.findElementByName("users");
     container = container->down;
-    if(container->cell_type == jsoner::NONE)
+    if(container->cellType == jsoner_space::NONE)
         return false;
 
     for(; container != nullptr; container = container->next)
     {
-        symptoms::data data_obj;
-        data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->one_cell.first, 1)); // Get username
-        data_obj.main_data.push_back(std::pair<std::string, int16_t>(container->down->next->one_cell.second, 1)); // Get ip
-        data_obj.time = data_time::time(container->down->one_cell.second);
-        data_obj.is_used = false;
-        this->all_data_from_symptom.push_back(data_obj);
+        std::string username = container->oneCell.first;
+        std::string ip = container->down->next->oneCell.second;
+        std::string time = container->down->oneCell.second;
+
+        symptoms_space::Data data_obj;
+        data_obj.mainData.push_back(std::pair<std::string, int16_t>(username, 1)); // Get username
+        data_obj.mainData.push_back(std::pair<std::string, int16_t>(ip, 1)); // Get ip
+        data_obj.time = data_time_space::Time(time);
+        data_obj.isUsed = false;
+        this->allDataFromSymptom.push_back(data_obj);
     }
-    if(this->all_data_from_symptom.size() > 0)
+    if(this->allDataFromSymptom.size() > 0)
         return true;
     else return false;
 }

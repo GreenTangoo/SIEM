@@ -1,78 +1,78 @@
 #include "json.hpp"
 
 
-using namespace jsoner;
+using namespace jsoner_space;
 
-json_parser::json_parser()
+JsonParser::JsonParser()
 {
-    root = new json_container(OBJECT);
+    root = new JsonContainer(OBJECT);
 }
 
-json_parser::json_parser(const json_parser &other)
+JsonParser::JsonParser(const JsonParser &other)
 {
-    root = new json_container(OBJECT);
-    json_container *child = new json_container;
-    add_child(&root, &child);
-    copy_elements(&root, other.root);
-    delete_none_elements(&root);
+    root = new JsonContainer(OBJECT);
+    JsonContainer *child = new JsonContainer;
+    addChild(&root, &child);
+    copyElements(&root, other.root);
+    deleteNoneElements(&root);
 }
 
-json_parser::json_parser(json_parser &&other)
+JsonParser::JsonParser(JsonParser &&other)
 {
     this->root = other.root;
     other.root = nullptr;
 }
 
-json_parser::json_parser(json_container *other)
+JsonParser::JsonParser(JsonContainer *other)
 {
-    root = new json_container(OBJECT);
-    json_container *child = new json_container;
-    add_child(&root, &child);
-    copy_elements(&(root->down), other);
-    delete_none_elements(&root);
+    root = new JsonContainer(OBJECT);
+    JsonContainer *child = new JsonContainer;
+    addChild(&root, &child);
+    copyElements(&(root->down), other);
+    deleteNoneElements(&root);
 }
 
-json_parser::~json_parser()
+JsonParser::~JsonParser()
 {
-    erase_json_container(&root);
+    eraseJsonContainer(&root);
 }
 
-json_parser& json_parser::operator=(const json_parser &other)
+JsonParser& JsonParser::operator=(const JsonParser &other)
 {
     if(this != &other)
     {
-        this->erase_json_container(&root);
-        root = new json_container(OBJECT);
-        json_container *child = new json_container;
-        add_child(&root, &child);
-        copy_elements(&(root->down), other.root);
-        delete_none_elements(&root);
+        this->eraseJsonContainer(&root);
+        root = new JsonContainer(OBJECT);
+        JsonContainer *child = new JsonContainer;
+        addChild(&root, &child);
+        copyElements(&(root->down), other.root);
+        deleteNoneElements(&root);
     }
     return *this;
 }
 
-type_cell json_parser::get_type(std::string source_str) const
+typeCell JsonParser::getType(std::string sourceStr) const
 {
-    if(source_str == "{")
+    if(sourceStr == "{")
         return OBJECT;
-    if(source_str == "}")
+    if(sourceStr == "}")
         return END_OBJECT;
-    if(source_str == "[")
+    if(sourceStr == "[")
         return ARRAY;
-    if(source_str == "]")
+    if(sourceStr == "]")
         return END_ARRAY;
 
     return STRING;
 }
 
-void json_parser::erase_json_container(json_container **root)
+void JsonParser::eraseJsonContainer(JsonContainer **root)
 {
-    /*json_container *temp = *root;
+    /*JsonContainer *temp = *root;
 
     if(temp->down != nullptr)
-        erase_json_container(&temp->down);
+        eraseJsonContainer(&temp->down);
     if(temp->next != nullptr)
-        erase_json_container(&temp->next);
+        eraseJsonContainer(&temp->next);
 
     if((temp->next == nullptr) && (temp->down == nullptr))
     {
@@ -82,55 +82,55 @@ void json_parser::erase_json_container(json_container **root)
     }*/
 }
 
-void json_parser::add_child(json_container **node, json_container **new_container)
+void JsonParser::addChild(JsonContainer **node, JsonContainer **newContainer)
 {
-    json_container *temp = *node;
-    temp->down = *new_container;
-    (*new_container)->up = temp;
+    JsonContainer *temp = *node;
+    temp->down = *newContainer;
+    (*newContainer)->up = temp;
 }
 
-void json_parser::add_neighbord(json_container **node, json_container **new_container)
+void JsonParser::addNeighbord(JsonContainer **node, JsonContainer **newContainer)
 {
-    json_container *temp = *node;
-    temp->next = *new_container;
-    (*new_container)->prev = temp;
-    (*new_container)->up = temp->up;
+    JsonContainer *temp = *node;
+    temp->next = *newContainer;
+    (*newContainer)->prev = temp;
+    (*newContainer)->up = temp->up;
 }
 
-void json_parser::getFromStream(std::istream &in, json_container **node)
+void JsonParser::getFromStream(std::istream &in, JsonContainer **node)
 {
-    json_container *temp_node = *node;
-    std::string input_str;
-    std::string first_part_str;
-    std::string second_part_str;
-    while(std::getline(in, input_str))
+    JsonContainer *tempNode = *node;
+    std::string inputStr;
+    std::string firstPartStr;
+    std::string secondPartStr;
+    while(std::getline(in, inputStr))
     {
-        std::list<std::string> parsed = parser_string::parse_by_delimeter(input_str, ":", true);
+        std::list<std::string> parsed = parser_string_space::parse_by_delimeter(inputStr, ":", true);
         if(parsed.size() > 1)
         {
             std::list<std::string>::iterator it = std::next(parsed.begin(), 0);
-            first_part_str = *it;
+            firstPartStr = *it;
             it = std::next(parsed.begin(), 1);
-            second_part_str = *it;
+            secondPartStr = *it;
 
-            first_part_str = parser_string::delete_symbol(first_part_str, parser_string::TAB);
-            first_part_str = parser_string::delete_symbol(first_part_str, parser_string::COMMA);
-            first_part_str = parser_string::delete_symbol(first_part_str, parser_string::DQUOTE);
-            first_part_str = parser_string::delete_symbol(first_part_str, parser_string::SPACE);
+            firstPartStr = parser_string_space::delete_symbol(firstPartStr, parser_string_space::TAB);
+            firstPartStr = parser_string_space::delete_symbol(firstPartStr, parser_string_space::COMMA);
+            firstPartStr = parser_string_space::delete_symbol(firstPartStr, parser_string_space::DQUOTE);
+            firstPartStr = parser_string_space::delete_symbol(firstPartStr, parser_string_space::SPACE);
         }
         else
         {
-            first_part_str = "";
+            firstPartStr = "";
             std::list<std::string>::iterator it = std::next(parsed.begin(), 0);
-            second_part_str = *it;
+            secondPartStr = *it;
         }
 
-        second_part_str = parser_string::delete_symbol(second_part_str, parser_string::TAB);
-        second_part_str = parser_string::delete_symbol(second_part_str, parser_string::COMMA);
-        second_part_str = parser_string::delete_symbol(second_part_str, parser_string::DQUOTE);
-        second_part_str = parser_string::delete_symbol(second_part_str, parser_string::SPACE);
+        secondPartStr = parser_string_space::delete_symbol(secondPartStr, parser_string_space::TAB);
+        secondPartStr = parser_string_space::delete_symbol(secondPartStr, parser_string_space::COMMA);
+        secondPartStr = parser_string_space::delete_symbol(secondPartStr, parser_string_space::DQUOTE);
+        secondPartStr = parser_string_space::delete_symbol(secondPartStr, parser_string_space::SPACE);
 
-        type_cell type = get_type(parser_string::delete_symbol(second_part_str, parser_string::SPACE));
+        typeCell type = getType(parser_string_space::delete_symbol(secondPartStr, parser_string_space::SPACE));
         if((type == END_ARRAY) || (type == END_OBJECT))
         {
             /*temp_node->prev->next = nullptr;
@@ -138,17 +138,17 @@ void json_parser::getFromStream(std::istream &in, json_container **node)
             return;
         }
 
-        temp_node->setData(first_part_str, second_part_str, type);
+        tempNode->setData(firstPartStr, secondPartStr, type);
 
         if((type == OBJECT) || (type == ARRAY))
         {
-            json_container *temp = new json_container;
-            add_child(&temp_node, &temp);
-            getFromStream(in, &(temp_node->down));
+            JsonContainer *temp = new JsonContainer;
+            addChild(&tempNode, &temp);
+            getFromStream(in, &(tempNode->down));
         }
-        json_container *temp = new json_container;
-        add_neighbord(&temp_node, &temp);
-        temp_node = temp_node->next;
+        JsonContainer *temp = new JsonContainer;
+        addNeighbord(&tempNode, &temp);
+        tempNode = tempNode->next;
         /*if(type == STRING)
         {
             json_container *temp = new json_container;
@@ -158,131 +158,143 @@ void json_parser::getFromStream(std::istream &in, json_container **node)
     }
 }
 
-void json_parser::putToStream(std::ostream &out, json_container **node, int32_t offset)
+void JsonParser::putToStream(std::ostream &out, JsonContainer **node, int32_t offset)
 {
-    json_container *temp = *node;
-    std::string out_str;
+    JsonContainer *temp = *node;
+    std::string outStr;
     while(true)
     {
-        if((temp->cell_type == OBJECT) || (temp->cell_type == ARRAY))
+        if((temp->cellType == OBJECT) || (temp->cellType == ARRAY))
         {
-            out_str = std::string("\t", offset) + temp->one_cell.first + " : " + temp->one_cell.second + "\n";
-            if(temp->one_cell.first != "")
-                out.write(out_str.c_str(), out_str.size());
-            else out.write(std::string(temp->one_cell.second + "\n").c_str(), temp->one_cell.second.size() + 1);
+            outStr = std::string("\t", offset) + temp->oneCell.first + " : " + temp->oneCell.second + "\n";
+            if(temp->oneCell.first != "")
+                out.write(outStr.c_str(), outStr.size());
+            else out.write(std::string(temp->oneCell.second + "\n").c_str(), temp->oneCell.second.size() + 1);
             putToStream(out, &(temp->down), offset + 1);
         }
-        if(temp->cell_type == STRING)
+        if(temp->cellType == STRING)
         {
-            out_str = std::string("\t", offset) + temp->one_cell.first + " : " + temp->one_cell.second + ",\n";
-            out.write(out_str.c_str(), out_str.size());
+            outStr = std::string("\t", offset) + temp->oneCell.first + " : " + temp->oneCell.second + ",\n";
+            out.write(outStr.c_str(), outStr.size());
         }
         if(temp->next == nullptr)
             break;
         temp = temp->next;
     }
-    if((temp->up->cell_type == OBJECT) || (temp->up->cell_type == ARRAY))
+    if((temp->up->cellType == OBJECT) || (temp->up->cellType == ARRAY))
     {
         if(temp->up->next != nullptr)
         {
-            out_str.clear();
-            out_str.push_back(static_cast<char>(temp->up->cell_type));
-            out_str.push_back('\n');
-            out.write(out_str.c_str(), out_str.size());
+            outStr.clear();
+            outStr.push_back(static_cast<char>(temp->up->cellType));
+            outStr.push_back('\n');
+            out.write(outStr.c_str(), outStr.size());
         }
         else
         {
-            out_str.clear();
-            out_str.push_back(static_cast<char>(temp->up->cell_type));
-            out_str.push_back('\n');
-            out.write(out_str.c_str(), out_str.size());
+            outStr.clear();
+            outStr.push_back(static_cast<char>(temp->up->cellType));
+            outStr.push_back('\n');
+            out.write(outStr.c_str(), outStr.size());
         }
     }
 }
 
-void json_parser::copy_elements(json_container **node, const json_container *other)
+void JsonParser::copyElements(JsonContainer **node, const JsonContainer *other)
 {
     if(other == nullptr)
         return;
-    json_container *temp_node = *node;
-    const json_container *temp_other = other;
+    JsonContainer *tempNode = *node;
+    const JsonContainer *tempOther = other;
 
-    if(temp_other->cell_type == NONE)
-        copy_elements(&temp_node, temp_other->down);
+    if(tempOther->cellType == NONE)
+        copyElements(&tempNode, tempOther->down);
 
-    for(; temp_other != nullptr; temp_other = temp_other->next)
+    for(; tempOther != nullptr; tempOther = tempOther->next)
     {
-        temp_node->setData(temp_other->one_cell.first, temp_other->one_cell.second, temp_other->cell_type);
+        tempNode->setData(tempOther->oneCell.first, tempOther->oneCell.second, tempOther->cellType);
 
-        if((temp_other->cell_type == OBJECT) || (temp_other->cell_type == ARRAY))
+        if((tempOther->cellType == OBJECT) || (tempOther->cellType == ARRAY))
         {
-            json_container *temp = new json_container;
-            add_child(&temp_node, &temp);
-            copy_elements(&(temp_node->down), temp_other->down);
+            JsonContainer *temp = new JsonContainer;
+            addChild(&tempNode, &temp);
+            copyElements(&(tempNode->down), tempOther->down);
         }
-        json_container *temp = new json_container;
-        add_neighbord(&temp_node, &temp);
-        temp_node = temp_node->next;
+        JsonContainer *temp = new JsonContainer;
+        addNeighbord(&tempNode, &temp);
+        tempNode = tempNode->next;
     }
 }
 
-void json_parser::delete_none_elements(json_container **node)
+void JsonParser::deleteNoneElements(JsonContainer **node)
 {
-    json_container *temp = *node;
+    JsonContainer *temp = *node;
 
     for(;;)
     {
         if(temp->down != nullptr)
-            delete_none_elements(&(temp->down));
+            deleteNoneElements(&(temp->down));
         if(temp->next == nullptr)
             break;
         temp = temp->next;
     }
-    while((temp->cell_type == NONE) && (temp->prev != nullptr))
+    while((temp->cellType == NONE) && (temp->prev != nullptr))
     {
-        json_container *prev = temp->prev;
+        JsonContainer *prev = temp->prev;
         delete temp;
         temp = prev;
         temp->next = nullptr;
     }
 }
 
-void json_parser::getJson(std::istream &input_stream)
+void JsonParser::getJson(std::istream &inputStream)
 {
-    erase_json_container(&root);
-    root = new json_container(OBJECT);
-    getFromStream(input_stream, &root);
-    delete_none_elements(&root);
+    eraseJsonContainer(&root);
+    root = new JsonContainer(OBJECT);
+    getFromStream(inputStream, &root);
+    deleteNoneElements(&root);
 }
 
-void json_parser::setJson(std::ostream &output_stream)
+void JsonParser::setJson(std::ostream &outputStream)
 {
-    putToStream(output_stream, &root, 0);
+    putToStream(outputStream, &root, 0);
 }
 
-json_container* json_parser::find_element_by_name(std::string name)
+JsonContainer* JsonParser::findElementByName(std::string name)
 {
-    return this->find_element_by_name(root, name);
+    return this->findElementByName(root, name);
 }
 
-json_container* json_parser::find_element_by_name(json_container *node, std::string name)
+JsonContainer* JsonParser::findElementByName(JsonContainer *node, std::string name)
 {
-    json_container *temp = node;
+    JsonContainer *temp = node;
     for(; temp != nullptr; temp = temp->next)
     {
-        if(temp->one_cell.first == name)
+        if(temp->oneCell.first == name)
             return temp;
-        if(temp->cell_type != STRING)
+        if(temp->cellType != STRING)
         {
-            json_container *return_type = find_element_by_name(temp->down, name);
-            if(return_type != nullptr)
-                return return_type;
+            JsonContainer *returnType = findElementByName(temp->down, name);
+            if(returnType != nullptr)
+                return returnType;
         }
     }
     return nullptr;
 }
 
-std::list<json_container*> json_parser::find_elements_by_name(std::string name)
+std::list<JsonContainer*> JsonParser::findElementsByName(std::string name)
 {
 
+}
+
+JsonParser getJsonData(std::string filename)
+{
+    std::ifstream fin;
+    fin.open(filename.c_str());
+    if(fin.is_open() == false)
+        throw SIEM_errors::hander_error("Cannot open file: " + filename);
+
+    JsonParser return_parser;
+    return_parser.getJson(fin);
+    return return_parser;
 }

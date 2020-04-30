@@ -10,67 +10,65 @@
 #include "correlation_module/sub_graph.h"
 #include "prediction_module/predictor.hpp"
 #include "aggregator/time_class/parse_time.hpp"
-#include "gui_module/mainapplicationwindow.h"
 
-using namespace topology;
+#include "aggregator/parser_json/json.hpp"
+
+using namespace topology_space;
 
 void displayPrediction(const analysis::prediction &obj, std::ofstream &fout)
 {
-    std::vector<std::pair<std::string, std::vector<std::string>>> returned_pred = obj.getPredictionSymptoms();
+    std::vector<std::pair<std::string, std::vector<std::string>>> returnedPred = obj.getPredictionSymptoms();
 
-    for(size_t i(0); i < returned_pred.size(); i++)
+    for(size_t i(0); i < returnedPred.size(); i++)
     {
-        fout << "Attack vector name: " << returned_pred[i].first << "\n";
-        for(size_t j(0); j < returned_pred[i].second.size(); j++)
-            fout << "    Possible later symptoms: " << returned_pred[i].second[j] << "\n";
+        fout << "Attack vector name: " << returnedPred[i].first << "\n";
+        for(size_t j(0); j < returnedPred[i].second.size(); j++)
+            fout << "    Possible later symptoms: " << returnedPred[i].second[j] << "\n";
     }
 }
 
 int main(int argc, char **argv)
 {
-    QApplication app(argc, argv);
-    /*app.setStyleSheet("QLabel {"
-                      "border-style: solid;"
-                      "border-width: 1px;"
-                      "border-color: black; "
-                      "}");*/
-    MainApplicationWindow *window = new MainApplicationWindow();
-    window->setFixedSize(800,600);
-    window->show();
-
-    std::ofstream fout;
-    fout.open("result.txt", std::ios_base::out);
-    if(fout.is_open() == false)
-        return -1;
-
-
-
-    topology::graph graph_obj;
-    graph_obj.initializeRecognitionMethods();
-    graph_obj.fillGraph();
-
-    std::list<sub_graph> return_vec = graph_obj.getAllSubGraphs();
-
-    for(std::list<sub_graph>::iterator it = return_vec.begin(); it != return_vec.end(); it++)
+    try
     {
-        analysis::prediction prediction_obj(*it);
-        displayPrediction(prediction_obj, fout);
+        std::ofstream fout;
+        fout.open("result.txt", std::ios_base::out);
+        if(fout.is_open() == false)
+            return -1;
 
-        fout << "One sub graph" << "\n";
-        std::vector<symptom_info> symptoms = it->getSymptomInfo();
 
-        for(size_t i(0); i < symptoms.size(); i++)
+
+        topology_space::Graph graphObj;
+        graphObj.initializeRecognitionMethods();
+        graphObj.fillGraph();
+
+        std::list<SubGraph> returnVec = graphObj.getAllSubGraphs();
+
+        for(std::list<SubGraph>::iterator it = returnVec.begin(); it != returnVec.end(); it++)
         {
-            fout << "  One symptom" << "\n";
-            fout << "      Time: " << symptoms[i].time.getStrTime() << "\n";
-            fout << "      Category: " << category::category_resolver::getInstance().getCategoryName(symptoms[i].symp_type) << "\n";
+            analysis::prediction prediction_obj(*it);
+            //displayPrediction(prediction_obj, fout);
 
-            for(size_t j(0); j < symptoms[i].info.size(); j++)
-                fout << "      Information: " << symptoms[i].info[j].first << "\n";
+            fout << "One sub graph" << "\n";
+            std::vector<SymptomInfo> symptoms = it->getSymptomInfo();
+
+            for(size_t i(0); i < symptoms.size(); i++)
+            {
+                fout << "  One symptom" << "\n";
+                fout << "      Time: " << symptoms[i].time.getStrTime() << "\n";
+                fout << "      Category: " << category_space::CategoryResolver::getInstance().getCategoryName(symptoms[i].sympType) << "\n";
+
+                for(size_t j(0); j < symptoms[i].info.size(); j++)
+                    fout << "      Information: " << symptoms[i].info[j].first << "\n";
+            }
+            fout << "\n";
         }
-        fout << "\n";
+    }
+    catch(const SIEM_errors::hander_error &obj)
+    {
+        std::cout << obj.what() << std::endl;
     }
 
-    return app.exec();
+    return 0;
 }
 

@@ -15,9 +15,9 @@ namespace analysis
         void fillSymptomsName();
     public:
         prediction();
-        prediction(const topology::sub_graph &sub_graph_obj);
+        prediction(const topology_space::SubGraph &sub_graph_obj);
         ~prediction();
-        void analyseSubGraph(const topology::sub_graph &sub_graph_obj);
+        void analyseSubGraph(const topology_space::SubGraph &sub_graph_obj);
         std::vector<std::pair<std::string, std::vector<std::string>>> getPredictionSymptoms() const;
     };
 }

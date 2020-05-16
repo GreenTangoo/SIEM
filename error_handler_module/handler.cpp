@@ -1,21 +1,23 @@
 #include "handler.hpp"
 
-SIEM_errors::hander_error::hander_error(const char *str)
+using namespace SIEM_errors;
+
+SIEM_errors::SIEMException::SIEMException(const char *str)
 {
     error_msg = std::string(str);
 }
 
-SIEM_errors::hander_error::hander_error(const std::string &str)
+SIEM_errors::SIEMException::SIEMException(const std::string &str)
 {
     error_msg = str;
 }
 
-SIEM_errors::hander_error::~hander_error() noexcept
+SIEM_errors::SIEMException::~SIEMException() noexcept
 {
 
 }
 
-const char* SIEM_errors::hander_error::what() const noexcept
+const char* SIEM_errors::SIEMException::what() const noexcept
 {
     return error_msg.c_str();
 }

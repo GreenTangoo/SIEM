@@ -5,6 +5,12 @@
 
 namespace category_space
 {
+
+    enum symptomPriority
+    {
+        no_priority = 0, priority_1 = 1, priority_2 = 2
+    };
+
     enum symptomCategory
     {
         user_login, login_root, directory_discovery, port_scanning, command_line_interface,
@@ -19,7 +25,7 @@ namespace category_space
         masquerading, modify_registry, rootkit, web_service, credential_dumping,
         input_capture, network_share_discovery, network_service_scanning,
         system_owner_user_discovery, remote_desktop_protocol, domain_generation_algorithms,
-        fallback_channels, standart_application_layer_protocol
+        fallback_channels, standart_application_layer_protocol, custom
     };
     class CategoryResolver // SINGLETON
     {

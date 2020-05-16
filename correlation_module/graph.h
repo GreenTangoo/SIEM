@@ -17,6 +17,7 @@ namespace topology_space
         std::vector<symptoms_space::SymptomImpl*> initializeDiscoveredSymptoms();
         std::vector<symptoms_space::SymptomImpl*> initializeFilesManipulationSymptoms();
         std::vector<symptoms_space::SymptomImpl*> initializeProccessManipulationSymptoms();
+        std::vector<symptoms_space::SymptomImpl*> initializeCustomSymptoms();
         void crop_unsuspicious_sub_graphs();
     public:
         Graph();

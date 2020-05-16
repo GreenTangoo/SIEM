@@ -31,8 +31,19 @@ std::vector<symptoms_space::SymptomImpl*> RecognitionCategory::getAlertSymptoms(
     std::vector<symptoms_space::SymptomImpl*> recoghSymps;
     for(size_t i(0); i < vectorSymptoms.size(); i++)
     {
-        if(vectorSymptoms[i]->checkSymptoms() == true)
-            recoghSymps.push_back(vectorSymptoms[i]);
+        try
+        {
+            if(vectorSymptoms[i]->checkSymptoms() == true)
+                recoghSymps.push_back(vectorSymptoms[i]);
+        }
+        catch(const SIEM_errors::SIEMException &ex)
+        {
+            std::cout << "Exception occured: " << ex.what() << std::endl;
+        }
+        catch(...)
+        {
+            throw SIEM_errors::SIEMException("Unexcepted error");
+        }
     }
 
     return recoghSymps;

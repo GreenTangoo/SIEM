@@ -23,6 +23,8 @@ SOURCES += \
     aggregator/parser_txt/parser.cpp \
     correlation_module/AccessManagment/account_access/user_login_symptoms.cpp \
     correlation_module/AccessManagment/account_access/valid_accounts.cpp \
+    correlation_module/CustomCorrelation/config_descriptor.cpp \
+    correlation_module/CustomCorrelation/custom_correlator.cpp \
     correlation_module/graph.cpp \
     correlation_module/recognition_categories_main.cpp \
     correlation_module/sub_graph.cpp \
@@ -49,6 +51,8 @@ HEADERS += \
     aggregator/parser_txt/parser.hpp \
     correlation_module/AccessManagment/account_access/user_login_symptoms.hpp \
     correlation_module/AccessManagment/account_access/valid_accounts.hpp \
+    correlation_module/CustomCorrelation/config_descriptor.hpp \
+    correlation_module/CustomCorrelation/custom_correlator.hpp \
     correlation_module/graph.h \
     correlation_module/recognition_categories_main.h \
     correlation_module/sub_graph.h \

@@ -1,7 +1,11 @@
 #include "json.hpp"
 
-
 using namespace jsoner_space;
+
+#define ARRAY_NODE "array"
+#define OBJECT_NODE "object"
+#define STRING_NODE "string"
+#define NONE_NODE ""
 
 JsonParser::JsonParser()
 {
@@ -67,19 +71,18 @@ typeCell JsonParser::getType(std::string sourceStr) const
 
 void JsonParser::eraseJsonContainer(JsonContainer **root)
 {
-    /*JsonContainer *temp = *root;
+    JsonContainer *temp = *root;
 
     if(temp->down != nullptr)
         eraseJsonContainer(&temp->down);
     if(temp->next != nullptr)
         eraseJsonContainer(&temp->next);
 
-    if((temp->next == nullptr) && (temp->down == nullptr))
+    if((temp->next == nullptr) && (temp->down == nullptr) && (temp != nullptr))
     {
         delete temp;
-        temp = nullptr;
         return;
-    }*/
+    }
 }
 
 void JsonParser::addChild(JsonContainer **node, JsonContainer **newContainer)
@@ -282,19 +285,84 @@ JsonContainer* JsonParser::findElementByName(JsonContainer *node, std::string na
     return nullptr;
 }
 
+void JsonParser::findElementsByName(JsonContainer *node, std::list<JsonContainer*> &foundedList, std::string name)
+{
+    JsonContainer *tempPtr = node;
+    for(; tempPtr != nullptr; tempPtr = tempPtr->next)
+    {
+        if(tempPtr->oneCell.first == name)
+            foundedList.push_back(tempPtr);
+
+        if(tempPtr->cellType == OBJECT)
+            this->findElementsByName(tempPtr->down, foundedList, name);
+    }
+}
+
 std::list<JsonContainer*> JsonParser::findElementsByName(std::string name)
+{
+    std::list<JsonContainer*> foundedElements;
+    this->findElementsByName(root, foundedElements, name);
+    return foundedElements;
+}
+
+JsonContainer* JsonParser::findElementByTemplate(std::string templateString)
 {
 
 }
+
+std::list<JsonContainer*> JsonParser::findElementsByTemplate(std::string templateString)
+{
+
+}
+
+//--------------------------------------GET JSON DATA---------------------------------------------
 
 JsonParser getJsonData(std::string filename)
 {
     std::ifstream fin;
     fin.open(filename.c_str());
     if(fin.is_open() == false)
-        throw SIEM_errors::hander_error("Cannot open file: " + filename);
+        throw SIEM_errors::SIEMException("Cannot open file: " + filename);
 
     JsonParser return_parser;
     return_parser.getJson(fin);
     return return_parser;
+}
+
+
+//------------------------------------TYPE JSON NODE RESOLVER--------------------------------------
+
+JSONNodeTypeResolver::JSONNodeTypeResolver()
+{
+
+}
+
+JSONNodeTypeResolver& JSONNodeTypeResolver::getInstance()
+{
+    static JSONNodeTypeResolver instance;
+    return instance;
+}
+
+typeCell JSONNodeTypeResolver::getNodeType(const std::string &nodeName)
+{
+    if(nodeName == "object")
+        return OBJECT;
+    else if(nodeName == "array")
+        return ARRAY;
+    else if(nodeName == "string")
+        return STRING;
+    else
+        return NONE;
+}
+
+std::string JSONNodeTypeResolver::getNodeName(const typeCell &typeNode)
+{
+    if(typeNode == OBJECT)
+        return OBJECT_NODE;
+    else if(typeNode == ARRAY)
+        return ARRAY_NODE;
+    else if(typeNode == STRING)
+        return STRING_NODE;
+    else
+        return NONE_NODE;
 }

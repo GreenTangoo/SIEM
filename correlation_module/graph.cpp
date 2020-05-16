@@ -21,8 +21,25 @@ void Graph::initializeRecognitionMethods()
     all_symptoms->addSymptomsChecker(initializeAccountAccessSymptoms());
     all_symptoms->addSymptomsChecker(initializeFilesManipulationSymptoms());
     all_symptoms->addSymptomsChecker(initializeProccessManipulationSymptoms());
+    all_symptoms->addSymptomsChecker(initializeCustomSymptoms());
 
     initializedVec = all_symptoms;
+}
+
+std::vector<symptoms_space::SymptomImpl*> Graph::initializeCustomSymptoms()
+{
+    std::vector<symptoms_space::SymptomImpl*> vectorCustomSymtoms;
+    DescriptorConfig userConfigDescriptor;
+
+    std::vector<OneConfigCell> configs = userConfigDescriptor.getDescription("corr.json");
+
+    for(size_t i(0); i < configs.size(); i++)
+    {
+        CustomSymptoms *customSymp = new CustomSymptoms(configs[i]);
+        vectorCustomSymtoms.push_back(customSymp);
+    }
+
+    return vectorCustomSymtoms;
 }
 
 std::vector<symptoms_space::SymptomImpl*> Graph::initializeDiscoveredSymptoms()
@@ -42,9 +59,11 @@ std::vector<symptoms_space::SymptomImpl*> Graph::initializeAccountAccessSymptoms
     std::vector<symptoms_space::SymptomImpl*> vector_account_symptoms;
     UserLoginSymptoms *usr_log_symp = new UserLoginSymptoms("auth.json");
     LoginRootSymptoms *log_root_symp = new LoginRootSymptoms("auth.json");
+    ValidAccountsSymptoms *validAccountsSympPtr = new ValidAccountsSymptoms("auth.json");
 
     vector_account_symptoms.push_back(usr_log_symp);
     vector_account_symptoms.push_back(log_root_symp);
+    vector_account_symptoms.push_back(validAccountsSympPtr);
 
     return vector_account_symptoms;
 }

@@ -105,4 +105,6 @@ std::string CategoryResolver::getCategoryName(symptomCategory symptomCategoryVar
         return std::string("fallback_channels");
     else if(symptomCategoryVar == standart_application_layer_protocol)
         return std::string("standart_application_layer_protocol");
+    else if(symptomCategoryVar == custom)
+        return std::string("custom");
 }

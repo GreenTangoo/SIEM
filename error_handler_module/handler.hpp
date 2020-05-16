@@ -6,14 +6,14 @@
 
 namespace SIEM_errors
 {
-    class hander_error : std::exception
+    class SIEMException : std::exception
     {
     protected:
         std::string error_msg;
     public:
-        explicit hander_error(const char *str);
-        explicit hander_error(const std::string &str);
-        virtual ~hander_error() noexcept;
+        explicit SIEMException(const char *str);
+        explicit SIEMException(const std::string &str);
+        virtual ~SIEMException() noexcept;
         virtual const char* what() const noexcept;
     };
 }

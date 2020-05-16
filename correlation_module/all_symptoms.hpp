@@ -10,6 +10,8 @@
 
 #include "AccessManagment/account_access/user_login_symptoms.hpp"
 #include "AccessManagment/account_access/login_root_symptoms.hpp"
+#include "AccessManagment/account_access/valid_accounts.hpp"
+
 
 #include "SystemManagment/files_manipulation/data_collection_symptoms.hpp"
 #include "SystemManagment/files_manipulation/account_discovery_symptoms.hpp"
@@ -19,9 +21,13 @@
 #include "SystemManagment/proccess_manipulation/system_network_conn_discovery_symptoms.hpp"
 #include "SystemManagment/proccess_manipulation/data_compressed_symptoms.hpp"
 
+#include "CustomCorrelation/config_descriptor.hpp"
+#include "CustomCorrelation/custom_correlator.hpp"
+
 using namespace symptoms_space::discovery;
 using namespace symptoms_space::account_access;
 using namespace symptoms_space::files_manipulation;
 using namespace symptoms_space::proccess_manipulation;
+using namespace symptoms_space::custom_correlation;
 
 #endif

@@ -8,7 +8,7 @@
 
 namespace jsoner_space
 {
-    enum typeCell {OBJECT = '}', ARRAY = ']', STRING, END_OBJECT = '{', END_ARRAY = '[', NONE};
+    enum typeCell {OBJECT = '{', ARRAY = '[', STRING, END_OBJECT = '}', END_ARRAY = ']', NONE};
     struct JsonContainer
     {
         std::pair<std::string, std::string> oneCell;
@@ -36,6 +36,12 @@ namespace jsoner_space
             oneCell.second = secondStr;
             this->cellType = cellType;
         }
+        ~JsonContainer()
+        {
+            cellType = NONE;
+            oneCell.first = "";
+            oneCell.second = "";
+        }
         void setData(std::string firstStr, std::string secondStr, typeCell cellType)
         {
             oneCell.first = firstStr;
@@ -54,6 +60,7 @@ namespace jsoner_space
         void addChild(JsonContainer **node, JsonContainer **newContainer);
         void addNeighbord(JsonContainer **node, JsonContainer **newContainer);
         JsonContainer* findElementByName(JsonContainer *node, std::string name);
+        void findElementsByName(JsonContainer *node, std::list<JsonContainer*> &foundedList, std::string name);
         typeCell getType(std::string sourceStr) const;
         void getFromStream(std::istream &in, JsonContainer **node);
         void putToStream(std::ostream &out, JsonContainer **node, int32_t offset);
@@ -70,6 +77,20 @@ namespace jsoner_space
         void setJson(std::ostream &output_stream);
         JsonContainer* findElementByName(std::string name);
         std::list<JsonContainer*> findElementsByName(std::string name);
+        JsonContainer* findElementByTemplate(std::string templateString);
+        std::list<JsonContainer*> findElementsByTemplate(std::string templateString);
+    };
+
+    class JSONNodeTypeResolver // SINGLETON
+    {
+    public:
+        JSONNodeTypeResolver();
+        JSONNodeTypeResolver(const JSONNodeTypeResolver &other) = delete;
+        JSONNodeTypeResolver(JSONNodeTypeResolver &&other) = delete;
+        JSONNodeTypeResolver operator=(const JSONNodeTypeResolver &other) = delete;
+        static JSONNodeTypeResolver& getInstance();
+        typeCell getNodeType(const std::string &nodeName);
+        std::string getNodeName(const typeCell &typeNode);
     };
 }
 

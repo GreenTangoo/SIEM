@@ -1,5 +1,3 @@
-#include <QApplication>
-
 #include <iostream>
 #include <fstream>
 #include <typeinfo>
@@ -8,6 +6,7 @@
 
 #include "correlation_module/graph.h"
 #include "correlation_module/sub_graph.h"
+#include "correlation_module/CustomCorrelation/config_descriptor.hpp"
 #include "prediction_module/predictor.hpp"
 #include "aggregator/time_class/parse_time.hpp"
 
@@ -64,11 +63,21 @@ int main(int argc, char **argv)
             fout << "\n";
         }
     }
-    catch(const SIEM_errors::hander_error &obj)
+    catch(const SIEM_errors::SIEMException &ex)
     {
-        std::cout << obj.what() << std::endl;
+        std::cout << "Exception catched: " << ex.what() << std::endl;
     }
 
+
+    /*jsoner_space::JsonParser parser = getJsonData("auth.json");
+    std::list<jsoner_space::JsonContainer*> listContainter = parser.findElementsByName("users");
+
+    std::cout << listContainter.size() << std::endl;
+    std::cout << "Hello world"  << std::endl;*/
+
+    /*symptoms_space::DescriptorConfig obj;
+    std::vector<symptoms_space::OneConfigCell> vecDesc = obj.getDescription("corr.json");
+    std::cout << "" << std::endl;*/
     return 0;
 }
 

@@ -1,0 +1,25 @@
+{
+  "config":{
+    "config-path":"test.json",
+    "type-config":"amount",
+    "type-node":"object",
+    "key-value":"[ip_addr]",
+    "high-threshold":"150"
+  },
+  "config":{
+    "config-path":"test.json",
+    "type-config":"found",
+    "type-node":"object",
+    "key-value":"Denis|1",
+    "inner-condition":{
+      "type-node":"string",
+      "key-value":"action|0",
+      "parameter-value":"login|0",
+      "and-condition":{
+        "type-node":"string",
+        "key-value":"action|0",
+        "parameter-value":"logout|0"
+      }
+    }
+  }
+}

@@ -1,9 +1,6 @@
 #include "directory_discovery_symptoms.hpp"
 
-
 using namespace symptoms_space::discovery;
-
-
 
 
 DirectoryDiscoverySymptoms::DirectoryDiscoverySymptoms(std::string filename) : jsonFilename(filename)

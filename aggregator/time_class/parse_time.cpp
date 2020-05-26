@@ -138,3 +138,81 @@ int data_time_space::compare(const data_time_space::Time &first, const data_time
 
     return -1;
 }
+
+std::string data_time_space::getMonthString(data_time_space::monthType monthTypeRepr)
+{
+    std::string convertedMonth;
+
+    switch(monthTypeRepr)
+    {
+    case JANUARY_NUM:
+        convertedMonth = "January";
+        break;
+    case FEBRUARY_NUM:
+        convertedMonth = "February";
+        break;
+    case MARCH_NUM:
+        convertedMonth = "March";
+        break;
+    case APRIL_NUM:
+        convertedMonth = "April";
+        break;
+    case MAY_NUM:
+        convertedMonth = "May";
+        break;
+    case JUNE_NUM:
+        convertedMonth = "June";
+        break;
+    case JULY_NUM:
+        convertedMonth = "July";
+        break;
+    case AUGUST_NUM:
+        convertedMonth = "August";
+        break;
+    case SEPTEMBER_NUM:
+        convertedMonth = "September";
+        break;
+    case OCTOBER_NUM:
+        convertedMonth = "October";
+        break;
+    case NOVEMBER_NUM:
+        convertedMonth = "November";
+        break;
+    case DECEMBER_NUM:
+        convertedMonth = "December";
+        break;
+    default:
+        convertedMonth = "Incorrect num";
+    }
+
+    return convertedMonth;
+}
+
+data_time_space::monthType data_time_space::getMonthType(std::string monthString)
+{
+    if(monthString == "January")
+        return JANUARY_NUM;
+    else if(monthString == "February")
+        return FEBRUARY_NUM;
+    else if(monthString == "March")
+        return MARCH_NUM;
+    else if(monthString == "April")
+        return APRIL_NUM;
+    else if(monthString == "May")
+        return MAY_NUM;
+    else if(monthString == "June")
+        return JUNE_NUM;
+    else if(monthString == "July")
+        return JULY_NUM;
+    else if(monthString == "August")
+        return AUGUST_NUM;
+    else if(monthString == "September")
+        return SEPTEMBER_NUM;
+    else if(monthString == "October")
+        return OCTOBER_NUM;
+    else if(monthString == "November")
+        return NOVEMBER_NUM;
+    else if(monthString == "December")
+        return DECEMBER_NUM;
+    else return INCORRECT_NUM;
+}

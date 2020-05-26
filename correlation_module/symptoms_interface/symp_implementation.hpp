@@ -3,6 +3,8 @@
 
 #include "main_symp_interface.hpp"
 
+using namespace json_space;
+
 namespace symptoms_space
 {
     class SymptomImpl : public SymptomInter

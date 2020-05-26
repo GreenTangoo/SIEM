@@ -6,11 +6,13 @@
 
 #include "correlation_module/graph.h"
 #include "correlation_module/sub_graph.h"
-#include "correlation_module/CustomCorrelation/config_descriptor.hpp"
+#include "config_descriptor.hpp"
 #include "prediction_module/predictor.hpp"
 #include "aggregator/time_class/parse_time.hpp"
-
 #include "aggregator/parser_json/json.hpp"
+
+
+#include "aggregator/aggregation_module/ApacheAggregation/apache_aggr.hpp"
 
 using namespace topology_space;
 
@@ -28,7 +30,7 @@ void displayPrediction(const analysis::prediction &obj, std::ofstream &fout)
 
 int main(int argc, char **argv)
 {
-    try
+    /*try
     {
         std::ofstream fout;
         fout.open("result.txt", std::ios_base::out);
@@ -66,18 +68,11 @@ int main(int argc, char **argv)
     catch(const SIEM_errors::SIEMException &ex)
     {
         std::cout << "Exception catched: " << ex.what() << std::endl;
-    }
+    }*/
 
+    aggregator_space::ApacheAggregator apacheOjb("access.log", "test.json");
+    apacheOjb.getInformationFromLogs();
 
-    /*jsoner_space::JsonParser parser = getJsonData("auth.json");
-    std::list<jsoner_space::JsonContainer*> listContainter = parser.findElementsByName("users");
-
-    std::cout << listContainter.size() << std::endl;
-    std::cout << "Hello world"  << std::endl;*/
-
-    /*symptoms_space::DescriptorConfig obj;
-    std::vector<symptoms_space::OneConfigCell> vecDesc = obj.getDescription("corr.json");
-    std::cout << "" << std::endl;*/
     return 0;
 }
 

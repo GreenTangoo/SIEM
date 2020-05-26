@@ -19,11 +19,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    aggregator/aggregation_module/ApacheAggregation/apache_aggr.cpp \
+    aggregator/aggregation_module/CustomAggregation/custom_aggregator.cpp \
+    aggregator/aggregation_module/FilesManipulation/files_manipulation_aggr.cpp \
+    aggregator/aggregation_module/IptablesAggregation/iptables_aggr.cpp \
+    aggregator/aggregation_module/ProcessesManipulation/processes_manupulation_aggr.cpp \
+    aggregator/aggregation_module/SystemAuthorizationAggregation/system_auth_aggr.cpp \
+    aggregator/aggregation_module/aggregator_interface/aggr_interface_implementation.cpp \
     aggregator/parser_json/json.cpp \
     aggregator/parser_txt/parser.cpp \
+    config_descriptor.cpp \
     correlation_module/AccessManagment/account_access/user_login_symptoms.cpp \
     correlation_module/AccessManagment/account_access/valid_accounts.cpp \
-    correlation_module/CustomCorrelation/config_descriptor.cpp \
     correlation_module/CustomCorrelation/custom_correlator.cpp \
     correlation_module/graph.cpp \
     correlation_module/recognition_categories_main.cpp \
@@ -47,11 +54,19 @@ SOURCES += \
     correlation_module/all_categories.cpp \
 
 HEADERS += \
+    aggregator/aggregation_module/ApacheAggregation/apache_aggr.hpp \
+    aggregator/aggregation_module/CustomAggregation/custom_aggregator.hpp \
+    aggregator/aggregation_module/FilesManipulation/files_manipulation_aggr.hpp \
+    aggregator/aggregation_module/IptablesAggregation/iptables_aggr.hpp \
+    aggregator/aggregation_module/ProcessesManipulation/processes_manupulation_aggr.hpp \
+    aggregator/aggregation_module/SystemAuthorizationAggregation/system_auth_aggr.hpp \
+    aggregator/aggregation_module/aggregator_interface/aggr_interface_implementation.hpp \
+    aggregator/aggregation_module/aggregator_interface/main_aggr_interface.hpp \
     aggregator/parser_json/json.hpp \
     aggregator/parser_txt/parser.hpp \
+    config_descriptor.hpp \
     correlation_module/AccessManagment/account_access/user_login_symptoms.hpp \
     correlation_module/AccessManagment/account_access/valid_accounts.hpp \
-    correlation_module/CustomCorrelation/config_descriptor.hpp \
     correlation_module/CustomCorrelation/custom_correlator.hpp \
     correlation_module/graph.h \
     correlation_module/recognition_categories_main.h \
@@ -68,6 +83,7 @@ HEADERS += \
     correlation_module/SystemManagment/files_manipulation/data_collection_symptoms.hpp \
     correlation_module/symptoms_interface/symp_implementation.hpp \
     error_handler_module/handler.hpp \
+    logfile_defines.hpp \
     prediction_module/predictor.hpp \
     aggregator/time_class/parse_time.hpp \
     correlation_module/SystemManagment/proccess_manipulation/command_line_interface_symptoms.hpp \

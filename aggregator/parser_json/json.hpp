@@ -2,83 +2,90 @@
 #define JSON_H
 
 #include <fstream>
+#include <vector>
+#include <memory>
 
 #include "../parser_txt/parser.hpp"
 #include "../../error_handler_module/handler.hpp"
 
-namespace jsoner_space
+namespace json_space
 {
-    enum typeCell {OBJECT = '{', ARRAY = '[', STRING, END_OBJECT = '}', END_ARRAY = ']', NONE};
+    enum typeNodeJSON {OBJECT = '{', ARRAY = '[', END_OBJECT = '}', END_ARRAY = ']', STRING, ARRAY_ELEMENT, NONE};
+
     struct JsonContainer
     {
-        std::pair<std::string, std::string> oneCell;
-        typeCell cellType;
+        std::pair<std::string, std::string> keyValue;
+        typeNodeJSON typeNode;
 
-        JsonContainer *next;
-        JsonContainer *prev;
-        JsonContainer *down;
-        JsonContainer *up;
+        std::shared_ptr<JsonContainer> nextNode;
+        std::shared_ptr<JsonContainer> prevNode;
+        std::shared_ptr<JsonContainer> parentNode;
+        std::shared_ptr<JsonContainer> childNode;
 
-        explicit JsonContainer()
-        {
-            next = prev = down = up = nullptr;
-            cellType = NONE;
-        }
-        explicit JsonContainer(typeCell cellType)
-        {
-            next = prev = down = up = nullptr;
-            this->cellType = cellType;
-        }
-        explicit JsonContainer(std::string firstStr, std::string secondStr, typeCell cellType)
-        {
-            next = prev = down = up = nullptr;
-            oneCell.first = firstStr;
-            oneCell.second = secondStr;
-            this->cellType = cellType;
-        }
-        ~JsonContainer()
-        {
-            cellType = NONE;
-            oneCell.first = "";
-            oneCell.second = "";
-        }
-        void setData(std::string firstStr, std::string secondStr, typeCell cellType)
-        {
-            oneCell.first = firstStr;
-            oneCell.second = secondStr;
-            this->cellType = cellType;
-        }
+        JsonContainer();
+        JsonContainer(const JsonContainer &other);
+        JsonContainer(JsonContainer &&other);
+        JsonContainer& operator=(const JsonContainer &other);
+
+        void recursiveCopyElements(JsonContainer &destObj, const JsonContainer &srcObj);
+        void moveElements(JsonContainer &destObj, JsonContainer &srcObj);
+
     };
 
-
-    class JsonParser
+    class JsonObject
     {
     private:
-        JsonContainer *root;
+        std::shared_ptr<JsonContainer> rootNode;
     private:
-        void eraseJsonContainer(JsonContainer **root);
-        void addChild(JsonContainer **node, JsonContainer **newContainer);
-        void addNeighbord(JsonContainer **node, JsonContainer **newContainer);
-        JsonContainer* findElementByName(JsonContainer *node, std::string name);
-        void findElementsByName(JsonContainer *node, std::list<JsonContainer*> &foundedList, std::string name);
-        typeCell getType(std::string sourceStr) const;
-        void getFromStream(std::istream &in, JsonContainer **node);
-        void putToStream(std::ostream &out, JsonContainer **node, int32_t offset);
-        void copyElements(JsonContainer **node, const JsonContainer *other);
-        void deleteNoneElements(JsonContainer **node);
+        std::shared_ptr<JsonContainer> findByName(std::shared_ptr<JsonContainer> node, const std::string keyName);
+        std::vector<std::shared_ptr<JsonContainer>> findsByName(std::shared_ptr<JsonContainer> node, const std::string keyName);
+        void addChild(std::shared_ptr<JsonContainer>node, JsonContainer &childNode);
+        void addNeighbor(std::shared_ptr<JsonContainer> node, JsonContainer &neighborNode);
+        void clearEmptyJsonNodes(std::shared_ptr<JsonContainer> node);
     public:
-        JsonParser();
-        JsonParser(const JsonParser &other);
-        JsonParser(JsonParser &&other);
-        JsonParser(JsonContainer *other);
-        ~JsonParser();
-        JsonParser& operator=(const JsonParser &other);
-        void getJson(std::istream &input_stream);
-        void setJson(std::ostream &output_stream);
-        JsonContainer* findElementByName(std::string name);
-        std::list<JsonContainer*> findElementsByName(std::string name);
-        JsonContainer* findElementByTemplate(std::string templateString);
-        std::list<JsonContainer*> findElementsByTemplate(std::string templateString);
+        JsonObject();
+        JsonObject(const JsonContainer &otherContainer);
+        JsonObject(const JsonObject &other);
+        JsonObject(JsonObject &&other);
+        ~JsonObject();
+        JsonObject& operator=(const JsonObject &other);
+        /*Construct json from program*/
+        void setContainer(const JsonContainer &otherContainer);
+        void addArray(const std::string &keyNode, const std::vector<std::string> &values, const std::string &parentName);
+        void addEmptyNode(const std::string &keyNode, const std::string &parentName);
+        void addString(const std::pair<std::string, std::string> &keyValue, const std::string &paraneName);
+        void clearJson();
+        /*Construct json from file*/
+        void getJson(std::istream &in);
+        void setJson(std::ostream &out, bool formatOut = false);
+        std::shared_ptr<JsonContainer> findElementByName(const std::string keyName);
+        std::vector<std::shared_ptr<JsonContainer>> findElementsByName(const std::string keyName);
+        std::shared_ptr<JsonContainer> findElementByTemplate(const std::string templateString);
+        std::vector<std::shared_ptr<JsonContainer>> findElementsByTemplate(const std::string templateString);
+    };
+
+    class JsonStreamParser // SINGLETON
+    {
+    private:
+        JsonStreamParser();
+        JsonStreamParser(const JsonStreamParser &other) = delete;
+        JsonStreamParser(JsonStreamParser &&other) = delete;
+        JsonStreamParser& operator=(const JsonStreamParser &other) = delete;
+        JsonStreamParser& operator=(JsonStreamParser &&other) = delete;
+        ~JsonStreamParser();
+        std::string getUntilSymbol(std::istream &in, parser_string_space::symbolType delimeterSymbol);
+        void fillContainer(JsonContainer &node, const std::string &first, const std::string &second, const typeNodeJSON nodeType);
+        std::shared_ptr<JsonContainer> getNode(std::istream &in, std::shared_ptr<JsonContainer> parentNode);
+        std::shared_ptr<JsonContainer> getArrayElement(std::istream &in, std::shared_ptr<JsonContainer> parentNode);
+        void putNode(std::ostream &out, std::shared_ptr<JsonContainer> node);
+        void putArrayElement(std::ostream &out, std::shared_ptr<JsonContainer> node);
+        void putNodeFormat(std::ostream &out, std::shared_ptr<JsonContainer> node, size_t offset);
+        void putArrayElementFormat(std::ostream &out, std::shared_ptr<JsonContainer> node, size_t offset);
+    public:
+        static JsonStreamParser& getInstance();
+        std::shared_ptr<JsonContainer> getFromStream(std::istream &in, std::shared_ptr<JsonContainer> parentNode);
+        void putToStream(std::ostream &out, std::shared_ptr<JsonContainer> jsonNode);
+        void putToStreamFormat(std::ostream &out, std::shared_ptr<JsonContainer> jsonNode, size_t offset = 0);
     };
 
     class JSONNodeTypeResolver // SINGLETON
@@ -89,11 +96,11 @@ namespace jsoner_space
         JSONNodeTypeResolver(JSONNodeTypeResolver &&other) = delete;
         JSONNodeTypeResolver operator=(const JSONNodeTypeResolver &other) = delete;
         static JSONNodeTypeResolver& getInstance();
-        typeCell getNodeType(const std::string &nodeName);
-        std::string getNodeName(const typeCell &typeNode);
+        typeNodeJSON getNodeType(const std::string &nodeName);
+        std::string getNodeName(const typeNodeJSON &typeNode);
     };
 }
 
-jsoner_space::JsonParser getJsonData(std::string filename);
+json_space::JsonObject getJsonData(std::string jsonFilename);
 
 #endif

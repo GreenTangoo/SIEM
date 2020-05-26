@@ -21,7 +21,7 @@
 #include "SystemManagment/proccess_manipulation/system_network_conn_discovery_symptoms.hpp"
 #include "SystemManagment/proccess_manipulation/data_compressed_symptoms.hpp"
 
-#include "CustomCorrelation/config_descriptor.hpp"
+#include "../config_descriptor.hpp"
 #include "CustomCorrelation/custom_correlator.hpp"
 
 using namespace symptoms_space::discovery;

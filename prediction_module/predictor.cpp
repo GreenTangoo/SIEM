@@ -53,22 +53,22 @@ std::vector<std::pair<std::string, std::vector<std::string>>> analysis::predicti
 /*This method gets attack vectors names and it symptoms from json file*/
 void analysis::prediction::fillSymptomsName()
 {
-    jsoner_space::JsonParser parser = getJsonData("vector_attacks.json");
+    json_space::JsonObject parser = getJsonData("vector_attacks.json");
 
-    jsoner_space::JsonContainer *container = parser.findElementByName("attacks");
+    std::shared_ptr<JsonContainer> container = parser.findElementByName("attacks");
 
-    container = container->down;
+    container = container->childNode;
     /*Moving through the attacks type vector*/
-    for(; container != nullptr; container = container->next)
+    for(; container != nullptr; container = container->nextNode)
     {
         std::vector<std::string> arr_symp;
-        jsoner_space::JsonContainer *container_array_symp = container->down->down;
+        std::shared_ptr<JsonContainer> container_array_symp = container->childNode->childNode;
         /*Moving through the symptoms of attack vector(like APT1)*/
-        for(; container_array_symp != nullptr; container_array_symp = container_array_symp->next)
-            arr_symp.push_back(container_array_symp->oneCell.second);
+        for(; container_array_symp != nullptr; container_array_symp = container_array_symp->nextNode)
+            arr_symp.push_back(container_array_symp->keyValue.second);
 
         std::sort(arr_symp.begin(), arr_symp.end());
-        std::pair<std::string, std::vector<std::string>> one_theory_vector = std::make_pair(container->oneCell.first, arr_symp);
+        std::pair<std::string, std::vector<std::string>> one_theory_vector = std::make_pair(container->keyValue.first, arr_symp);
 
         file_get_symptoms.push_back(one_theory_vector);
     }

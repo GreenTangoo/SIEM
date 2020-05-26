@@ -17,16 +17,20 @@ bool DirectoryDiscoverySymptoms::checkSymptoms()
 {
     parser = getJsonData(jsonFilename);
 
-    jsoner_space::JsonContainer *container = parser.findElementByName("requests");
-    container = container->down;
-    if(container->cellType == jsoner_space::NONE)
+    std::shared_ptr<JsonContainer> container = parser.findElementByName("requests");
+
+    if((container == nullptr) || (container->childNode == nullptr))
+        return false;
+
+    container = container->childNode;
+    if(container->typeNode == json_space::NONE)
         return false;
 
     std::map<std::string, int32_t> ipAmountReq;
-    for(; container != nullptr; container = container->next)
+    for(; container != nullptr; container = container->nextNode)
     {
-        std::string responseCode = container->down->next->oneCell.second;
-        std::string ipAddr = container->oneCell.first;
+        std::string responseCode = container->childNode->nextNode->keyValue.second;
+        std::string ipAddr = container->keyValue.first;
 
         if(responseCode == "404")
             ipAmountReq[ipAddr]++;
@@ -36,8 +40,8 @@ bool DirectoryDiscoverySymptoms::checkSymptoms()
         {
             symptoms_space::Data data_obj;
             data_obj.mainData.push_back(std::pair<std::string, int16_t>(it->first, 1));
-            jsoner_space::JsonContainer *anchor = parser.findElementByName(it->first);
-            data_obj.time = data_time_space::Time(anchor->down->oneCell.second);
+            std::shared_ptr<JsonContainer> anchor = parser.findElementByName(it->first);
+            data_obj.time = data_time_space::Time(anchor->childNode->keyValue.second);
             data_obj.isUsed = false;
             this->allDataFromSymptom.push_back(data_obj);
         }

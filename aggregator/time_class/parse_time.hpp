@@ -5,6 +5,10 @@
 
 namespace data_time_space
 {
+    enum monthType{ JANUARY_NUM = 1, FEBRUARY_NUM = 2, MARCH_NUM = 3, APRIL_NUM = 4, MAY_NUM = 5,
+         JUNE_NUM = 6, JULY_NUM = 7, AUGUST_NUM = 8, SEPTEMBER_NUM = 9, OCTOBER_NUM = 10,
+         NOVEMBER_NUM = 11, DECEMBER_NUM = 12, INCORRECT_NUM = 13};
+
     class Time
     {
     private:
@@ -31,6 +35,9 @@ namespace data_time_space
         int getMonth() const ;
         int getDay() const ;
     };
+
+    monthType getMonthType(std::string monthString);
+    std::string getMonthString(monthType monthTypeRepresentation);
 }
 
 #endif

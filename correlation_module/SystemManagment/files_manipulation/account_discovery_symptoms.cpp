@@ -17,23 +17,28 @@ bool AccountDiscoverySymptoms::checkSymptoms()
 {
     parser = getJsonData(jsonFilename);
 
-    jsoner_space::JsonContainer *container = parser.findElementByName("users");
-    container = container->down;
-    if(container->cellType == jsoner_space::NONE)
+    std::shared_ptr<JsonContainer> container = parser.findElementByName("users");
+
+    if((container == nullptr) || (container->childNode == nullptr))
         return false;
-    for(; container != nullptr; container = container->next)
+
+    container = container->childNode;
+    if(container->typeNode == json_space::NONE)
+        return false;
+
+    for(; container != nullptr; container = container->nextNode)
     {
-        std::string openedFilename = container->down->oneCell.first;
+        std::string openedFilename = container->childNode->keyValue.first;
 
         if(openedFilename == "passwd")
         {
-            std::string name = container->oneCell.first;
-            std::string filename = container->down->oneCell.first;
-            std::string actinoPrefix = container->down->down->next->oneCell.first;
-            std::string action = container->down->down->next->oneCell.second;
-            std::string privilegesPrefix = container->down->down->next->next->oneCell.first;
-            std::string privileges = container->down->down->next->next->oneCell.second;
-            std::string time = container->down->down->oneCell.second;
+            std::string name = container->keyValue.first;
+            std::string filename = container->childNode->keyValue.first;
+            std::string actinoPrefix = container->childNode->childNode->nextNode->keyValue.first;
+            std::string action = container->childNode->childNode->nextNode->keyValue.second;
+            std::string privilegesPrefix = container->childNode->childNode->nextNode->nextNode->keyValue.first;
+            std::string privileges = container->childNode->childNode->nextNode->nextNode->keyValue.second;
+            std::string time = container->childNode->childNode->keyValue.second;
 
             symptoms_space::Data dataObj;
             dataObj.mainData.push_back(std::pair<std::string, int16_t>(name, 1)); // Get name

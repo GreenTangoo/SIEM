@@ -17,23 +17,28 @@ bool CommandLineInterfaceSymptoms::checkSymptoms()
 {
     parser = getJsonData(jsonFilename);
 
-    jsoner_space::JsonContainer *container = parser.findElementByName("users");
-    container = container->down;
-    if(container->cellType == jsoner_space::NONE)
+    std::shared_ptr<JsonContainer> container = parser.findElementByName("users");
+
+    if((container == nullptr) || (container->childNode == nullptr))
         return false;
-    for(; container != nullptr; container = container->next)
+
+    container = container->childNode;
+    if(container->typeNode == json_space::NONE)
+        return false;
+
+    for(; container != nullptr; container = container->nextNode)
     {
-        std::string processName = container->down->oneCell.first;
-        std::string processAction = container->down->down->next->oneCell.second;
+        std::string processName = container->childNode->keyValue.first;
+        std::string processAction = container->childNode->childNode->nextNode->keyValue.second;
 
         if((processName == "bash") &&
                 (processAction == "start"))
         {
-            std::string username = container->oneCell.first;
-            std::string actionPrefix = container->down->down->next->oneCell.first;
-            std::string privilegesPrefix = container->down->down->next->next->oneCell.first;
-            std::string privileges = container->down->down->next->next->oneCell.second;
-            std::string time = container->down->down->oneCell.second;
+            std::string username = container->keyValue.first;
+            std::string actionPrefix = container->childNode->childNode->nextNode->keyValue.first;
+            std::string privilegesPrefix = container->childNode->childNode->nextNode->nextNode->keyValue.first;
+            std::string privileges = container->childNode->childNode->nextNode->nextNode->keyValue.second;
+            std::string time = container->childNode->childNode->keyValue.second;
 
             symptoms_space::Data dataObj;
             dataObj.mainData.push_back(std::pair<std::string, int16_t>(username, 1)); // Get name

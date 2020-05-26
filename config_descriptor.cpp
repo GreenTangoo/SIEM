@@ -1,7 +1,7 @@
 #include "config_descriptor.hpp"
 
 
-using namespace symptoms_space;
+using namespace config_space;
 
 OneConfigCell::OneConfigCell()
 {
@@ -90,11 +90,11 @@ std::vector<OneConfigCell> DescriptorConfig::getDescription(std::string configFi
     configFile.clear();
 
     parser = getJsonData(configFilename);
-    std::list<jsoner_space::JsonContainer*> configs = parser.findElementsByName("config");
+    std::vector<std::shared_ptr<JsonContainer>> configs = parser.findElementsByName("config");
 
-    for(std::list<jsoner_space::JsonContainer*>::iterator it = configs.begin(); it != configs.end(); it++)
+    for(std::vector<std::shared_ptr<JsonContainer>>::iterator it = configs.begin(); it != configs.end(); it++)
     {
-        std::shared_ptr<OneConfigCell> descriptedCellPtr = getFilledCell((*it)->down);
+        std::shared_ptr<OneConfigCell> descriptedCellPtr = getFilledCell((*it)->childNode);
         OneConfigCell descriptedCellObj(*(descriptedCellPtr.get()));
         configFile.push_back(descriptedCellObj);
         descriptedCellPtr.reset();
@@ -103,25 +103,25 @@ std::vector<OneConfigCell> DescriptorConfig::getDescription(std::string configFi
     return configFile;
 }
 
-std::shared_ptr<OneConfigCell> DescriptorConfig::getFilledCell(jsoner_space::JsonContainer *configContainer)
+std::shared_ptr<OneConfigCell> DescriptorConfig::getFilledCell(std::shared_ptr<JsonContainer> configContainer)
 {
     std::shared_ptr<OneConfigCell> oneConfig = std::make_shared<OneConfigCell>();
 
-    for(jsoner_space::JsonContainer *iterPtr = configContainer; iterPtr != nullptr; iterPtr = iterPtr->next)
+    for(std::shared_ptr<JsonContainer> iterPtr = configContainer; iterPtr != nullptr; iterPtr = iterPtr->nextNode)
     {
-        std::string key = iterPtr->oneCell.first;
+        std::string key = iterPtr->keyValue.first;
 
-        if((iterPtr->cellType == jsoner_space::STRING) && isValidKey(key))
+        if((iterPtr->typeNode == json_space::STRING) && isValidKey(key))
         {
-            std::string value = iterPtr->oneCell.second;
+            std::string value = iterPtr->keyValue.second;
             oneConfig->keyValues.push_back(std::pair<std::string, std::string>(key, value));
         }
-        else if((iterPtr->cellType == jsoner_space::OBJECT) && isValidKey(key))
+        else if((iterPtr->typeNode == json_space::OBJECT) && isValidKey(key))
         {
             if(key == INNER_CONDITION)
-                oneConfig->innerCellPtr = getFilledCell(iterPtr->down);
+                oneConfig->innerCellPtr = getFilledCell(iterPtr->childNode);
             else
-                oneConfig->andConditionCellPtr = getFilledCell(iterPtr->down);
+                oneConfig->andConditionCellPtr = getFilledCell(iterPtr->childNode);
         }
         else
         {

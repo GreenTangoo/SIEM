@@ -95,7 +95,7 @@ std::vector<std::pair<std::string, std::string>>::const_iterator CustomSymptoms:
     return foundedIt;
 }
 
-bool CustomSymptoms::foundByConfig(OneConfigCell cellConfig, jsoner_space::JsonParser &parserJson, symptoms_space::Data &dataObj)
+bool CustomSymptoms::foundByConfig(OneConfigCell cellConfig, json_space::JsonObject &parserJson, symptoms_space::Data &dataObj)
 {
     std::vector<std::pair<std::string, std::string>>::const_iterator keyIt =
             foundInVec(cellConfig.keyValues, KEY_VALUE);
@@ -107,7 +107,7 @@ bool CustomSymptoms::foundByConfig(OneConfigCell cellConfig, jsoner_space::JsonP
 
     std::string keyValue = addDataAndPriority(keyIt->second, dataObj);
 
-    jsoner_space::JsonContainer *container = parserJson.findElementByName(keyValue);
+    std::shared_ptr<JsonContainer> container = parserJson.findElementByName(keyValue);
     if(container == nullptr)
     {
         return false;
@@ -121,19 +121,19 @@ bool CustomSymptoms::foundByConfig(OneConfigCell cellConfig, jsoner_space::JsonP
         return false;
     }
 
-    jsoner_space::typeCell typeNode = jsoner_space::JSONNodeTypeResolver::getInstance().getNodeType(typeNodeIt->second);
+    json_space::typeNodeJSON typeNode = json_space::JSONNodeTypeResolver::getInstance().getNodeType(typeNodeIt->second);
 
-    if(container->cellType != typeNode)
+    if(container->typeNode != typeNode)
         return false;
 
-    if(typeNode == jsoner_space::STRING)
+    if(typeNode == json_space::STRING)
     {
         std::vector<std::pair<std::string, std::string>>::const_iterator parameterIt =
                 foundInVec(cellConfig.keyValues, PARAMETER_VALUE);
         if(parameterIt != cellConfig.keyValues.end())
         {
             std::string parameterValue = addDataAndPriority(parameterIt->second, dataObj);
-            if(container->oneCell.second != parameterValue)
+            if(container->keyValue.second != parameterValue)
                 return false;
         }
     }
@@ -141,18 +141,18 @@ bool CustomSymptoms::foundByConfig(OneConfigCell cellConfig, jsoner_space::JsonP
     if(cellConfig.andConditionCellPtr != nullptr)
     {
         OneConfigCell andConditionalConfig(*(cellConfig.andConditionCellPtr.get()));
-        jsoner_space::JsonParser andCondParser(container->up);
+        json_space::JsonObject andCondParser(*(container->parentNode.get()));
         if(foundByConfig(andConditionalConfig, andCondParser, dataObj) == false)
             return false;
     }
 
     if(cellConfig.innerCellPtr != nullptr)
     {
-        if(container->down == nullptr)
+        if(container->childNode == nullptr)
             return false;
 
         OneConfigCell innerConditionalCell(*(cellConfig.innerCellPtr.get()));
-        jsoner_space::JsonParser innerCondParser(container->down);
+        json_space::JsonObject innerCondParser(*(container->childNode.get()));
         if(foundByConfig(innerConditionalCell, innerCondParser, dataObj) == false)
             return false;
     }
@@ -160,7 +160,7 @@ bool CustomSymptoms::foundByConfig(OneConfigCell cellConfig, jsoner_space::JsonP
     return true;
 }
 
-bool CustomSymptoms::amountByConfig(OneConfigCell cellConfig, jsoner_space::JsonParser &parserJson)
+bool CustomSymptoms::amountByConfig(OneConfigCell cellConfig, json_space::JsonObject &parserJson)
 {
 
 }

@@ -17,24 +17,29 @@ bool DataCompressedSymptoms::checkSymptoms()
 {
     parser = getJsonData(jsonFilename);
 
-    jsoner_space::JsonContainer *container = parser.findElementByName("users");
-    container = container->down;
-    if(container->cellType == jsoner_space::NONE)
+    std::shared_ptr<JsonContainer> container = parser.findElementByName("users");
+
+    if((container == nullptr) || (container->childNode == nullptr))
         return false;
-    for(; container->down != nullptr; container->down = container->down->next)
+
+    container = container->childNode;
+    if(container->typeNode == json_space::NONE)
+        return false;
+
+    for(; container->childNode != nullptr; container->childNode = container->childNode->nextNode)
     {
-        std::string processName = container->down->oneCell.first;
-        std::string actionName = container->down->down->next->oneCell.second;
+        std::string processName = container->childNode->keyValue.first;
+        std::string actionName = container->childNode->childNode->nextNode->keyValue.second;
 
         if(((processName == "tar") || (processName == "gzip") || (processName == "7z")) &&
                 (actionName == "start"))
         {
             symptoms_space::Data dataObj;
-            std::string name = container->oneCell.first;
-            std::string actionPrefix = container->down->down->next->oneCell.first;
-            std::string privilegesPrefix = container->down->down->next->next->oneCell.first;
-            std::string privilegesName = container->down->down->next->next->oneCell.second;
-            std::string time = container->down->down->oneCell.second;
+            std::string name = container->keyValue.first;
+            std::string actionPrefix = container->childNode->childNode->nextNode->keyValue.first;
+            std::string privilegesPrefix = container->childNode->childNode->nextNode->nextNode->keyValue.first;
+            std::string privilegesName = container->childNode->childNode->nextNode->nextNode->keyValue.second;
+            std::string time = container->childNode->childNode->keyValue.second;
 
             dataObj.mainData.push_back(std::pair<std::string, int16_t>(name, 1)); // Get name
             dataObj.mainData.push_back(std::pair<std::string, int16_t>(processName, 0)); // Get process name

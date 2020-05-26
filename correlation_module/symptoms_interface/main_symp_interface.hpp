@@ -21,8 +21,8 @@ namespace symptoms_space
     {
     public:
         SymptomInter() = default;
-        SymptomInter(const SymptomInter &other) = delete;
-        SymptomInter(SymptomInter &&other) = default;
+        SymptomInter(const SymptomInter &other) = default;
+        SymptomInter(SymptomInter &&other) = delete;
         virtual ~SymptomInter() = default;
         virtual bool checkSymptoms() = 0;
     };

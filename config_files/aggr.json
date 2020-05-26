@@ -1,0 +1,24 @@
+{
+  "config":{
+    "log-path":"access.log",
+    "result-json":"apache2.json",
+    "parent-node":"requests",
+    "key-regexp":"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}",
+    "type-node":"object",
+    "innect-cell":{
+      "type-node":"string",
+      "key-value":"time",
+      "parameter-regexp":"\d{4}:\d{2}:\d{2}:\d{2}",
+      "and-cell":{
+        "type-node":"string",
+        "key-value":"path",
+        "parameter-regexp":"(?:\s)\/.*(?:\sH)",
+        "and-cell":{
+          "type-node":"string",
+          "key-value":"response code",
+          "parameter-regexp":"(?:\"\s)\d{3}(?:\s)"
+        }
+      }
+    }
+  }
+}

@@ -7,8 +7,8 @@
 #include <iterator>
 #include <memory>
 
-#include "../../aggregator/parser_json/json.hpp"
-#include "../all_categories.hpp"
+#include "aggregator/parser_json/json.hpp"
+#include "correlation_module/all_categories.hpp"
 
 #define CONFIG_PATH "config-path"
 #define TYPE_CONFIG "type-config"
@@ -19,7 +19,9 @@
 #define AND_CONDITION "and-condition"
 #define INNER_CONDITION "inner-condition"
 
-namespace symptoms_space
+using namespace json_space;
+
+namespace config_space
 {
     struct OneConfigCell
     {
@@ -38,9 +40,9 @@ namespace symptoms_space
     {
     private:
         std::vector<OneConfigCell> configFile;
-        jsoner_space::JsonParser parser;
+        json_space::JsonObject parser;
     private:
-        std::shared_ptr<OneConfigCell> getFilledCell(jsoner_space::JsonContainer *configContainer);
+        std::shared_ptr<OneConfigCell> getFilledCell(std::shared_ptr<JsonContainer> configContainer);
         bool isValidKey(std::string key);
     public:
         DescriptorConfig();

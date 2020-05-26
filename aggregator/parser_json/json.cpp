@@ -1,336 +1,630 @@
 #include "json.hpp"
 
-using namespace jsoner_space;
+using namespace json_space;
+using namespace parser_string_space;
+
 
 #define ARRAY_NODE "array"
 #define OBJECT_NODE "object"
 #define STRING_NODE "string"
 #define NONE_NODE ""
 
-JsonParser::JsonParser()
+/*----------------------------------JSON CONTAINER--------------------------------*/
+
+JsonContainer::JsonContainer()
 {
-    root = new JsonContainer(OBJECT);
+    typeNode = NONE;
 }
 
-JsonParser::JsonParser(const JsonParser &other)
+JsonContainer::JsonContainer(const JsonContainer &other)
 {
-    root = new JsonContainer(OBJECT);
-    JsonContainer *child = new JsonContainer;
-    addChild(&root, &child);
-    copyElements(&root, other.root);
-    deleteNoneElements(&root);
+    *this = other;
 }
 
-JsonParser::JsonParser(JsonParser &&other)
+JsonContainer::JsonContainer(JsonContainer &&other)
 {
-    this->root = other.root;
-    other.root = nullptr;
+    this->moveElements(*this, other);
 }
 
-JsonParser::JsonParser(JsonContainer *other)
-{
-    root = new JsonContainer(OBJECT);
-    JsonContainer *child = new JsonContainer;
-    addChild(&root, &child);
-    copyElements(&(root->down), other);
-    deleteNoneElements(&root);
-}
-
-JsonParser::~JsonParser()
-{
-    eraseJsonContainer(&root);
-}
-
-JsonParser& JsonParser::operator=(const JsonParser &other)
+JsonContainer& JsonContainer::operator=(const JsonContainer &other)
 {
     if(this != &other)
-    {
-        this->eraseJsonContainer(&root);
-        root = new JsonContainer(OBJECT);
-        JsonContainer *child = new JsonContainer;
-        addChild(&root, &child);
-        copyElements(&(root->down), other.root);
-        deleteNoneElements(&root);
-    }
+        recursiveCopyElements(*this, other);
+
     return *this;
 }
 
-typeCell JsonParser::getType(std::string sourceStr) const
+void JsonContainer::recursiveCopyElements(JsonContainer &destObj, const JsonContainer &srcObj)
 {
-    if(sourceStr == "{")
-        return OBJECT;
-    if(sourceStr == "}")
-        return END_OBJECT;
-    if(sourceStr == "[")
-        return ARRAY;
-    if(sourceStr == "]")
-        return END_ARRAY;
+    destObj.keyValue = srcObj.keyValue;
+    destObj.typeNode = srcObj.typeNode;
 
-    return STRING;
-}
+    destObj.prevNode = srcObj.prevNode;
+    destObj.parentNode = srcObj.parentNode;
 
-void JsonParser::eraseJsonContainer(JsonContainer **root)
-{
-    JsonContainer *temp = *root;
-
-    if(temp->down != nullptr)
-        eraseJsonContainer(&temp->down);
-    if(temp->next != nullptr)
-        eraseJsonContainer(&temp->next);
-
-    if((temp->next == nullptr) && (temp->down == nullptr) && (temp != nullptr))
+    if(srcObj.childNode != nullptr)
     {
-        delete temp;
-        return;
+        if(destObj.childNode == nullptr)
+            destObj.childNode = std::make_shared<JsonContainer>(JsonContainer());
+
+        recursiveCopyElements(*(destObj.childNode.get()), *(srcObj.childNode.get()));
+    }
+    if(srcObj.nextNode != nullptr)
+    {
+        if(destObj.nextNode == nullptr)
+            destObj.nextNode = std::make_shared<JsonContainer>(JsonContainer());
+
+        recursiveCopyElements(*(destObj.nextNode.get()), *(srcObj.nextNode.get()));
     }
 }
 
-void JsonParser::addChild(JsonContainer **node, JsonContainer **newContainer)
+void JsonContainer::moveElements(JsonContainer &destObj, JsonContainer &srcObj)
 {
-    JsonContainer *temp = *node;
-    temp->down = *newContainer;
-    (*newContainer)->up = temp;
-}
+    destObj.keyValue = srcObj.keyValue;
+    destObj.typeNode = srcObj.typeNode;
 
-void JsonParser::addNeighbord(JsonContainer **node, JsonContainer **newContainer)
-{
-    JsonContainer *temp = *node;
-    temp->next = *newContainer;
-    (*newContainer)->prev = temp;
-    (*newContainer)->up = temp->up;
-}
+    srcObj.keyValue.first = srcObj.keyValue.second = "";
+    srcObj.typeNode = NONE;
 
-void JsonParser::getFromStream(std::istream &in, JsonContainer **node)
-{
-    JsonContainer *tempNode = *node;
-    std::string inputStr;
-    std::string firstPartStr;
-    std::string secondPartStr;
-    while(std::getline(in, inputStr))
+    if(srcObj.childNode != nullptr)
     {
-        std::list<std::string> parsed = parser_string_space::parse_by_delimeter(inputStr, ":", true);
-        if(parsed.size() > 1)
-        {
-            std::list<std::string>::iterator it = std::next(parsed.begin(), 0);
-            firstPartStr = *it;
-            it = std::next(parsed.begin(), 1);
-            secondPartStr = *it;
-
-            firstPartStr = parser_string_space::delete_symbol(firstPartStr, parser_string_space::TAB);
-            firstPartStr = parser_string_space::delete_symbol(firstPartStr, parser_string_space::COMMA);
-            firstPartStr = parser_string_space::delete_symbol(firstPartStr, parser_string_space::DQUOTE);
-            firstPartStr = parser_string_space::delete_symbol(firstPartStr, parser_string_space::SPACE);
-        }
-        else
-        {
-            firstPartStr = "";
-            std::list<std::string>::iterator it = std::next(parsed.begin(), 0);
-            secondPartStr = *it;
-        }
-
-        secondPartStr = parser_string_space::delete_symbol(secondPartStr, parser_string_space::TAB);
-        secondPartStr = parser_string_space::delete_symbol(secondPartStr, parser_string_space::COMMA);
-        secondPartStr = parser_string_space::delete_symbol(secondPartStr, parser_string_space::DQUOTE);
-        secondPartStr = parser_string_space::delete_symbol(secondPartStr, parser_string_space::SPACE);
-
-        typeCell type = getType(parser_string_space::delete_symbol(secondPartStr, parser_string_space::SPACE));
-        if((type == END_ARRAY) || (type == END_OBJECT))
-        {
-            /*temp_node->prev->next = nullptr;
-            delete temp_node;*/
-            return;
-        }
-
-        tempNode->setData(firstPartStr, secondPartStr, type);
-
-        if((type == OBJECT) || (type == ARRAY))
-        {
-            JsonContainer *temp = new JsonContainer;
-            addChild(&tempNode, &temp);
-            getFromStream(in, &(tempNode->down));
-        }
-        JsonContainer *temp = new JsonContainer;
-        addNeighbord(&tempNode, &temp);
-        tempNode = tempNode->next;
-        /*if(type == STRING)
-        {
-            json_container *temp = new json_container;
-            add_neighbord(&temp_node, &temp);
-            temp_node = temp_node->next;
-        }*/
+        destObj.childNode = srcObj.childNode;
+        srcObj.childNode = nullptr;
+    }
+    if(srcObj.nextNode != nullptr)
+    {
+        destObj.nextNode = srcObj.nextNode;
+        srcObj.nextNode = nullptr;
     }
 }
 
-void JsonParser::putToStream(std::ostream &out, JsonContainer **node, int32_t offset)
+/*-----------------------------------JSON OBJECT------------------------------------*/
+
+JsonObject::JsonObject()
 {
-    JsonContainer *temp = *node;
-    std::string outStr;
-    while(true)
-    {
-        if((temp->cellType == OBJECT) || (temp->cellType == ARRAY))
-        {
-            outStr = std::string("\t", offset) + temp->oneCell.first + " : " + temp->oneCell.second + "\n";
-            if(temp->oneCell.first != "")
-                out.write(outStr.c_str(), outStr.size());
-            else out.write(std::string(temp->oneCell.second + "\n").c_str(), temp->oneCell.second.size() + 1);
-            putToStream(out, &(temp->down), offset + 1);
-        }
-        if(temp->cellType == STRING)
-        {
-            outStr = std::string("\t", offset) + temp->oneCell.first + " : " + temp->oneCell.second + ",\n";
-            out.write(outStr.c_str(), outStr.size());
-        }
-        if(temp->next == nullptr)
-            break;
-        temp = temp->next;
-    }
-    if((temp->up->cellType == OBJECT) || (temp->up->cellType == ARRAY))
-    {
-        if(temp->up->next != nullptr)
-        {
-            outStr.clear();
-            outStr.push_back(static_cast<char>(temp->up->cellType));
-            outStr.push_back('\n');
-            out.write(outStr.c_str(), outStr.size());
-        }
-        else
-        {
-            outStr.clear();
-            outStr.push_back(static_cast<char>(temp->up->cellType));
-            outStr.push_back('\n');
-            out.write(outStr.c_str(), outStr.size());
-        }
-    }
+    rootNode = std::make_shared<JsonContainer>(JsonContainer());
+    rootNode->typeNode = OBJECT;
+    rootNode->keyValue.first = "root";
 }
 
-void JsonParser::copyElements(JsonContainer **node, const JsonContainer *other)
+JsonObject::JsonObject(const JsonObject &other)
 {
-    if(other == nullptr)
-        return;
-    JsonContainer *tempNode = *node;
-    const JsonContainer *tempOther = other;
-
-    if(tempOther->cellType == NONE)
-        copyElements(&tempNode, tempOther->down);
-
-    for(; tempOther != nullptr; tempOther = tempOther->next)
-    {
-        tempNode->setData(tempOther->oneCell.first, tempOther->oneCell.second, tempOther->cellType);
-
-        if((tempOther->cellType == OBJECT) || (tempOther->cellType == ARRAY))
-        {
-            JsonContainer *temp = new JsonContainer;
-            addChild(&tempNode, &temp);
-            copyElements(&(tempNode->down), tempOther->down);
-        }
-        JsonContainer *temp = new JsonContainer;
-        addNeighbord(&tempNode, &temp);
-        tempNode = tempNode->next;
-    }
+    rootNode = std::make_shared<JsonContainer>(JsonContainer());
+    rootNode = other.rootNode;
 }
 
-void JsonParser::deleteNoneElements(JsonContainer **node)
+JsonObject::JsonObject(const JsonContainer &otherContainer)
 {
-    JsonContainer *temp = *node;
+    rootNode = std::make_shared<JsonContainer>(JsonContainer());
+    rootNode->keyValue.first = "root";
+    setContainer(otherContainer);
+}
 
-    for(;;)
+JsonObject::JsonObject(JsonObject &&other)
+{
+    rootNode = std::move(other.rootNode);
+}
+
+JsonObject::~JsonObject()
+{
+
+}
+
+JsonObject& JsonObject::operator=(const JsonObject &other)
+{
+    if(this != &other)
     {
-        if(temp->down != nullptr)
-            deleteNoneElements(&(temp->down));
-        if(temp->next == nullptr)
-            break;
-        temp = temp->next;
+        this->rootNode = other.rootNode;
     }
-    while((temp->cellType == NONE) && (temp->prev != nullptr))
+
+    return *this;
+}
+
+void JsonObject::setContainer(const JsonContainer &otherContainer)
+{
+    this->rootNode->recursiveCopyElements(*(rootNode.get()), otherContainer);
+}
+
+void JsonObject::addArray(const std::string &keyNode, const std::vector<std::string> &values, const std::string &parentName)
+{
+    JsonContainer newContainer;
+    newContainer.keyValue.first = keyNode;
+    newContainer.typeNode = ARRAY;
+
+    std::shared_ptr<JsonContainer> newContainerPtr = std::make_shared<JsonContainer>(newContainer);
+
+    for(size_t i(0); i < values.size(); i++)
     {
-        JsonContainer *prev = temp->prev;
-        delete temp;
-        temp = prev;
-        temp->next = nullptr;
+        JsonContainer newArrayElementContainer;
+        newArrayElementContainer.keyValue.first = values[i];
+        newArrayElementContainer.typeNode = ARRAY_ELEMENT;
+        this->addChild(newContainerPtr, newArrayElementContainer);
+    }
+
+    std::shared_ptr<JsonContainer> foundedContainer = findByName(rootNode, parentName);
+
+    if(foundedContainer != nullptr)
+    {
+        this->addChild(foundedContainer, *(newContainerPtr.get()));
+    }
+    else
+    {
+        this->addChild(rootNode, *(newContainerPtr.get()));
     }
 }
 
-void JsonParser::getJson(std::istream &inputStream)
+void JsonObject::addEmptyNode(const std::string &keyNode, const std::string &parentName)
 {
-    eraseJsonContainer(&root);
-    root = new JsonContainer(OBJECT);
-    getFromStream(inputStream, &root);
-    deleteNoneElements(&root);
-}
+    JsonContainer newContainer;
+    newContainer.keyValue.first = keyNode;
+    newContainer.typeNode = OBJECT;
 
-void JsonParser::setJson(std::ostream &outputStream)
-{
-    putToStream(outputStream, &root, 0);
-}
+    std::shared_ptr<JsonContainer> foundedContainer = findByName(rootNode, parentName);
 
-JsonContainer* JsonParser::findElementByName(std::string name)
-{
-    return this->findElementByName(root, name);
-}
-
-JsonContainer* JsonParser::findElementByName(JsonContainer *node, std::string name)
-{
-    JsonContainer *temp = node;
-    for(; temp != nullptr; temp = temp->next)
+    if(foundedContainer == nullptr)
     {
-        if(temp->oneCell.first == name)
-            return temp;
-        if(temp->cellType != STRING)
+        addEmptyNode(parentName, "root");
+    }
+
+    foundedContainer = findByName(rootNode, parentName);
+    addChild(foundedContainer, newContainer);
+}
+
+void JsonObject::addString(const std::pair<std::string, std::string> &keyValue, const std::string &parentName)
+{
+    JsonContainer newContainer;
+    newContainer.keyValue = keyValue;
+    newContainer.typeNode = STRING;
+
+    std::shared_ptr<JsonContainer> foundedContainer = findByName(rootNode, parentName);
+
+    if(foundedContainer != nullptr)
+    {
+        this->addChild(foundedContainer, newContainer);
+    }
+    else
+    {
+        this->addChild(rootNode, newContainer);
+    }
+}
+
+void JsonObject::clearJson()
+{
+    rootNode->typeNode = NONE;
+    if(rootNode->childNode)
+        rootNode->childNode.reset();
+    if(rootNode->nextNode)
+        rootNode->nextNode.reset();
+}
+
+void JsonObject::getJson(std::istream &in)
+{
+    rootNode = JsonStreamParser::getInstance().getFromStream(in, rootNode);
+    rootNode->parentNode = nullptr;
+    rootNode->nextNode = nullptr;
+    clearEmptyJsonNodes(rootNode);
+    rootNode->keyValue.first = "root";
+}
+
+void JsonObject::setJson(std::ostream &out, bool formatOut)
+{
+    if(!formatOut)
+        JsonStreamParser::getInstance().putToStream(out, rootNode);
+    else
+        JsonStreamParser::getInstance().putToStreamFormat(out, rootNode->childNode);
+}
+
+std::shared_ptr<JsonContainer> JsonObject::findElementByName(const std::string keyName)
+{
+    std::shared_ptr<JsonContainer> foundedNodePtr = findByName(rootNode, keyName);
+    return foundedNodePtr;
+}
+
+std::vector<std::shared_ptr<JsonContainer>> JsonObject::findElementsByName(const std::string keyName)
+{
+    std::vector<std::shared_ptr<JsonContainer>> foundedVecPtr = findsByName(rootNode, keyName);
+    return foundedVecPtr;
+}
+
+std::shared_ptr<JsonContainer> JsonObject::findElementByTemplate(const std::string templateString)
+{
+
+}
+
+std::vector<std::shared_ptr<JsonContainer>> JsonObject::findElementsByTemplate(const std::string temlateString)
+{
+
+}
+
+/*------------------------------------JSON OBJECT(PRIVATE)-------------------------------------*/
+
+std::shared_ptr<JsonContainer> JsonObject::findByName(std::shared_ptr<JsonContainer> node, const std::string keyName)
+{
+    for(std::shared_ptr<JsonContainer> itPtr = node; itPtr != nullptr; itPtr = itPtr->nextNode)
+    {
+        std::string nodeKey = itPtr->keyValue.first;
+
+        if(nodeKey == keyName)
+            return itPtr;
+
+        if(itPtr->childNode != nullptr)
         {
-            JsonContainer *returnType = findElementByName(temp->down, name);
-            if(returnType != nullptr)
-                return returnType;
+            std::shared_ptr<JsonContainer> foundedJsonPtr = findByName(itPtr->childNode, keyName);
+            if(foundedJsonPtr != nullptr)
+                return foundedJsonPtr;
         }
     }
+
     return nullptr;
 }
 
-void JsonParser::findElementsByName(JsonContainer *node, std::list<JsonContainer*> &foundedList, std::string name)
+std::vector<std::shared_ptr<JsonContainer>> JsonObject::findsByName(std::shared_ptr<JsonContainer> node, const std::string keyName)
 {
-    JsonContainer *tempPtr = node;
-    for(; tempPtr != nullptr; tempPtr = tempPtr->next)
-    {
-        if(tempPtr->oneCell.first == name)
-            foundedList.push_back(tempPtr);
+    std::vector<std::shared_ptr<JsonContainer>> foundedVec;
 
-        if(tempPtr->cellType == OBJECT)
-            this->findElementsByName(tempPtr->down, foundedList, name);
+    for(std::shared_ptr<JsonContainer> itPtr = node; itPtr != nullptr; itPtr = itPtr->nextNode)
+    {
+        std::string nodeKey = itPtr->keyValue.first;
+
+        if(nodeKey == keyName)
+            foundedVec.push_back(itPtr);
+
+        if(itPtr->childNode != nullptr)
+        {
+            std::vector<std::shared_ptr<JsonContainer>> returnedVec = findsByName(itPtr->childNode, keyName);
+            std::copy(returnedVec.begin(), returnedVec.end(), std::back_inserter(foundedVec));
+        }
+    }
+
+    return foundedVec;
+}
+
+void JsonObject::addChild(std::shared_ptr<JsonContainer> node, JsonContainer &childNode)
+{
+    if(node->childNode == nullptr)
+    {
+        JsonContainer addingContainer(childNode);
+        node->childNode = std::make_shared<JsonContainer>(addingContainer);
+        node->childNode->parentNode = node;
+    }
+    else
+    {
+        std::shared_ptr<JsonContainer> nodePtr = node->childNode;
+        for(; nodePtr->nextNode != nullptr; nodePtr = nodePtr->nextNode);
+
+        addNeighbor(nodePtr, childNode);
     }
 }
 
-std::list<JsonContainer*> JsonParser::findElementsByName(std::string name)
+void JsonObject::addNeighbor(std::shared_ptr<JsonContainer> node, JsonContainer &neighborNode)
 {
-    std::list<JsonContainer*> foundedElements;
-    this->findElementsByName(root, foundedElements, name);
-    return foundedElements;
+    JsonContainer addingContainer(neighborNode);
+
+    node->nextNode = std::make_shared<JsonContainer>(addingContainer);
+    node->nextNode->prevNode = node;
+    node->nextNode->parentNode = node->parentNode;
 }
 
-JsonContainer* JsonParser::findElementByTemplate(std::string templateString)
+void JsonObject::clearEmptyJsonNodes(std::shared_ptr<JsonContainer> node)
+{
+    if(node->childNode != nullptr)
+    {
+        size_t lengthNodeFirstString = node->childNode->keyValue.first.length();
+        if((node->childNode->childNode == nullptr) &&
+                (node->childNode->nextNode == nullptr) &&
+                (lengthNodeFirstString == 0))
+        {
+            node->childNode.reset();
+        }
+        else
+        {
+            clearEmptyJsonNodes(node->childNode);
+        }
+    }
+
+    if(node->nextNode != nullptr)
+    {
+        size_t lengthNodeFirstString = node->nextNode->keyValue.first.length();
+        if((node->nextNode->childNode == nullptr) &&
+                (node->nextNode->nextNode == nullptr) &&
+                (lengthNodeFirstString == 0))
+        {
+            node->nextNode.reset();
+        }
+        else
+        {
+            clearEmptyJsonNodes(node->nextNode);
+        }
+    }
+}
+
+/*------------------------------------JSON STREAM PARSER--------------------------------*/
+JsonStreamParser::JsonStreamParser()
 {
 
 }
 
-std::list<JsonContainer*> JsonParser::findElementsByTemplate(std::string templateString)
+JsonStreamParser::~JsonStreamParser()
 {
 
 }
 
-//--------------------------------------GET JSON DATA---------------------------------------------
-
-JsonParser getJsonData(std::string filename)
+JsonStreamParser& JsonStreamParser::getInstance()
 {
-    std::ifstream fin;
-    fin.open(filename.c_str());
-    if(fin.is_open() == false)
-        throw SIEM_errors::SIEMException("Cannot open file: " + filename);
-
-    JsonParser return_parser;
-    return_parser.getJson(fin);
-    return return_parser;
+    static JsonStreamParser obj;
+    return obj;
 }
 
+std::shared_ptr<JsonContainer> JsonStreamParser::getFromStream(std::istream &in, std::shared_ptr<JsonContainer> parentNode)
+{
+    return getNode(in, parentNode);
+}
 
-//------------------------------------TYPE JSON NODE RESOLVER--------------------------------------
+void JsonStreamParser::putToStream(std::ostream &out, std::shared_ptr<JsonContainer> jsonNode)
+{
+    out.write("{", 1);
+    putNode(out, jsonNode);
+    out.write("}", 1);
+}
+
+void JsonStreamParser::putToStreamFormat(std::ostream &out, std::shared_ptr<JsonContainer> jsonNode, size_t offset)
+{
+    out.write("{\n", 2);
+    putNodeFormat(out, jsonNode, offset + 4);
+    out.write("}", 1);
+}
+
+/*----------------------------------JSON STREAM PARSER(PRIVATE)-------------------------*/
+
+std::string JsonStreamParser::getUntilSymbol(std::istream &in, symbolType delimeterSymbol)
+{
+    std::string getString;
+    char symbol = 0;
+
+    while(in.get(symbol))
+    {
+        if(symbol == delimeterSymbol)
+            break;
+
+        getString.push_back(symbol);
+    }
+
+    return getString;
+}
+
+std::shared_ptr<JsonContainer> JsonStreamParser::getNode(std::istream &in, std::shared_ptr<JsonContainer> parentNode)
+{
+    std::shared_ptr<JsonContainer> newContainerPtr
+            = std::make_shared<JsonContainer>(JsonContainer());
+
+    char symbol = 0;
+    std::string firstStringNodeVar;
+    std::string secondStringNodeVar;
+
+    while(in.get(symbol))
+    {
+        if(symbol == END_OBJECT)
+            break;
+
+        if(symbol == DQUOTE)
+        {
+            if(firstStringNodeVar.length() == 0)
+            {
+                firstStringNodeVar = getUntilSymbol(in, DQUOTE);
+                continue;
+            }
+            else
+            {
+                secondStringNodeVar = getUntilSymbol(in, DQUOTE);
+                newContainerPtr->keyValue =
+                        std::pair<std::string, std::string>(firstStringNodeVar, secondStringNodeVar);
+
+                newContainerPtr->typeNode = STRING;
+
+                newContainerPtr->nextNode = getNode(in, parentNode);
+                newContainerPtr->nextNode->prevNode = newContainerPtr;
+                newContainerPtr->parentNode = parentNode;
+                break;
+            }
+        }
+
+        if(symbol == OBJECT)
+        {
+            newContainerPtr->keyValue.first = firstStringNodeVar;
+            newContainerPtr->typeNode = OBJECT;
+
+            newContainerPtr->childNode = getNode(in, newContainerPtr);
+            newContainerPtr->parentNode = parentNode;
+            newContainerPtr->nextNode = getNode(in, parentNode);
+            newContainerPtr->nextNode->prevNode = newContainerPtr;
+            break;
+        }
+
+        if(symbol == ARRAY)
+        {
+            newContainerPtr->keyValue.first = firstStringNodeVar;
+            newContainerPtr->typeNode = ARRAY;
+
+            newContainerPtr->childNode = getArrayElement(in, newContainerPtr);
+            newContainerPtr->childNode->parentNode = parentNode;
+            break;
+        }
+    }
+
+    return newContainerPtr;
+}
+
+std::shared_ptr<JsonContainer> JsonStreamParser::getArrayElement(std::istream &in, std::shared_ptr<JsonContainer> parentNode)
+{
+    std::shared_ptr<JsonContainer> arrayElementContainerPtr
+            = std::make_shared<JsonContainer>(JsonContainer());
+
+    arrayElementContainerPtr->typeNode = ARRAY_ELEMENT;
+
+    std::string arrayElementString;
+    char symbol = 0;
+    while(in.get(symbol))
+    {
+        if(symbol == END_ARRAY)
+        {
+            if(arrayElementString.length() > 0)
+                arrayElementContainerPtr->keyValue.first = arrayElementString;
+
+            break;
+        }
+
+        if((symbol == SPACE) || (symbol == NEW_LINE))
+            continue;
+
+        if(symbol == COMMA)
+        {
+            arrayElementContainerPtr->keyValue.first = arrayElementString;
+
+            arrayElementContainerPtr->nextNode = getArrayElement(in, parentNode);
+            arrayElementContainerPtr->nextNode->prevNode = arrayElementContainerPtr;
+            arrayElementContainerPtr->parentNode = parentNode;
+            break;
+        }
+
+        arrayElementString.push_back(symbol);
+    }
+
+    return arrayElementContainerPtr;
+}
+
+void JsonStreamParser::putNode(std::ostream &out, std::shared_ptr<JsonContainer> node)
+{
+    for(std::shared_ptr<JsonContainer> nodeIter = node; nodeIter != nullptr; nodeIter = nodeIter->nextNode)
+    {
+        if(nodeIter.get()->typeNode == STRING)
+        {
+            std::string key = nodeIter.get()->keyValue.first;
+            std::string value = nodeIter.get()->keyValue.second;
+
+            std::string writeStr = key + ":" + value;
+            out.write(writeStr.c_str(), static_cast<long>(writeStr.length()));
+
+            if(nodeIter->nextNode)
+                out.write(",", 1);
+
+            continue;
+        }
+
+        if(nodeIter.get()->typeNode == OBJECT)
+        {
+            std::string key = nodeIter.get()->keyValue.first;
+            out.write(key.c_str(), static_cast<long>(key.length()));
+            out.write(":{", 2);
+            putNode(out, nodeIter->childNode);
+            out.write("}", 1);
+
+            if(nodeIter->nextNode)
+                out.write(",", 1);
+
+            continue;
+        }
+
+        if(nodeIter.get()->typeNode == ARRAY)
+        {
+            std::string key = nodeIter.get()->keyValue.first;
+            out.write(key.c_str(), static_cast<long>(key.length()));
+            out.write(":[", 2);
+            putArrayElement(out, nodeIter->childNode);
+            out.write("]", 1);
+
+            if(nodeIter->nextNode)
+                out.write(",", 1);
+        }
+    }
+}
+
+void JsonStreamParser::putArrayElement(std::ostream &out, std::shared_ptr<JsonContainer> node)
+{
+    for(std::shared_ptr<JsonContainer> nodeIter = node; nodeIter != nullptr; nodeIter = nodeIter->nextNode)
+    {
+        std::string arrayElement = nodeIter.get()->keyValue.first;
+        out.write(arrayElement.c_str(), static_cast<long>(arrayElement.length()));
+
+        if(nodeIter->nextNode)
+            out.write(",", 1);
+    }
+}
+
+void JsonStreamParser::putNodeFormat(std::ostream &out, std::shared_ptr<JsonContainer> node, size_t offset)
+{
+    std::string offsetStr(" ", offset);
+
+    for(std::shared_ptr<JsonContainer> nodeIter = node; nodeIter != nullptr; nodeIter = nodeIter->nextNode)
+    {
+        if(nodeIter.get()->typeNode == STRING)
+        {
+            std::string key = nodeIter.get()->keyValue.first;
+            std::string value = nodeIter.get()->keyValue.second;
+
+            std::string writeStr = offsetStr + key + ":" + value;
+            out.write(writeStr.c_str(), static_cast<long>(writeStr.length()));
+
+            if(nodeIter->nextNode)
+                out.write(",", 1);
+
+            out.write("\n", 1);
+
+            continue;
+        }
+
+        if(nodeIter.get()->typeNode == OBJECT)
+        {
+            std::string key = nodeIter.get()->keyValue.first;
+
+            std::string writeStr = offsetStr + key + ":{\n";
+            out.write(writeStr.c_str(), static_cast<long>(writeStr.length()));
+
+            putNodeFormat(out, nodeIter->childNode, offset + 4);
+            out.write(std::string(offsetStr + "}\n").c_str(), static_cast<long>(offset + 2));
+
+            if(nodeIter->nextNode)
+                out.write(",", 1);
+
+            out.write("\n", 1);
+
+            continue;
+        }
+
+        if(nodeIter.get()->typeNode == ARRAY)
+        {
+            std::string key = nodeIter.get()->keyValue.first;
+
+            std::string writeStr = offsetStr + key + ":[\n";
+            out.write(writeStr.c_str(), static_cast<long>(writeStr.length()));
+
+            putArrayElementFormat(out, nodeIter->childNode, offset + 4);
+            out.write(std::string(offsetStr + "]\n").c_str(), static_cast<long>(offset + 2));
+
+            if(nodeIter->nextNode)
+                out.write(",", 1);
+
+            out.write("\n", 1);
+        }
+    }
+}
+
+void JsonStreamParser::putArrayElementFormat(std::ostream &out, std::shared_ptr<JsonContainer> node, size_t offset)
+{
+    std::string offsetStr(" ", offset);
+    for(std::shared_ptr<JsonContainer> nodeIter = node; nodeIter != nullptr; nodeIter = nodeIter->nextNode)
+    {
+        std::string arrayElement = nodeIter.get()->keyValue.first;
+        std::string writeStr = offsetStr + arrayElement;
+
+        out.write(writeStr.c_str(), static_cast<long>(writeStr.length()));
+
+        if(nodeIter->nextNode)
+            out.write(",", 1);
+        out.write("\n", 1);
+    }
+}
+
+/*------------------------------------TYPE JSON NODE RESOLVER--------------------------------------*/
 
 JSONNodeTypeResolver::JSONNodeTypeResolver()
 {
@@ -343,7 +637,7 @@ JSONNodeTypeResolver& JSONNodeTypeResolver::getInstance()
     return instance;
 }
 
-typeCell JSONNodeTypeResolver::getNodeType(const std::string &nodeName)
+typeNodeJSON JSONNodeTypeResolver::getNodeType(const std::string &nodeName)
 {
     if(nodeName == "object")
         return OBJECT;
@@ -355,7 +649,7 @@ typeCell JSONNodeTypeResolver::getNodeType(const std::string &nodeName)
         return NONE;
 }
 
-std::string JSONNodeTypeResolver::getNodeName(const typeCell &typeNode)
+std::string JSONNodeTypeResolver::getNodeName(const typeNodeJSON &typeNode)
 {
     if(typeNode == OBJECT)
         return OBJECT_NODE;
@@ -365,4 +659,23 @@ std::string JSONNodeTypeResolver::getNodeName(const typeCell &typeNode)
         return STRING_NODE;
     else
         return NONE_NODE;
+}
+
+/*----------------------------------------FUNCTIONS------------------------------*/
+
+json_space::JsonObject getJsonData(std::string jsonFilename)
+{
+    std::ifstream fin;
+    fin.open(jsonFilename, std::ios_base::in);
+
+    if(fin.is_open() == false)
+    {
+        throw SIEM_errors::SIEMException("Cannot open file: " + jsonFilename);
+    }
+
+    JsonObject readJsonObj;
+    readJsonObj.getJson(fin);
+
+    fin.close();
+    return readJsonObj;
 }

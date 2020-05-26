@@ -1,8 +1,10 @@
 #ifndef CUSTOM_CORRELATOR
 #define CUSTOM_CORRELATOR
 
-#include "config_descriptor.hpp"
+#include "../../config_descriptor.hpp"
 #include "../symptoms_interface/symp_implementation.hpp"
+
+using namespace config_space;
 
 namespace symptoms_space
 {
@@ -11,13 +13,13 @@ namespace symptoms_space
         class CustomSymptoms : public SymptomImpl
         {
         private:
-            jsoner_space::JsonParser parser;
+            json_space::JsonObject parser;
             std::string jsonFilename;
             OneConfigCell jsonConfigCell;
         private:
             bool isTemplate(std::string valueString);
-            bool foundByConfig(OneConfigCell cellConfig, jsoner_space::JsonParser &parserJson, Data &dataObj);
-            bool amountByConfig(OneConfigCell cellConfig, jsoner_space::JsonParser &parserJson);
+            bool foundByConfig(OneConfigCell cellConfig, json_space::JsonObject &parserJson, Data &dataObj);
+            bool amountByConfig(OneConfigCell cellConfig, json_space::JsonObject &parserJson);
             std::string addDataAndPriority(std::string data, Data &dataObj);
             std::vector<std::pair<std::string, std::string>>::const_iterator foundInVec(const std::vector<std::pair<std::string, std::string>> &vec, std::string value);
         public:

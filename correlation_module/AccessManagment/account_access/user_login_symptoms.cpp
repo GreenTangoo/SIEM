@@ -16,16 +16,21 @@ UserLoginSymptoms::~UserLoginSymptoms()
 bool UserLoginSymptoms::checkSymptoms()
 {
     parser = getJsonData(jsonFilename);
-    jsoner_space::JsonContainer *container = parser.findElementByName("users");
-    container = container->down;
-    if(container->cellType == jsoner_space::NONE)
+    std::shared_ptr<JsonContainer> container = parser.findElementByName("users");
+
+    if((container == nullptr) || (container->childNode == nullptr))
         return false;
 
-    for(; container != nullptr; container = container->next)
+    container = container->childNode;
+
+    if(container->typeNode == json_space::NONE)
+        return false;
+
+    for(; container != nullptr; container = container->nextNode)
     {
-        std::string username = container->oneCell.first;
-        std::string ip = container->down->next->oneCell.second;
-        std::string time = container->down->oneCell.second;
+        std::string username = container->keyValue.first;
+        std::string ip = container->childNode->nextNode->keyValue.second;
+        std::string time = container->childNode->keyValue.second;
 
         symptoms_space::Data data_obj;
         data_obj.mainData.push_back(std::pair<std::string, int16_t>(username, 1)); // Get username

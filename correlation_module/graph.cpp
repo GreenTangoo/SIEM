@@ -1,4 +1,5 @@
 #include "graph.h"
+#include "../logfile_defines.hpp"
 
 using namespace topology_space;
 using namespace recognition_space;
@@ -31,7 +32,7 @@ std::vector<symptoms_space::SymptomImpl*> Graph::initializeCustomSymptoms()
     std::vector<symptoms_space::SymptomImpl*> vectorCustomSymtoms;
     DescriptorConfig userConfigDescriptor;
 
-    std::vector<OneConfigCell> configs = userConfigDescriptor.getDescription("corr.json");
+    std::vector<OneConfigCell> configs = userConfigDescriptor.getDescription(CORRELATION_CONFIG);
 
     for(size_t i(0); i < configs.size(); i++)
     {
@@ -45,8 +46,8 @@ std::vector<symptoms_space::SymptomImpl*> Graph::initializeCustomSymptoms()
 std::vector<symptoms_space::SymptomImpl*> Graph::initializeDiscoveredSymptoms()
 {
     std::vector<symptoms_space::SymptomImpl*> vector_discovery_symptoms;
-    PortScanningSymptoms *port_scan_symp = new PortScanningSymptoms("net_log.json");
-    DirectoryDiscoverySymptoms *dir_scan_symp = new DirectoryDiscoverySymptoms("apache2.json");
+    PortScanningSymptoms *port_scan_symp = new PortScanningSymptoms(IPTABLES_LOGFILE);
+    DirectoryDiscoverySymptoms *dir_scan_symp = new DirectoryDiscoverySymptoms(APACHE_LOGFILE);
 
     vector_discovery_symptoms.push_back(port_scan_symp);
     vector_discovery_symptoms.push_back(dir_scan_symp);
@@ -57,9 +58,9 @@ std::vector<symptoms_space::SymptomImpl*> Graph::initializeDiscoveredSymptoms()
 std::vector<symptoms_space::SymptomImpl*> Graph::initializeAccountAccessSymptoms()
 {
     std::vector<symptoms_space::SymptomImpl*> vector_account_symptoms;
-    UserLoginSymptoms *usr_log_symp = new UserLoginSymptoms("auth.json");
-    LoginRootSymptoms *log_root_symp = new LoginRootSymptoms("auth.json");
-    ValidAccountsSymptoms *validAccountsSympPtr = new ValidAccountsSymptoms("auth.json");
+    UserLoginSymptoms *usr_log_symp = new UserLoginSymptoms(SYSTEM_AUTHORIZATION_LOGFILE);
+    LoginRootSymptoms *log_root_symp = new LoginRootSymptoms(SYSTEM_AUTHORIZATION_LOGFILE);
+    ValidAccountsSymptoms *validAccountsSympPtr = new ValidAccountsSymptoms(SYSTEM_AUTHORIZATION_LOGFILE);
 
     vector_account_symptoms.push_back(usr_log_symp);
     vector_account_symptoms.push_back(log_root_symp);
@@ -71,8 +72,8 @@ std::vector<symptoms_space::SymptomImpl*> Graph::initializeAccountAccessSymptoms
 std::vector<symptoms_space::SymptomImpl*> Graph::initializeFilesManipulationSymptoms()
 {
     std::vector<symptoms_space::SymptomImpl*> vector_files_manipulation_symptoms;
-    DataCollectionSymptoms *data_collection_symp = new DataCollectionSymptoms("system_files.json");
-    AccountDiscoverySymptoms *account_discovery_symp = new AccountDiscoverySymptoms("system_files.json");
+    DataCollectionSymptoms *data_collection_symp = new DataCollectionSymptoms(SYSTEM_FILES_MANIPULATION_LOGFILE);
+    AccountDiscoverySymptoms *account_discovery_symp = new AccountDiscoverySymptoms(SYSTEM_FILES_MANIPULATION_LOGFILE);
 
     vector_files_manipulation_symptoms.push_back(data_collection_symp);
     vector_files_manipulation_symptoms.push_back(account_discovery_symp);
@@ -83,11 +84,11 @@ std::vector<symptoms_space::SymptomImpl*> Graph::initializeFilesManipulationSymp
 std::vector<SymptomImpl*> Graph::initializeProccessManipulationSymptoms()
 {
     std::vector<symptoms_space::SymptomImpl*> vector_proccess_manipulation_symptoms;
-    ProcessDiscoverySymptoms *process_discovery_symp = new ProcessDiscoverySymptoms("system_processes.json");
-    CommandLineInterfaceSymptoms *cmd_symptoms = new CommandLineInterfaceSymptoms("system_processes.json");
-    DataCompressedSymptoms *data_compressed_symp = new DataCompressedSymptoms("system_processes.json");
-    SystemNetworkConfDiscoverySymptoms *net_conf_discovery_symp = new SystemNetworkConfDiscoverySymptoms("system_processes.json");
-    SystemNetworkConnDiscoverySymptoms *net_conn_discovery_symp = new SystemNetworkConnDiscoverySymptoms("system_processes.json");
+    ProcessDiscoverySymptoms *process_discovery_symp = new ProcessDiscoverySymptoms(SYSTEM_PROCESSES_MANIPULATION_LOGFILE);
+    CommandLineInterfaceSymptoms *cmd_symptoms = new CommandLineInterfaceSymptoms(SYSTEM_PROCESSES_MANIPULATION_LOGFILE);
+    DataCompressedSymptoms *data_compressed_symp = new DataCompressedSymptoms(SYSTEM_PROCESSES_MANIPULATION_LOGFILE);
+    SystemNetworkConfDiscoverySymptoms *net_conf_discovery_symp = new SystemNetworkConfDiscoverySymptoms(SYSTEM_PROCESSES_MANIPULATION_LOGFILE);
+    SystemNetworkConnDiscoverySymptoms *net_conn_discovery_symp = new SystemNetworkConnDiscoverySymptoms(SYSTEM_PROCESSES_MANIPULATION_LOGFILE);
 
     vector_proccess_manipulation_symptoms.push_back(process_discovery_symp);
     vector_proccess_manipulation_symptoms.push_back(cmd_symptoms);

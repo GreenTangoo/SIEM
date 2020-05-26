@@ -10,7 +10,7 @@ namespace symptoms_space
         class CommandLineInterfaceSymptoms : public SymptomImpl
         {
         private:
-            jsoner_space::JsonParser parser;
+            json_space::JsonObject parser;
             std::string jsonFilename;
         public:
             CommandLineInterfaceSymptoms(std::string filename);

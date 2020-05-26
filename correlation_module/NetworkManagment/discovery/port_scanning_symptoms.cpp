@@ -17,15 +17,19 @@ bool PortScanningSymptoms::checkSymptoms()
 {
     parser = getJsonData(jsonFilename);
 
-    jsoner_space::JsonContainer *container = parser.findElementByName("iptables");
-    container = container->down;
-    if(container->cellType == jsoner_space::NONE)
+    std::shared_ptr<JsonContainer> container = parser.findElementByName("iptables");
+
+    if((container == nullptr) || (container->childNode == nullptr))
+        return false;
+
+    container = container->childNode;
+    if(container->typeNode == json_space::NONE)
         return false;
 
     std::map<std::string, int32_t> ipAmountReq;
-    for(; container != nullptr; container = container->next)
+    for(; container != nullptr; container = container->nextNode)
     {
-        std::string ipAddr = container->oneCell.first;
+        std::string ipAddr = container->keyValue.first;
         ipAmountReq[ipAddr]++;
     }
 
@@ -35,8 +39,8 @@ bool PortScanningSymptoms::checkSymptoms()
         {
             symptoms_space::Data dataObj;
             dataObj.mainData.push_back(std::pair<std::string, int16_t>(it->first, 1));
-            jsoner_space::JsonContainer *anchor = parser.findElementByName(it->first);
-            dataObj.time = data_time_space::Time(anchor->down->oneCell.second);
+            std::shared_ptr<JsonContainer> anchor = parser.findElementByName(it->first);
+            dataObj.time = data_time_space::Time(anchor->childNode->keyValue.second);
             dataObj.isUsed = false;
             this->allDataFromSymptom.push_back(dataObj);
         }

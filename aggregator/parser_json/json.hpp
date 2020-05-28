@@ -28,6 +28,7 @@ namespace json_space
         JsonContainer& operator=(const JsonContainer &other);
 
         void recursiveCopyElements(JsonContainer &destObj, const JsonContainer &srcObj);
+        void recursiveClearElements(std::shared_ptr<JsonContainer> parentNode);
         void moveElements(JsonContainer &destObj, JsonContainer &srcObj);
 
     };
@@ -37,8 +38,9 @@ namespace json_space
     private:
         std::shared_ptr<JsonContainer> rootNode;
     private:
-        std::shared_ptr<JsonContainer> findByName(std::shared_ptr<JsonContainer> node, const std::string keyName);
-        std::vector<std::shared_ptr<JsonContainer>> findsByName(std::shared_ptr<JsonContainer> node, const std::string keyName);
+        std::shared_ptr<JsonContainer> findByName(std::shared_ptr<JsonContainer> node, const std::string &keyName);
+        std::vector<std::shared_ptr<JsonContainer>> findsByName(std::shared_ptr<JsonContainer> node, const std::string &keyName);
+        std::shared_ptr<JsonContainer> findByPath(std::shared_ptr<JsonContainer> node, const std::string &path);
         void addChild(std::shared_ptr<JsonContainer>node, JsonContainer &childNode);
         void addNeighbor(std::shared_ptr<JsonContainer> node, JsonContainer &neighborNode);
         void clearEmptyJsonNodes(std::shared_ptr<JsonContainer> node);
@@ -51,17 +53,25 @@ namespace json_space
         JsonObject& operator=(const JsonObject &other);
         /*Construct json from program*/
         void setContainer(const JsonContainer &otherContainer);
-        void addArray(const std::string &keyNode, const std::vector<std::string> &values, const std::string &parentName);
-        void addEmptyNode(const std::string &keyNode, const std::string &parentName);
-        void addString(const std::pair<std::string, std::string> &keyValue, const std::string &paraneName);
+        void addArray(const std::string &keyNode, const std::vector<std::string> &values, const std::string &parentpath);
+        void addOrUpdateArray(const std::string &keyNode, const std::vector<std::string> &values, const std::string &arrayPath);
+        void updateArray(const std::string &keyNode, const std::vector<std::string> &values, const std::string &arrayPath);
+        void addArrayElement(const std::string &value, const std::string &parentPath);
+        void addEmptyNode(const std::string &keyNode, const std::string &parentpath);
+        void addOrUpdateNode(const std::string &keyNode, const std::string &nodePath);
+        void updateNodeName(const std::string &keyNode, const std::string &nodePath);
+        void addString(const std::pair<std::string, std::string> &keyValue, const std::string &parentpath);
+        void updateString(const std::pair<std::string, std::string> &keyValue, const std::string &stringPath);
+        void addOrUpdateString(const std::pair<std::string, std::string> &keyValue, const std::string &stringPath);
         void clearJson();
         /*Construct json from file*/
         void getJson(std::istream &in);
         void setJson(std::ostream &out, bool formatOut = false);
-        std::shared_ptr<JsonContainer> findElementByName(const std::string keyName);
-        std::vector<std::shared_ptr<JsonContainer>> findElementsByName(const std::string keyName);
-        std::shared_ptr<JsonContainer> findElementByTemplate(const std::string templateString);
-        std::vector<std::shared_ptr<JsonContainer>> findElementsByTemplate(const std::string templateString);
+        std::shared_ptr<JsonContainer> findElementByName(const std::string &keyName);
+        std::vector<std::shared_ptr<JsonContainer>> findElementsByName(const std::string &keyName);
+        std::shared_ptr<JsonContainer> findElementByPath(const std::string &path);
+        std::shared_ptr<JsonContainer> findElementByTemplate(const std::string &templateString);
+        std::vector<std::shared_ptr<JsonContainer>> findElementsByTemplate(const std::string &templateString);
     };
 
     class JsonStreamParser // SINGLETON

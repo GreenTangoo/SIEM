@@ -1,18 +1,11 @@
 #include <iostream>
 #include <fstream>
-#include <typeinfo>
 #include <vector>
 #include <thread>
 
 #include "correlation_module/graph.h"
 #include "correlation_module/sub_graph.h"
-#include "config_descriptor.hpp"
 #include "prediction_module/predictor.hpp"
-#include "aggregator/time_class/parse_time.hpp"
-#include "aggregator/parser_json/json.hpp"
-
-
-#include "aggregator/aggregation_module/ApacheAggregation/apache_aggr.hpp"
 
 using namespace topology_space;
 
@@ -30,7 +23,7 @@ void displayPrediction(const analysis::prediction &obj, std::ofstream &fout)
 
 int main(int argc, char **argv)
 {
-    /*try
+    try
     {
         std::ofstream fout;
         fout.open("result.txt", std::ios_base::out);
@@ -48,7 +41,6 @@ int main(int argc, char **argv)
         for(std::list<SubGraph>::iterator it = returnVec.begin(); it != returnVec.end(); it++)
         {
             analysis::prediction prediction_obj(*it);
-            //displayPrediction(prediction_obj, fout);
 
             fout << "One sub graph" << "\n";
             std::vector<SymptomInfo> symptoms = it->getSymptomInfo();
@@ -68,10 +60,7 @@ int main(int argc, char **argv)
     catch(const SIEM_errors::SIEMException &ex)
     {
         std::cout << "Exception catched: " << ex.what() << std::endl;
-    }*/
-
-    aggregator_space::ApacheAggregator apacheOjb("access.log", "test.json");
-    apacheOjb.getInformationFromLogs();
+    }
 
     return 0;
 }

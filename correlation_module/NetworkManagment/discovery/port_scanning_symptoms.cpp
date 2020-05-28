@@ -39,8 +39,8 @@ bool PortScanningSymptoms::checkSymptoms()
         {
             symptoms_space::Data dataObj;
             dataObj.mainData.push_back(std::pair<std::string, int16_t>(it->first, 1));
-            std::shared_ptr<JsonContainer> anchor = parser.findElementByName(it->first);
-            dataObj.time = data_time_space::Time(anchor->childNode->keyValue.second);
+            std::shared_ptr<JsonContainer> dstIp = parser.findElementByPath(it->first + "/" + "dst-ip");
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(dstIp->keyValue.second, 1));
             dataObj.isUsed = false;
             this->allDataFromSymptom.push_back(dataObj);
         }

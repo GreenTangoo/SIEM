@@ -1,8 +1,13 @@
-
-
 #include "apache_aggr.hpp"
 
 using namespace aggregator_space;
+using namespace parser_string_space;
+
+#define REQUESTS "requests"
+#define ROOT "root"
+#define TIME "time"
+#define PATH "path"
+#define RESPONSE_CODE "response-code"
 
 ApacheAggregator::ApacheAggregator(const std::string &logFilename, const std::string &resultJsonFilename) : resultJsonFilename(resultJsonFilename)
 {
@@ -31,22 +36,38 @@ void ApacheAggregator::getInformationFromLogs()
         throw SIEM_errors::SIEMException("Cannot open file: " + logFileFilename);
     }
 
+    std::string requestsPath = constructPath(SLASH, 2, ROOT, REQUESTS);
+    jsonLogRepresentation.addOrUpdateNode(REQUESTS, requestsPath.c_str());
+
+    std::map<std::string, std::map<std::string, int>> counterResponsesCode;
+
     std::string oneLineFromLogfile;
     while(std::getline(fin, oneLineFromLogfile))
     {
         std::list<std::string> parsedStringList = parser_string_space::parse_by_delimeter(oneLineFromLogfile, " ");
         std::list<std::string>::iterator ipIter = std::next(parsedStringList.begin(), 0);
-        jsonLogRepresentation.addEmptyNode(*ipIter, "requests");
+        std::string addIpPath = constructPath(SLASH, 3, ROOT, REQUESTS, (*ipIter).c_str());
+        jsonLogRepresentation.addOrUpdateNode(*ipIter, addIpPath);
 
         std::list<std::string>::iterator timeIter = std::next(parsedStringList.begin(), 3);
-        std::string timeString = this->convertApacheDateFormat(*timeIter);
-        jsonLogRepresentation.addString(std::pair<std::string, std::string>("time", timeString), *ipIter);
+        std::string timeString = convertApacheDateFormat(*timeIter);
+        std::string addTimePath = constructPath(SLASH, 4, ROOT, REQUESTS, (*ipIter).c_str(), TIME);
+        jsonLogRepresentation.addOrUpdateString(std::pair<std::string, std::string>(TIME, timeString), addTimePath);
 
+        std::string addPathPath = constructPath(SLASH, 4, ROOT, REQUESTS, (*ipIter).c_str(), PATH);
+        jsonLogRepresentation.addOrUpdateArray(PATH, std::vector<std::string>(), addPathPath);
         std::list<std::string>::iterator pathIter = std::next(parsedStringList.begin(), 6);
-        jsonLogRepresentation.addString(std::pair<std::string, std::string>("path", *pathIter), *ipIter);
+        jsonLogRepresentation.addArrayElement(*pathIter, addPathPath);
 
         std::list<std::string>::iterator responseCodeIter = std::next(parsedStringList.begin(), 8);
-        jsonLogRepresentation.addString(std::pair<std::string, std::string>("response code", *responseCodeIter), *ipIter);
+
+        counterResponsesCode[*ipIter][*responseCodeIter]++;
+        int amountResponseCode = counterResponsesCode[*ipIter][*responseCodeIter];
+        std::string responseCodeNumber = "response-code-" + *responseCodeIter;
+
+        std::string responseCodeNumberPath = constructPath(SLASH, 4, ROOT, REQUESTS, (*ipIter).c_str(), responseCodeNumber.c_str());
+        jsonLogRepresentation.addOrUpdateString(std::pair<std::string, std::string>(responseCodeNumber, std::to_string(amountResponseCode)),
+                                                responseCodeNumberPath);
     }
 
     fin.close();
@@ -60,7 +81,6 @@ void ApacheAggregator::getInformationFromLogs()
 
 std::string ApacheAggregator::convertApacheDateFormat(std::string apacheDate)
 {
-    //std::copy(apacheDate.begin() + 1, apacheDate.end(), dateString.begin()); // delete [ symbol from apacheDate
     std::string::size_type pos = apacheDate.find("[");
     std::string dateString(apacheDate.substr(pos + 1));
 

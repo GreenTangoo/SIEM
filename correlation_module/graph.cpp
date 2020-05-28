@@ -32,7 +32,7 @@ std::vector<symptoms_space::SymptomImpl*> Graph::initializeCustomSymptoms()
     std::vector<symptoms_space::SymptomImpl*> vectorCustomSymtoms;
     DescriptorConfig userConfigDescriptor;
 
-    std::vector<OneConfigCell> configs = userConfigDescriptor.getDescription(CORRELATION_CONFIG);
+    std::vector<OneConfigCell> configs = userConfigDescriptor.getDescription(CORRELATION_CONF_PATH);
 
     for(size_t i(0); i < configs.size(); i++)
     {
@@ -46,8 +46,8 @@ std::vector<symptoms_space::SymptomImpl*> Graph::initializeCustomSymptoms()
 std::vector<symptoms_space::SymptomImpl*> Graph::initializeDiscoveredSymptoms()
 {
     std::vector<symptoms_space::SymptomImpl*> vector_discovery_symptoms;
-    PortScanningSymptoms *port_scan_symp = new PortScanningSymptoms(IPTABLES_LOGFILE);
-    DirectoryDiscoverySymptoms *dir_scan_symp = new DirectoryDiscoverySymptoms(APACHE_LOGFILE);
+    PortScanningSymptoms *port_scan_symp = new PortScanningSymptoms(IPTABLES_LOG_PATH);
+    DirectoryDiscoverySymptoms *dir_scan_symp = new DirectoryDiscoverySymptoms(APACHE_LOG_PATH);
 
     vector_discovery_symptoms.push_back(port_scan_symp);
     vector_discovery_symptoms.push_back(dir_scan_symp);
@@ -58,9 +58,9 @@ std::vector<symptoms_space::SymptomImpl*> Graph::initializeDiscoveredSymptoms()
 std::vector<symptoms_space::SymptomImpl*> Graph::initializeAccountAccessSymptoms()
 {
     std::vector<symptoms_space::SymptomImpl*> vector_account_symptoms;
-    UserLoginSymptoms *usr_log_symp = new UserLoginSymptoms(SYSTEM_AUTHORIZATION_LOGFILE);
-    LoginRootSymptoms *log_root_symp = new LoginRootSymptoms(SYSTEM_AUTHORIZATION_LOGFILE);
-    ValidAccountsSymptoms *validAccountsSympPtr = new ValidAccountsSymptoms(SYSTEM_AUTHORIZATION_LOGFILE);
+    UserLoginSymptoms *usr_log_symp = new UserLoginSymptoms(SYSTEM_AUTHORIZATION_LOG_PATH);
+    LoginRootSymptoms *log_root_symp = new LoginRootSymptoms(SYSTEM_AUTHORIZATION_LOG_PATH);
+    ValidAccountsSymptoms *validAccountsSympPtr = new ValidAccountsSymptoms(SYSTEM_AUTHORIZATION_LOG_PATH);
 
     vector_account_symptoms.push_back(usr_log_symp);
     vector_account_symptoms.push_back(log_root_symp);
@@ -72,8 +72,8 @@ std::vector<symptoms_space::SymptomImpl*> Graph::initializeAccountAccessSymptoms
 std::vector<symptoms_space::SymptomImpl*> Graph::initializeFilesManipulationSymptoms()
 {
     std::vector<symptoms_space::SymptomImpl*> vector_files_manipulation_symptoms;
-    DataCollectionSymptoms *data_collection_symp = new DataCollectionSymptoms(SYSTEM_FILES_MANIPULATION_LOGFILE);
-    AccountDiscoverySymptoms *account_discovery_symp = new AccountDiscoverySymptoms(SYSTEM_FILES_MANIPULATION_LOGFILE);
+    DataCollectionSymptoms *data_collection_symp = new DataCollectionSymptoms(SYSTEM_FILES_MANIPULATION_LOG_PATH);
+    AccountDiscoverySymptoms *account_discovery_symp = new AccountDiscoverySymptoms(SYSTEM_FILES_MANIPULATION_LOG_PATH);
 
     vector_files_manipulation_symptoms.push_back(data_collection_symp);
     vector_files_manipulation_symptoms.push_back(account_discovery_symp);
@@ -84,11 +84,11 @@ std::vector<symptoms_space::SymptomImpl*> Graph::initializeFilesManipulationSymp
 std::vector<SymptomImpl*> Graph::initializeProccessManipulationSymptoms()
 {
     std::vector<symptoms_space::SymptomImpl*> vector_proccess_manipulation_symptoms;
-    ProcessDiscoverySymptoms *process_discovery_symp = new ProcessDiscoverySymptoms(SYSTEM_PROCESSES_MANIPULATION_LOGFILE);
-    CommandLineInterfaceSymptoms *cmd_symptoms = new CommandLineInterfaceSymptoms(SYSTEM_PROCESSES_MANIPULATION_LOGFILE);
-    DataCompressedSymptoms *data_compressed_symp = new DataCompressedSymptoms(SYSTEM_PROCESSES_MANIPULATION_LOGFILE);
-    SystemNetworkConfDiscoverySymptoms *net_conf_discovery_symp = new SystemNetworkConfDiscoverySymptoms(SYSTEM_PROCESSES_MANIPULATION_LOGFILE);
-    SystemNetworkConnDiscoverySymptoms *net_conn_discovery_symp = new SystemNetworkConnDiscoverySymptoms(SYSTEM_PROCESSES_MANIPULATION_LOGFILE);
+    ProcessDiscoverySymptoms *process_discovery_symp = new ProcessDiscoverySymptoms(SYSTEM_PROCESSES_MANIPULATION_LOG_PATH);
+    CommandLineInterfaceSymptoms *cmd_symptoms = new CommandLineInterfaceSymptoms(SYSTEM_PROCESSES_MANIPULATION_LOG_PATH);
+    DataCompressedSymptoms *data_compressed_symp = new DataCompressedSymptoms(SYSTEM_PROCESSES_MANIPULATION_LOG_PATH);
+    SystemNetworkConfDiscoverySymptoms *net_conf_discovery_symp = new SystemNetworkConfDiscoverySymptoms(SYSTEM_PROCESSES_MANIPULATION_LOG_PATH);
+    SystemNetworkConnDiscoverySymptoms *net_conn_discovery_symp = new SystemNetworkConnDiscoverySymptoms(SYSTEM_PROCESSES_MANIPULATION_LOG_PATH);
 
     vector_proccess_manipulation_symptoms.push_back(process_discovery_symp);
     vector_proccess_manipulation_symptoms.push_back(cmd_symptoms);

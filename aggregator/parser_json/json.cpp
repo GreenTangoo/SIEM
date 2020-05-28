@@ -58,6 +58,14 @@ void JsonContainer::recursiveCopyElements(JsonContainer &destObj, const JsonCont
     }
 }
 
+void JsonContainer::recursiveClearElements(std::shared_ptr<JsonContainer> parentNode)
+{
+    if(parentNode->childNode != nullptr)
+        parentNode->childNode.reset();
+    if(parentNode->nextNode != nullptr)
+        parentNode->nextNode.reset();
+}
+
 void JsonContainer::moveElements(JsonContainer &destObj, JsonContainer &srcObj)
 {
     destObj.keyValue = srcObj.keyValue;
@@ -125,7 +133,22 @@ void JsonObject::setContainer(const JsonContainer &otherContainer)
     this->rootNode->recursiveCopyElements(*(rootNode.get()), otherContainer);
 }
 
-void JsonObject::addArray(const std::string &keyNode, const std::vector<std::string> &values, const std::string &parentName)
+void JsonObject::addArrayElement(const std::string &value, const std::string &parentPath)
+{
+    std::shared_ptr<JsonContainer> foundedArrayNode = findByPath(rootNode, parentPath);
+
+    if(foundedArrayNode == nullptr)
+    {
+        throw SIEM_errors::SIEMException("Cannot find node by path: " + parentPath + " in addArrayElement method");
+    }
+
+    JsonContainer newArrayElementContainer;
+    newArrayElementContainer.keyValue.first = value;
+    newArrayElementContainer.typeNode = ARRAY_ELEMENT;
+    addChild(foundedArrayNode, newArrayElementContainer);
+}
+
+void JsonObject::addArray(const std::string &keyNode, const std::vector<std::string> &values, const std::string &parentPath)
 {
     JsonContainer newContainer;
     newContainer.keyValue.first = keyNode;
@@ -141,50 +164,133 @@ void JsonObject::addArray(const std::string &keyNode, const std::vector<std::str
         this->addChild(newContainerPtr, newArrayElementContainer);
     }
 
-    std::shared_ptr<JsonContainer> foundedContainer = findByName(rootNode, parentName);
+    std::shared_ptr<JsonContainer> foundedContainer = findByPath(rootNode, parentPath);
 
-    if(foundedContainer != nullptr)
+    if(foundedContainer == nullptr)
     {
-        this->addChild(foundedContainer, *(newContainerPtr.get()));
+        throw SIEM_errors::SIEMException("Cannot find node by path: " + parentPath + " in addArrayMethod");
     }
-    else
+
+    addChild(foundedContainer, *(newContainerPtr.get()));
+}
+
+void JsonObject::addOrUpdateArray(const std::string &keyNode, const std::vector<std::string> &values, const std::string &arrayPath)
+{
+    try
     {
-        this->addChild(rootNode, *(newContainerPtr.get()));
+        updateArray(keyNode, values, arrayPath);
+    }
+    catch(const SIEM_errors::SIEMException &ex)
+    {
+        std::string stringParentPath = cropFromEnd(arrayPath, SLASH);
+        addArray(keyNode, values, stringParentPath);
     }
 }
 
-void JsonObject::addEmptyNode(const std::string &keyNode, const std::string &parentName)
+void JsonObject::updateArray(const std::string &keyNode, const std::vector<std::string> &values, const std::string &arrayPath)
+{
+    std::shared_ptr<JsonContainer> foundedArrayNode = findByPath(rootNode, arrayPath);
+
+    if(foundedArrayNode == nullptr)
+    {
+        throw  SIEM_errors::SIEMException("Cannot find node by path: " + arrayPath + " in updateArray method");
+    }
+
+    if(foundedArrayNode->childNode != nullptr)
+    {
+        foundedArrayNode->recursiveClearElements(foundedArrayNode->childNode);
+    }
+
+    foundedArrayNode->keyValue.first = keyNode;
+
+    for(size_t i(0); i < values.size(); i++)
+    {
+        JsonContainer newArrayElementContainer;
+        newArrayElementContainer.keyValue.first = values[i];
+        newArrayElementContainer.typeNode = ARRAY_ELEMENT;
+        this->addChild(foundedArrayNode, newArrayElementContainer);
+    }
+}
+
+void JsonObject::addEmptyNode(const std::string &keyNode, const std::string &parentPath)
 {
     JsonContainer newContainer;
     newContainer.keyValue.first = keyNode;
     newContainer.typeNode = OBJECT;
 
-    std::shared_ptr<JsonContainer> foundedContainer = findByName(rootNode, parentName);
+    std::shared_ptr<JsonContainer> foundedContainer = findByPath(rootNode, parentPath);
 
     if(foundedContainer == nullptr)
     {
-        addEmptyNode(parentName, "root");
+        throw SIEM_errors::SIEMException("Cannot find node by path: " + parentPath + " in addEmptyNode method");
     }
 
-    foundedContainer = findByName(rootNode, parentName);
     addChild(foundedContainer, newContainer);
 }
 
-void JsonObject::addString(const std::pair<std::string, std::string> &keyValue, const std::string &parentName)
+void JsonObject::updateNodeName(const std::string &keyNode, const std::string &nodePath)
+{
+    std::shared_ptr<JsonContainer> foundedNode = findByPath(rootNode, nodePath);
+
+    if(foundedNode == nullptr)
+    {
+        throw SIEM_errors::SIEMException("Cannot find node by path: " + nodePath + " in updateNodeName method");
+    }
+
+    foundedNode->keyValue.first = keyNode;
+}
+
+void JsonObject::addOrUpdateNode(const std::string &keyNode, const std::string &nodePath)
+{
+    try
+    {
+        updateNodeName(keyNode, nodePath);
+    }
+    catch(const SIEM_errors::SIEMException &ex)
+    {
+        std::string stringParentPath = cropFromEnd(nodePath, SLASH);
+        addEmptyNode(keyNode, stringParentPath);
+    }
+}
+
+void JsonObject::addString(const std::pair<std::string, std::string> &keyValue, const std::string &parentPath)
 {
     JsonContainer newContainer;
     newContainer.keyValue = keyValue;
     newContainer.typeNode = STRING;
 
-    std::shared_ptr<JsonContainer> foundedContainer = findByName(rootNode, parentName);
+    std::shared_ptr<JsonContainer> foundedContainer = findByPath(rootNode, parentPath);
 
-    if(foundedContainer != nullptr)
+    if(foundedContainer == nullptr)
     {
-        this->addChild(foundedContainer, newContainer);
+        throw SIEM_errors::SIEMException("Cannot find node by path: " + parentPath + " in addString method");
     }
-    else
+
+    addChild(foundedContainer, newContainer);
+}
+
+void JsonObject::updateString(const std::pair<std::string, std::string> &keyValue, const std::string &stringPath)
+{
+    std::shared_ptr<JsonContainer> foundedStringNode = findByPath(rootNode, stringPath);
+
+    if(foundedStringNode == nullptr)
     {
-        this->addChild(rootNode, newContainer);
+        throw SIEM_errors::SIEMException("Cannot find node by path: " + stringPath + " in updateString method");
+    }
+
+    foundedStringNode->keyValue = keyValue;
+}
+
+void JsonObject::addOrUpdateString(const std::pair<std::string, std::string> &keyValue, const std::string &stringPath)
+{
+    try
+    {
+        updateString(keyValue, stringPath);
+    }
+    catch(const SIEM_errors::SIEMException &ex)
+    {
+        std::string stringParenPath = cropFromEnd(stringPath, SLASH);
+        addString(keyValue, stringParenPath);
     }
 }
 
@@ -214,31 +320,37 @@ void JsonObject::setJson(std::ostream &out, bool formatOut)
         JsonStreamParser::getInstance().putToStreamFormat(out, rootNode->childNode);
 }
 
-std::shared_ptr<JsonContainer> JsonObject::findElementByName(const std::string keyName)
+std::shared_ptr<JsonContainer> JsonObject::findElementByName(const std::string &keyName)
 {
     std::shared_ptr<JsonContainer> foundedNodePtr = findByName(rootNode, keyName);
     return foundedNodePtr;
 }
 
-std::vector<std::shared_ptr<JsonContainer>> JsonObject::findElementsByName(const std::string keyName)
+std::vector<std::shared_ptr<JsonContainer>> JsonObject::findElementsByName(const std::string &keyName)
 {
     std::vector<std::shared_ptr<JsonContainer>> foundedVecPtr = findsByName(rootNode, keyName);
     return foundedVecPtr;
 }
 
-std::shared_ptr<JsonContainer> JsonObject::findElementByTemplate(const std::string templateString)
+std::shared_ptr<JsonContainer> JsonObject::findElementByTemplate(const std::string &templateString)
 {
 
 }
 
-std::vector<std::shared_ptr<JsonContainer>> JsonObject::findElementsByTemplate(const std::string temlateString)
+std::vector<std::shared_ptr<JsonContainer>> JsonObject::findElementsByTemplate(const std::string &temlateString)
 {
 
+}
+
+std::shared_ptr<JsonContainer> JsonObject::findElementByPath(const std::string &path)
+{
+    std::shared_ptr<JsonContainer> foundedNodePtr = findByPath(rootNode, path);
+    return foundedNodePtr;
 }
 
 /*------------------------------------JSON OBJECT(PRIVATE)-------------------------------------*/
 
-std::shared_ptr<JsonContainer> JsonObject::findByName(std::shared_ptr<JsonContainer> node, const std::string keyName)
+std::shared_ptr<JsonContainer> JsonObject::findByName(std::shared_ptr<JsonContainer> node, const std::string &keyName)
 {
     for(std::shared_ptr<JsonContainer> itPtr = node; itPtr != nullptr; itPtr = itPtr->nextNode)
     {
@@ -258,7 +370,7 @@ std::shared_ptr<JsonContainer> JsonObject::findByName(std::shared_ptr<JsonContai
     return nullptr;
 }
 
-std::vector<std::shared_ptr<JsonContainer>> JsonObject::findsByName(std::shared_ptr<JsonContainer> node, const std::string keyName)
+std::vector<std::shared_ptr<JsonContainer>> JsonObject::findsByName(std::shared_ptr<JsonContainer> node, const std::string &keyName)
 {
     std::vector<std::shared_ptr<JsonContainer>> foundedVec;
 
@@ -277,6 +389,24 @@ std::vector<std::shared_ptr<JsonContainer>> JsonObject::findsByName(std::shared_
     }
 
     return foundedVec;
+}
+
+std::shared_ptr<JsonContainer> JsonObject::findByPath(std::shared_ptr<JsonContainer> node, const std::string &path)
+{
+    std::shared_ptr<JsonContainer> foundedNodePtr = node;
+    std::list<std::string> pathNodesList = parse_by_delimeter(path, "/");
+
+    for(std::list<std::string>::iterator it = pathNodesList.begin(); it != pathNodesList.end(); it++)
+    {
+        std::string nodeName = *it;
+        foundedNodePtr = findByName(foundedNodePtr, nodeName);
+        if(foundedNodePtr == nullptr)
+        {
+            return nullptr;
+        }
+    }
+
+    return foundedNodePtr;
 }
 
 void JsonObject::addChild(std::shared_ptr<JsonContainer> node, JsonContainer &childNode)

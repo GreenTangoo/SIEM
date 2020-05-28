@@ -1,6 +1,8 @@
 #ifndef APACHE_AGGR_HPP
 #define APACHE_AGGR_HPP
 
+#include <map>
+
 #include "../aggregator_interface/aggr_interface_implementation.hpp"
 #include "../../time_class/parse_time.hpp"
 

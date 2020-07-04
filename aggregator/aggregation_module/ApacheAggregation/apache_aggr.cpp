@@ -37,7 +37,7 @@ void ApacheAggregator::getInformationFromLogs()
     }
 
     std::string requestsPath = constructPath(SLASH, 2, ROOT, REQUESTS);
-    jsonLogRepresentation.addOrUpdateNode(REQUESTS, requestsPath.c_str());
+    jsonLogRepresentation.addOrUpdateNode(REQUESTS, requestsPath);
 
     std::map<std::string, std::map<std::string, int>> counterResponsesCode;
 
@@ -92,6 +92,14 @@ std::string ApacheAggregator::convertApacheDateFormat(std::string apacheDate)
     std::list<std::string>::iterator dayIter = std::next(parsedDateStringList.begin(), 0);
     std::list<std::string>::iterator timeIter = std::next(parsedDateStringList.begin(), 2);
 
-    std::string convertedDateTime = *dayIter + "/" + std::to_string(monthNumber) + "/" + *timeIter;
+    std::list<std::string> parsedTime = parse_by_delimeter(*timeIter, ":");
+    std::list<std::string>::iterator yearIter = std::next(parsedTime.begin(), 0);
+    std::list<std::string>::iterator hourIter = std::next(parsedTime.begin(), 1);
+    std::list<std::string>::iterator minuteIter = std::next(parsedTime.begin(), 2);
+    std::list<std::string>::iterator secondIter = std::next(parsedTime.begin(), 3);
+
+
+    std::string convertedDateTime = *dayIter + "/" + std::to_string(monthNumber) + "/" + *yearIter
+            + "/" + *hourIter + ":" + *minuteIter + ":" + *secondIter;
     return convertedDateTime;
 }

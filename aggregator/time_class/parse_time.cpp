@@ -45,17 +45,45 @@ bool data_time_space::Time::operator==(const Time &other)
 void data_time_space::Time::setTime(std::string strTime)
 {
     std::list<std::string> parsedStr = parser_string_space::parse_by_delimeter(strTime, "/"); // Get year, month, day, day time
-    std::list<std::string>::iterator accessIter = std::next(parsedStr.begin(), 0); // Get year
-    this->year = atoi(accessIter->c_str());
+    std::list<std::string>::iterator accessIter;
+    try
+    {
+        accessIter = std::next(parsedStr.begin(), 0); // Get year
+        this->year = atoi(accessIter->c_str());
+    }
+    catch(std::exception const  &ex)
+    {
+        this->year = 0;
+    }
+    try
+    {
+        accessIter = std::next(parsedStr.begin(), 1); // Get month
+        this->month = atoi(accessIter->c_str());
+    }
+    catch(std::exception const &ex)
+    {
+        this->month = 0;
+    }
 
-    accessIter = std::next(parsedStr.begin(), 1); // Get month
-    this->month = atoi(accessIter->c_str());
+    try
+    {
+        accessIter = std::next(parsedStr.begin(), 2); // Get day
+        this->day = atoi(accessIter->c_str());
+    }
+    catch(std::exception const &ex)
+    {
+        this->day = 0;
+    }
 
-    accessIter = std::next(parsedStr.begin(), 2); // Get day
-    this->day = atoi(accessIter->c_str());
-
-    accessIter = std::next(parsedStr.begin(), 3); // Get day time
-    transformToAbsoluteTime(*accessIter);
+    try
+    {
+        accessIter = std::next(parsedStr.begin(), 3); // Get day time
+        transformToAbsoluteTime(*accessIter);
+    }
+    catch(std::exception const &ex)
+    {
+        this->absoluteOneDayTime = 0;
+    }
 }
 
 std::string data_time_space::Time::getStrTime()

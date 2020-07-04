@@ -2,6 +2,9 @@
 
 using namespace symptoms_space::proccess_manipulation;
 
+#define TAR "tar"
+#define BZIP "bzip"
+#define GZIP "gzip"
 
 DataCompressedSymptoms::DataCompressedSymptoms(std::string filename) : jsonFilename(filename)
 {
@@ -28,24 +31,18 @@ bool DataCompressedSymptoms::checkSymptoms()
 
     for(; container->childNode != nullptr; container->childNode = container->childNode->nextNode)
     {
-        std::string processName = container->childNode->keyValue.first;
-        std::string actionName = container->childNode->childNode->nextNode->keyValue.second;
+        std::string username = container->keyValue.first;
+        std::shared_ptr<JsonContainer> archiveNodePtr = parser.findElementByPath("/" + username + "/" + TAR);
 
-        if(((processName == "tar") || (processName == "gzip") || (processName == "7z")) &&
-                (actionName == "start"))
+        if(archiveNodePtr)
         {
-            symptoms_space::Data dataObj;
-            std::string name = container->keyValue.first;
-            std::string actionPrefix = container->childNode->childNode->nextNode->keyValue.first;
-            std::string privilegesPrefix = container->childNode->childNode->nextNode->nextNode->keyValue.first;
-            std::string privilegesName = container->childNode->childNode->nextNode->nextNode->keyValue.second;
-            std::string time = container->childNode->childNode->keyValue.second;
+            std::string programName = archiveNodePtr->keyValue.first;
+            std::string argsProgram = archiveNodePtr->keyValue.second;
 
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(name, 1)); // Get name
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(processName, 0)); // Get process name
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(actionPrefix + ":" + actionName, 0)); // Get action
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(privilegesPrefix + ":" + privilegesName, 0)); // Get privilieges
-            dataObj.time = data_time_space::Time(time);
+            Data dataObj;
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(username, 1));
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(programName, 0));
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(argsProgram, 0));
             dataObj.isUsed = false;
             this->allDataFromSymptom.push_back(dataObj);
         }

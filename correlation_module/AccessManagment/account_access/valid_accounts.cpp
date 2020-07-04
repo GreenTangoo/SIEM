@@ -5,7 +5,7 @@ using namespace symptoms_space::account_access;
 
 ValidAccountsSymptoms::ValidAccountsSymptoms(std::string filename) : jsonFilename(filename)
 {
-    this->typeSymp = category_space::symptomCategory::login_root;
+    this->typeSymp = category_space::symptomCategory::valid_accounts;
 }
 
 ValidAccountsSymptoms::~ValidAccountsSymptoms()

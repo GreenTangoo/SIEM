@@ -1,4 +1,7 @@
-CONFIG += c++11
+TEMPLATE = app
+CONFIG += console c++11
+CONFIG -= app_bundle
+CONFIG -= qt
 
 SOURCES += \
     aggregator/aggregation_module/ApacheAggregation/apache_aggr.cpp \
@@ -7,6 +10,7 @@ SOURCES += \
     aggregator/aggregation_module/IptablesAggregation/iptables_aggr.cpp \
     aggregator/aggregation_module/ProcessesManipulation/processes_manupulation_aggr.cpp \
     aggregator/aggregation_module/SystemAuthorizationAggregation/system_auth_aggr.cpp \
+    aggregator/aggregation_module/aggregation_initializer.cpp \
     aggregator/aggregation_module/aggregator_interface/aggr_interface_implementation.cpp \
     aggregator/parser_json/json.cpp \
     aggregator/parser_txt/parser.cpp \
@@ -42,8 +46,10 @@ HEADERS += \
     aggregator/aggregation_module/IptablesAggregation/iptables_aggr.hpp \
     aggregator/aggregation_module/ProcessesManipulation/processes_manupulation_aggr.hpp \
     aggregator/aggregation_module/SystemAuthorizationAggregation/system_auth_aggr.hpp \
+    aggregator/aggregation_module/aggregation_initializer.hpp \
     aggregator/aggregation_module/aggregator_interface/aggr_interface_implementation.hpp \
     aggregator/aggregation_module/aggregator_interface/main_aggr_interface.hpp \
+    aggregator/aggregation_module/all_aggregations.hpp \
     aggregator/parser_json/json.hpp \
     aggregator/parser_txt/parser.hpp \
     config_descriptor.hpp \

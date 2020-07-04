@@ -65,7 +65,7 @@ void analysis::prediction::fillSymptomsName()
         std::shared_ptr<JsonContainer> container_array_symp = container->childNode->childNode;
         /*Moving through the symptoms of attack vector(like APT1)*/
         for(; container_array_symp != nullptr; container_array_symp = container_array_symp->nextNode)
-            arr_symp.push_back(container_array_symp->keyValue.second);
+            arr_symp.push_back(container_array_symp->keyValue.first);
 
         std::sort(arr_symp.begin(), arr_symp.end());
         std::pair<std::string, std::vector<std::string>> one_theory_vector = std::make_pair(container->keyValue.first, arr_symp);

@@ -2,6 +2,7 @@
 
 using namespace symptoms_space::discovery;
 
+#define AMOUNT_REQ "amount-requests"
 
 PortScanningSymptoms::PortScanningSymptoms(std::string filename) : jsonFilename(filename)
 {
@@ -30,7 +31,12 @@ bool PortScanningSymptoms::checkSymptoms()
     for(; container != nullptr; container = container->nextNode)
     {
         std::string ipAddr = container->keyValue.first;
-        ipAmountReq[ipAddr]++;
+        std::shared_ptr<JsonContainer> amountReqContainer = parser.findElementByPath(ipAddr + "/" + AMOUNT_REQ);
+        if(amountReqContainer != nullptr)
+        {
+            int amountBadResponse = atoi(amountReqContainer->keyValue.second.c_str());
+            ipAmountReq[ipAddr] = amountBadResponse;
+        }
     }
 
     for(std::map<std::string, int32_t>::iterator it = ipAmountReq.begin(); it != ipAmountReq.end(); it++)

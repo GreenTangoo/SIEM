@@ -2,27 +2,34 @@
 #include <fstream>
 #include <vector>
 #include <thread>
+#include <ctime>
 
 #include "correlation_module/graph.h"
 #include "correlation_module/sub_graph.h"
 #include "prediction_module/predictor.hpp"
+#include "aggregator/parser_json/json.hpp"
+#include "aggregator/aggregation_module/aggregation_initializer.hpp"
+#include "logfile_defines.hpp"
 
 using namespace topology_space;
+using namespace aggregator_init_space;
 
-void displayPrediction(const analysis::prediction &obj, std::ofstream &fout)
+void displayPrediction(const analysis::prediction &obj, std::ostream &out)
 {
     std::vector<std::pair<std::string, std::vector<std::string>>> returnedPred = obj.getPredictionSymptoms();
 
     for(size_t i(0); i < returnedPred.size(); i++)
     {
-        fout << "Attack vector name: " << returnedPred[i].first << "\n";
+        out << "Attack vector name: " << returnedPred[i].first << "\n";
         for(size_t j(0); j < returnedPred[i].second.size(); j++)
-            fout << "    Possible later symptoms: " << returnedPred[i].second[j] << "\n";
+            out << "    Possible later symptoms: " << returnedPred[i].second[j] << "\n";
     }
 }
 
 int main(int argc, char **argv)
 {
+    long startTime = clock();
+
     try
     {
         std::ofstream fout;
@@ -31,6 +38,8 @@ int main(int argc, char **argv)
             return -1;
 
 
+        AggregationInitializer initAggregationObject;
+        initAggregationObject.startAggregation();
 
         topology_space::Graph graphObj;
         graphObj.initializeRecognitionMethods();
@@ -41,6 +50,7 @@ int main(int argc, char **argv)
         for(std::list<SubGraph>::iterator it = returnVec.begin(); it != returnVec.end(); it++)
         {
             analysis::prediction prediction_obj(*it);
+            displayPrediction(prediction_obj, fout);
 
             fout << "One sub graph" << "\n";
             std::vector<SymptomInfo> symptoms = it->getSymptomInfo();
@@ -61,6 +71,10 @@ int main(int argc, char **argv)
     {
         std::cout << "Exception catched: " << ex.what() << std::endl;
     }
+
+    long endTime = clock();
+
+    std::cout << (endTime - startTime) / 1000.0 << std::endl;
 
     return 0;
 }

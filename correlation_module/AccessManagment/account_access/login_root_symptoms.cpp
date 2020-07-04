@@ -16,7 +16,7 @@ LoginRootSymptoms::~LoginRootSymptoms()
 bool LoginRootSymptoms::checkSymptoms()
 {
     parser = getJsonData(jsonFilename);
-    std::shared_ptr<JsonContainer> container = parser.findElementByName("root");
+    std::shared_ptr<JsonContainer> container = parser.findElementByPath("admin");
 
     if((container == nullptr) || (container->childNode == nullptr))
         return false;

@@ -32,6 +32,7 @@ bool CustomSymptoms::checkSymptoms()
     {
         symptoms_space::Data dataObj;
         bool result = foundByConfig(this->jsonConfigCell, parser, dataObj);
+
         if(result != SUCCESSFULL_FOUNDED)
         {
             return false;
@@ -45,6 +46,7 @@ bool CustomSymptoms::checkSymptoms()
     else if(parseType == AMOUNT_PARSE_TYPE)
     {
         bool result = amountByConfig(this->jsonConfigCell, parser);
+
         if(result != SUCCESSFULL_AMOUNT)
         {
             return false;

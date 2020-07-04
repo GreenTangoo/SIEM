@@ -315,7 +315,7 @@ void JsonObject::getJson(std::istream &in)
 void JsonObject::setJson(std::ostream &out, bool formatOut)
 {
     if(!formatOut)
-        JsonStreamParser::getInstance().putToStream(out, rootNode);
+        JsonStreamParser::getInstance().putToStream(out, rootNode->childNode);
     else
         JsonStreamParser::getInstance().putToStreamFormat(out, rootNode->childNode);
 }
@@ -577,6 +577,8 @@ std::shared_ptr<JsonContainer> JsonStreamParser::getNode(std::istream &in, std::
 
             newContainerPtr->childNode = getArrayElement(in, newContainerPtr);
             newContainerPtr->childNode->parentNode = parentNode;
+            newContainerPtr->nextNode = getNode(in, parentNode);
+            newContainerPtr->nextNode->prevNode = newContainerPtr;
             break;
         }
     }
@@ -603,7 +605,7 @@ std::shared_ptr<JsonContainer> JsonStreamParser::getArrayElement(std::istream &i
             break;
         }
 
-        if((symbol == SPACE) || (symbol == NEW_LINE))
+        if((symbol == SPACE) || (symbol == NEW_LINE) || (symbol == DQUOTE) || (symbol == TAB))
             continue;
 
         if(symbol == COMMA)
@@ -631,7 +633,7 @@ void JsonStreamParser::putNode(std::ostream &out, std::shared_ptr<JsonContainer>
             std::string key = nodeIter.get()->keyValue.first;
             std::string value = nodeIter.get()->keyValue.second;
 
-            std::string writeStr = key + ":" + value;
+            std::string writeStr =  "\"" + key + "\":\"" + value + "\"";
             out.write(writeStr.c_str(), static_cast<long>(writeStr.length()));
 
             if(nodeIter->nextNode)
@@ -643,6 +645,7 @@ void JsonStreamParser::putNode(std::ostream &out, std::shared_ptr<JsonContainer>
         if(nodeIter.get()->typeNode == OBJECT)
         {
             std::string key = nodeIter.get()->keyValue.first;
+            key = "\"" + key + "\"";
             out.write(key.c_str(), static_cast<long>(key.length()));
             out.write(":{", 2);
             putNode(out, nodeIter->childNode);
@@ -657,6 +660,7 @@ void JsonStreamParser::putNode(std::ostream &out, std::shared_ptr<JsonContainer>
         if(nodeIter.get()->typeNode == ARRAY)
         {
             std::string key = nodeIter.get()->keyValue.first;
+            key = "\"" + key + "\"";
             out.write(key.c_str(), static_cast<long>(key.length()));
             out.write(":[", 2);
             putArrayElement(out, nodeIter->childNode);
@@ -673,6 +677,7 @@ void JsonStreamParser::putArrayElement(std::ostream &out, std::shared_ptr<JsonCo
     for(std::shared_ptr<JsonContainer> nodeIter = node; nodeIter != nullptr; nodeIter = nodeIter->nextNode)
     {
         std::string arrayElement = nodeIter.get()->keyValue.first;
+        arrayElement = "\"" + arrayElement + "\"";
         out.write(arrayElement.c_str(), static_cast<long>(arrayElement.length()));
 
         if(nodeIter->nextNode)

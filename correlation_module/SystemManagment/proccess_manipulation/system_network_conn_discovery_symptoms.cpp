@@ -2,6 +2,7 @@
 
 using namespace symptoms_space::proccess_manipulation;
 
+#define NETSTAT "netstat"
 
 SystemNetworkConnDiscoverySymptoms::SystemNetworkConnDiscoverySymptoms(std::string filename) : jsonFilename(filename)
 {
@@ -25,26 +26,21 @@ bool SystemNetworkConnDiscoverySymptoms::checkSymptoms()
     container = container->childNode;
     if(container->typeNode == json_space::NONE)
         return false;
+
     for(; container->childNode != nullptr; container->childNode = container->childNode->nextNode)
     {
-        std::string processName = container->childNode->keyValue.first;
-        std::string processAction = container->childNode->childNode->nextNode->keyValue.second;
+        std::string username = container->keyValue.first;
+        std::shared_ptr<JsonContainer> connectDiscoveryNodePtr = parser.findElementByPath("/" + username + "/" + NETSTAT);
 
-        if(((processName == "netstat") || (processName == "lsof") || (processName == "w")) &&
-                (processAction == "start"))
+        if(connectDiscoveryNodePtr)
         {
-            std::string username = container->keyValue.first;
-            std::string actionPrefix = container->childNode->childNode->nextNode->keyValue.first;
-            std::string privilegesPrefix = container->childNode->childNode->nextNode->nextNode->keyValue.first;
-            std::string privileges = container->childNode->childNode->nextNode->nextNode->keyValue.second;
-            std::string time = container->childNode->childNode->keyValue.second;
+            std::string connDiscoveryProgram = connectDiscoveryNodePtr->keyValue.first;
+            std::string argsProgram = connectDiscoveryNodePtr->keyValue.second;
 
-            symptoms_space::Data dataObj;
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(username, 1)); // Get name
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(processName, 0)); // Get process name
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(actionPrefix + ":" + processAction, 0)); // Get action
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(privilegesPrefix + ":" + privileges, 0)); // Get privilieges
-            dataObj.time = data_time_space::Time(time);
+            Data dataObj;
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(username, 1));
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(connDiscoveryProgram, 0));
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(argsProgram, 0));
             dataObj.isUsed = false;
             this->allDataFromSymptom.push_back(dataObj);
         }

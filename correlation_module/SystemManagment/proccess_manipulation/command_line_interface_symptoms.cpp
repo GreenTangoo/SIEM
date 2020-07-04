@@ -2,6 +2,9 @@
 
 using namespace symptoms_space::proccess_manipulation;
 
+#define BASH "bash"
+#define KSH "ksh"
+#define ZSH "zsh"
 
 CommandLineInterfaceSymptoms::CommandLineInterfaceSymptoms(std::string filename) : jsonFilename(filename)
 {
@@ -28,24 +31,17 @@ bool CommandLineInterfaceSymptoms::checkSymptoms()
 
     for(; container != nullptr; container = container->nextNode)
     {
-        std::string processName = container->childNode->keyValue.first;
-        std::string processAction = container->childNode->childNode->nextNode->keyValue.second;
-
-        if((processName == "bash") &&
-                (processAction == "start"))
+        std::string username = container->keyValue.first;
+        std::shared_ptr<JsonContainer> intrepreterNodePtr = parser.findElementByPath("/" + username + "/" + BASH);
+        if(intrepreterNodePtr)
         {
-            std::string username = container->keyValue.first;
-            std::string actionPrefix = container->childNode->childNode->nextNode->keyValue.first;
-            std::string privilegesPrefix = container->childNode->childNode->nextNode->nextNode->keyValue.first;
-            std::string privileges = container->childNode->childNode->nextNode->nextNode->keyValue.second;
-            std::string time = container->childNode->childNode->keyValue.second;
+            std::string programName = intrepreterNodePtr->keyValue.first;
+            std::string argsProgram = intrepreterNodePtr->keyValue.second;
 
-            symptoms_space::Data dataObj;
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(username, 1)); // Get name
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(processName, 0)); // Get process name
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(actionPrefix + ":" + processAction, 0)); // Get action
-            dataObj.mainData.push_back(std::pair<std::string, int16_t>(privilegesPrefix + ":" + privileges, 0)); // Get privilieges
-            dataObj.time = data_time_space::Time(time);
+            Data dataObj;
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(username, 1));
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(programName, 0));
+            dataObj.mainData.push_back(std::pair<std::string, int16_t>(argsProgram, 0));
             dataObj.isUsed = false;
             this->allDataFromSymptom.push_back(dataObj);
         }
